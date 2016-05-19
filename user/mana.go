@@ -74,7 +74,7 @@ func (obj *UserManager) LoginUser(ctx context.Context, userName string, passIdFr
 	}
 	loginIdObj, err1 := obj.NewAccessToken(ctx, userName, remoteAddr, userAgent, "")
 
-	return loginIdObj.GaeObject.LoginId, userObj, err1
+	return loginIdObj.gaeObject.LoginId, userObj, err1
 }
 
 func (obj *UserManager) CheckLoginId(ctx context.Context, loginId string, remoteAddr string, userAgent string) (bool, *AccessToken, error) {
@@ -84,10 +84,10 @@ func (obj *UserManager) CheckLoginId(ctx context.Context, loginId string, remote
 		return false, nil, err
 	}
 
-	reqDeviceId, _, _ := obj.MakeLoginId(loginIdObj.GaeObject.UserName, remoteAddr, userAgent)
-	if loginIdObj.GaeObject.DeviceID != reqDeviceId || loginIdObj.GaeObject.LoginId != loginId {
-		if loginIdObj.GaeObject.LoginId != "" {
-			loginIdObj.GaeObject.LoginId = ""
+	reqDeviceId, _, _ := obj.MakeLoginId(loginIdObj.gaeObject.UserName, remoteAddr, userAgent)
+	if loginIdObj.gaeObject.DeviceID != reqDeviceId || loginIdObj.gaeObject.LoginId != loginId {
+		if loginIdObj.gaeObject.LoginId != "" {
+			loginIdObj.gaeObject.LoginId = ""
 			loginIdObj.Save(ctx)
 		}
 		return false, nil, err

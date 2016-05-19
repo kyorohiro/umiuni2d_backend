@@ -26,11 +26,66 @@ type GaeAccessTokenItem struct {
 }
 
 type AccessToken struct {
-	GaeObject    *GaeAccessTokenItem
-	GaeObjectKey *datastore.Key
+	gaeObject    *GaeAccessTokenItem
+	gaeObjectKey *datastore.Key
 	ItemKind     string
 }
 
+func (obj *AccessToken) GetLoginId() string {
+	return obj.gaeObject.LoginId
+}
+
+func (obj *AccessToken) GetUserName() string {
+	return obj.gaeObject.UserName
+}
+
+func (obj *AccessToken) GetIP() string {
+	return obj.gaeObject.IP
+}
+
+func (obj *AccessToken) GetUserAgent() string {
+	return obj.gaeObject.UserAgent
+}
+
+func (obj *AccessToken) GetLoginTime() time.Time {
+	return obj.gaeObject.LoginTime
+}
+
+func (obj *AccessToken) GetGAEObjectKey() *datastore.Key {
+	return obj.gaeObjectKey
+}
+
+func (obj *AccessToken) LoadFromDB(ctx context.Context) error {
+	return datastore.Get(ctx, obj.gaeObjectKey, obj.gaeObject)
+}
+
+func (obj *AccessToken) IsExistedOnDB(ctx context.Context) bool {
+	err := datastore.Get(ctx, obj.gaeObjectKey, obj.gaeObject)
+	if err == nil {
+		return true
+	} else {
+		return false
+	}
+}
+
+func (obj *AccessToken) Save(ctx context.Context) error {
+	_, e := datastore.Put(ctx, obj.gaeObjectKey, obj.gaeObject)
+	return e
+}
+
+func (obj *AccessToken) Logout(ctx context.Context) error {
+	obj.gaeObject.LoginId = ""
+	_, e := datastore.Put(ctx, obj.gaeObjectKey, obj.gaeObject)
+	return e
+}
+
+func (obj *AccessToken) DeleteFromDB(ctx context.Context) error {
+	return datastore.Delete(ctx, obj.gaeObjectKey)
+}
+
+//
+//
+//
 //
 //
 //
@@ -40,20 +95,20 @@ func (obj *UserManager) NewAccessToken(ctx context.Context, userName string, ip 
 	//
 	userKey := obj.NewUserGaeObjectKey(ctx, userName)
 	ret := new(AccessToken)
-	ret.GaeObject = new(GaeAccessTokenItem)
+	ret.gaeObject = new(GaeAccessTokenItem)
 	deviceId, loginId, loginTime := obj.MakeLoginId(userName, ip, userAgent)
-	ret.GaeObject.LoginId = loginId
-	ret.GaeObject.IP = ip
-	ret.GaeObject.Type = loginType
-	ret.GaeObject.LoginTime = loginTime
-	ret.GaeObject.DeviceID = deviceId
-	ret.GaeObject.UserName = userName
-	ret.GaeObject.UserAgent = userAgent
+	ret.gaeObject.LoginId = loginId
+	ret.gaeObject.IP = ip
+	ret.gaeObject.Type = loginType
+	ret.gaeObject.LoginTime = loginTime
+	ret.gaeObject.DeviceID = deviceId
+	ret.gaeObject.UserName = userName
+	ret.gaeObject.UserAgent = userAgent
 
 	ret.ItemKind = obj.loginIdKind
-	ret.GaeObjectKey = obj.NewLoginIdGaeObjectKey(ctx, userName, deviceId, userKey)
+	ret.gaeObjectKey = obj.NewLoginIdGaeObjectKey(ctx, userName, deviceId, userKey)
 
-	_, e := datastore.Put(ctx, ret.GaeObjectKey, ret.GaeObject)
+	_, e := datastore.Put(ctx, ret.gaeObjectKey, ret.gaeObject)
 	return ret, e
 }
 
@@ -65,8 +120,8 @@ func (obj *UserManager) LoadAccessTokenFromLoginId(ctx context.Context, loginId 
 	userKey := obj.NewUserGaeObjectKey(ctx, userName)
 	ret := new(AccessToken)
 	ret.ItemKind = obj.loginIdKind
-	ret.GaeObject = new(GaeAccessTokenItem)
-	ret.GaeObjectKey = datastore.NewKey(ctx, obj.loginIdKind, deviceId, 0, userKey)
+	ret.gaeObject = new(GaeAccessTokenItem)
+	ret.gaeObjectKey = datastore.NewKey(ctx, obj.loginIdKind, deviceId, 0, userKey)
 
 	err = ret.LoadFromDB(ctx)
 	if err != nil {
@@ -78,8 +133,8 @@ func (obj *UserManager) LoadAccessTokenFromLoginId(ctx context.Context, loginId 
 //
 func (obj *UserManager) NewLoginIdFromGaeObject(key *datastore.Key, item *GaeAccessTokenItem) *AccessToken {
 	ret := new(AccessToken)
-	ret.GaeObject = item
-	ret.GaeObjectKey = key
+	ret.gaeObject = item
+	ret.gaeObjectKey = key
 	ret.ItemKind = obj.loginIdKind
 	return ret
 }
@@ -128,35 +183,4 @@ func (obj *UserManager) MakeLoginId(userName string, ip string, userAgent string
 		loginId += base64.StdEncoding.EncodeToString([]byte(userName))
 	}
 	return DeviceID, loginId, t
-}
-
-///
-///
-///
-func (obj *AccessToken) LoadFromDB(ctx context.Context) error {
-	return datastore.Get(ctx, obj.GaeObjectKey, obj.GaeObject)
-}
-
-func (obj *AccessToken) IsExistedOnDB(ctx context.Context) bool {
-	err := datastore.Get(ctx, obj.GaeObjectKey, obj.GaeObject)
-	if err == nil {
-		return true
-	} else {
-		return false
-	}
-}
-
-func (obj *AccessToken) Save(ctx context.Context) error {
-	_, e := datastore.Put(ctx, obj.GaeObjectKey, obj.GaeObject)
-	return e
-}
-
-func (obj *AccessToken) Logout(ctx context.Context) error {
-	obj.GaeObject.LoginId = ""
-	_, e := datastore.Put(ctx, obj.GaeObjectKey, obj.GaeObject)
-	return e
-}
-
-func (obj *AccessToken) DeleteFromDB(ctx context.Context) error {
-	return datastore.Delete(ctx, obj.GaeObjectKey)
 }
