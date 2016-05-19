@@ -12,13 +12,14 @@ import (
 )
 
 type GaeUserItem struct {
-	UserName string    `datastore:",noindex"`
-	Created  time.Time `datastore:",noindex"`
-	Logined  time.Time `datastore:",noindex"`
-	Mail     string
-	PassHash string `datastore:",noindex"`
-	MeIcon   string `datastore:",noindex"`
-	Status   string
+	DisplayName string    `datastore:",noindex"`
+	UserName    string    `datastore:",noindex"`
+	Created     time.Time `datastore:",noindex"`
+	Logined     time.Time `datastore:",noindex"`
+	Mail        string
+	PassHash    string `datastore:",noindex"`
+	MeIcon      string `datastore:",noindex"`
+	Status      string
 }
 
 type User struct {

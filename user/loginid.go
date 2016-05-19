@@ -16,8 +16,8 @@ import (
 )
 
 type GaeAccessTokenItem struct {
-	LoginId   string
-	DeviceID  string
+	LoginId   string    `datastore:",noindex"`
+	DeviceID  string    `datastore:",noindex"`
 	IP        string    `datastore:",noindex"`
 	UserName  string    `datastore:",noindex"`
 	Type      string    `datastore:",noindex"`
