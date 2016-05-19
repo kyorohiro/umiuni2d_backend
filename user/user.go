@@ -22,33 +22,76 @@ type GaeUserItem struct {
 }
 
 type User struct {
-	GaeObject    *GaeUserItem
-	GaeObjectKey *datastore.Key
+	gaeObject    *GaeUserItem
+	gaeObjectKey *datastore.Key
 	kind         string
 }
 
+func (obj *User) GetUserName() string {
+	return obj.gaeObject.UserName
+}
+
+func (obj *User) GetCreated() time.Time {
+	return obj.gaeObject.Created
+}
+
+func (obj *User) GetLogined() time.Time {
+	return obj.gaeObject.Logined
+}
+
+func (obj *User) GetMail() string {
+	return obj.gaeObject.Mail
+}
+
+func (obj *User) SetMail(v string) {
+	obj.gaeObject.Mail = v
+}
+
+func (obj *User) GetMeIcon() string {
+	return obj.gaeObject.MeIcon
+}
+
+func (obj *User) SetMeIcon(v string) {
+	obj.gaeObject.MeIcon = v
+}
+
+func (obj *User) GetStatus() string {
+	return obj.gaeObject.Status
+}
+
+func (obj *User) GetPassHash() string {
+	return obj.gaeObject.PassHash
+}
+
+func (obj *User) UpdatePassword(v string) {
+	obj.gaeObject.PassHash = obj.MakeSha1Pass(v)
+}
+
+func (obj *User) CheckPassword(v string) bool {
+	if obj.gaeObject.PassHash == obj.MakeSha1Pass(v) {
+		return true
+	} else {
+		return false
+	}
+}
+
+//
+//
 func (obj *UserManager) NewUser(ctx context.Context, userName string) *User {
 	ret := new(User)
 	ret.kind = obj.userKind
-	ret.GaeObject = new(GaeUserItem)
-	ret.GaeObject.UserName = userName
-	ret.GaeObjectKey = obj.NewUserGaeObjectKey(ctx, userName)
+	ret.gaeObject = new(GaeUserItem)
+	ret.gaeObject.UserName = userName
+	ret.gaeObjectKey = obj.NewUserGaeObjectKey(ctx, userName)
 	return ret
 }
-
-/*
-func (obj *UserManager) NewUserKey(ctx context.Context, userName string) *User {
-	ret.GaeObjectKey = ret.MakeGaeObjectKey(ctx)
-	return ret
-}
-*/
 
 //
 // need load or make
 func (obj *UserManager) NewUserFromsGaeObject(key *datastore.Key, item *GaeUserItem) *User {
 	ret := new(User)
-	ret.GaeObject = item
-	ret.GaeObjectKey = key
+	ret.gaeObject = item
+	ret.gaeObjectKey = key
 	ret.kind = obj.userKind
 	return ret
 }
@@ -64,21 +107,21 @@ func (obj *UserManager) NewUserGaeObjectKey(ctx context.Context, userName string
 func (obj *User) MakeSha1Pass(passIdFromClient string) string {
 	sha1Hash := sha1.New()
 	io.WriteString(sha1Hash, passIdFromClient)
-	io.WriteString(sha1Hash, obj.GaeObject.UserName)
+	io.WriteString(sha1Hash, obj.gaeObject.UserName)
 	return base64.StdEncoding.EncodeToString(sha1Hash.Sum(nil))
 }
 
 func (obj *User) LoadFromDB(ctx context.Context) error {
-	return datastore.Get(ctx, obj.GaeObjectKey, obj.GaeObject)
+	return datastore.Get(ctx, obj.gaeObjectKey, obj.gaeObject)
 }
 
 func (obj *User) PushToDB(ctx context.Context) error {
-	_, e := datastore.Put(ctx, obj.GaeObjectKey, obj.GaeObject)
+	_, e := datastore.Put(ctx, obj.gaeObjectKey, obj.gaeObject)
 	return e
 }
 
 func (obj *User) IsExistedOnDB(ctx context.Context) bool {
-	err := datastore.Get(ctx, obj.GaeObjectKey, obj.GaeObject)
+	err := datastore.Get(ctx, obj.gaeObjectKey, obj.gaeObject)
 	if err == nil {
 		return true
 	} else {
@@ -90,11 +133,11 @@ func (obj *User) Regist(ctx context.Context, passIdFromClient string, email stri
 	if true == obj.IsExistedOnDB(ctx) {
 		return ErrorAlreadyRegist
 	}
-	obj.GaeObject.UserName = obj.GaeObject.UserName
-	obj.GaeObject.PassHash = obj.MakeSha1Pass(passIdFromClient)
-	obj.GaeObject.Mail = email
+	obj.gaeObject.UserName = obj.gaeObject.UserName
+	obj.gaeObject.PassHash = obj.MakeSha1Pass(passIdFromClient)
+	obj.gaeObject.Mail = email
 
-	_, e := datastore.Put(ctx, obj.GaeObjectKey, obj.GaeObject)
+	_, e := datastore.Put(ctx, obj.gaeObjectKey, obj.gaeObject)
 	return e
 }
 
@@ -104,7 +147,7 @@ func (obj *User) Delete(ctx context.Context) error {
 		return ErrorNotFound
 	}
 	return datastore.RunInTransaction(ctx, func(ctx context.Context) error {
-		e := datastore.Delete(ctx, obj.GaeObjectKey)
+		e := datastore.Delete(ctx, obj.gaeObjectKey)
 		if e != nil {
 			return datastore.ErrConcurrentTransaction
 		}

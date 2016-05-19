@@ -68,7 +68,7 @@ func (obj *UserManager) LoginUser(ctx context.Context, userName string, passIdFr
 		return "", nil, ErrorNotFound
 	}
 	pass1 := userObj.MakeSha1Pass(passIdFromClient)
-	pass2 := userObj.GaeObject.PassHash
+	pass2 := userObj.gaeObject.PassHash
 	if pass1 != pass2 {
 		return "", userObj, ErrorInvalidPass
 	}
@@ -113,7 +113,7 @@ func (obj *UserManager) DeleteUser(ctx context.Context, userName string, passIdF
 	if err != nil {
 		return err
 	}
-	user.GaeObject.Status = UserStatusDelete
+	user.gaeObject.Status = UserStatusDelete
 	err = user.PushToDB(ctx)
 	return err
 }
