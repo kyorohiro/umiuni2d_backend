@@ -8,6 +8,10 @@ import (
 	"golang.org/x/net/context"
 )
 
+const (
+	UserStatusDelete = "delete"
+)
+
 var ErrorNotFound = errors.New("not found")
 var ErrorAlreadyRegist = errors.New("already found")
 var ErrorAlreadyUseMail = errors.New("already use mail")
@@ -68,51 +72,48 @@ func (obj *UserManager) LoginUser(ctx context.Context, userName string, passIdFr
 	if pass1 != pass2 {
 		return "", userObj, ErrorInvalidPass
 	}
-	loginIdObj := obj.NewLoginIdWithID(ctx, userName, remoteAddr, userAgent, "")
-	err = loginIdObj.Login(ctx)
-	if err == nil {
-		llist := obj.NewLoginIdManager(ctx, userName)
-		llist.DeleteOldLoginIds(ctx)
-	}
-	return loginIdObj.GaeObject.LoginId, userObj, err
+	loginIdObj, err1 := obj.NewAccessToken(ctx, userName, remoteAddr, userAgent, "")
+
+	return loginIdObj.GaeObject.LoginId, userObj, err1
 }
 
-func (obj *UserManager) CheckLoginId(ctx context.Context, loginId string, remoteAddr string, userAgent string) (bool, string, error) {
-	userName, e1 := ExtractUserFromLoginId(loginId)
-	if e1 != nil {
-		return false, "", e1
-	}
-	loginIdObj := obj.NewLoginId(ctx, userName, remoteAddr, userAgent, "")
-	err := loginIdObj.LoadFromDB(ctx)
+func (obj *UserManager) CheckLoginId(ctx context.Context, loginId string, remoteAddr string, userAgent string) (bool, *AccessToken, error) {
+
+	loginIdObj, err := obj.LoadAccessTokenFromLoginId(ctx, loginId)
 	if err != nil {
-		llist := obj.NewLoginIdManager(ctx, userName)
-		llist.Logout(ctx, loginId)
-		return false, userName, err
+		return false, nil, err
 	}
-	if loginIdObj.GaeObject.LoginId == loginId {
-		return true, userName, nil
-	} else {
-		return false, userName, nil
+
+	reqDeviceId, _, _ := obj.MakeLoginId(loginIdObj.GaeObject.UserName, remoteAddr, userAgent)
+	if loginIdObj.GaeObject.DeviceID != reqDeviceId || loginIdObj.GaeObject.LoginId != loginId {
+		if loginIdObj.GaeObject.LoginId != "" {
+			loginIdObj.GaeObject.LoginId = ""
+			loginIdObj.Save(ctx)
+		}
+		return false, nil, err
 	}
+
+	return true, loginIdObj, nil
 }
 
 func (obj *UserManager) LogoutUser(ctx context.Context, loginId string, remoteAddr string, userAgent string) error {
-	userName, e1 := ExtractUserFromLoginId(loginId)
-	if e1 != nil {
-		return e1
+	isLogin, loginIdObj, err := obj.CheckLoginId(ctx, loginId, remoteAddr, userAgent)
+	if err != nil {
+		return err
 	}
-	llist := obj.NewLoginIdManager(ctx, userName)
-	return llist.Logout(ctx, loginId)
+	if isLogin == false {
+		return nil
+	}
+	return loginIdObj.Logout(ctx)
 }
 
 func (obj *UserManager) DeleteUser(ctx context.Context, userName string, passIdFromClient string) error {
 	user := obj.NewUser(ctx, userName)
-	//
-	llist := obj.NewLoginIdManager(ctx, userName)
-	err := llist.DeleteAllLoginIds(ctx)
+	err := user.LoadFromDB(ctx)
 	if err != nil {
 		return err
 	}
-
-	return user.Delete(ctx)
+	user.GaeObject.Status = UserStatusDelete
+	err = user.PushToDB(ctx)
+	return err
 }

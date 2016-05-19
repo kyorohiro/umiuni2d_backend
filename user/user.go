@@ -18,6 +18,7 @@ type GaeUserItem struct {
 	Mail     string
 	PassHash string `datastore:",noindex"`
 	MeIcon   string `datastore:",noindex"`
+	Status   string
 }
 
 type User struct {
@@ -31,9 +32,16 @@ func (obj *UserManager) NewUser(ctx context.Context, userName string) *User {
 	ret.kind = obj.userKind
 	ret.GaeObject = new(GaeUserItem)
 	ret.GaeObject.UserName = userName
+	ret.GaeObjectKey = obj.NewUserGaeObjectKey(ctx, userName)
+	return ret
+}
+
+/*
+func (obj *UserManager) NewUserKey(ctx context.Context, userName string) *User {
 	ret.GaeObjectKey = ret.MakeGaeObjectKey(ctx)
 	return ret
 }
+*/
 
 //
 // need load or make
@@ -45,12 +53,12 @@ func (obj *UserManager) NewUserFromsGaeObject(key *datastore.Key, item *GaeUserI
 	return ret
 }
 
-func (obj *User) MakeGaeObjectKeyStringId() string {
-	return obj.kind + ":" + obj.GaeObject.UserName
+func (obj *UserManager) MakeUserGaeObjectKeyStringId(userName string) string {
+	return obj.userKind + ":" + userName
 }
 
-func (obj *User) MakeGaeObjectKey(ctx context.Context) *datastore.Key {
-	return datastore.NewKey(ctx, obj.kind, obj.MakeGaeObjectKeyStringId(), 0, nil)
+func (obj *UserManager) NewUserGaeObjectKey(ctx context.Context, userName string) *datastore.Key {
+	return datastore.NewKey(ctx, obj.userKind, obj.MakeUserGaeObjectKeyStringId(userName), 0, nil)
 }
 
 func (obj *User) MakeSha1Pass(passIdFromClient string) string {

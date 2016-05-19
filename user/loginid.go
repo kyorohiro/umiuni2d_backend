@@ -8,14 +8,14 @@ import (
 	"fmt"
 	"io"
 	"math/rand"
-	"sort"
+	//	"sort"
 
 	"github.com/mssola/user_agent"
 	"golang.org/x/net/context"
 	"google.golang.org/appengine/datastore"
 )
 
-type GaeUserLoginIdItem struct {
+type GaeAccessTokenItem struct {
 	LoginId   string
 	DeviceID  string
 	IP        string    `datastore:",noindex"`
@@ -25,8 +25,8 @@ type GaeUserLoginIdItem struct {
 	LoginTime time.Time `datastore:",noindex"`
 }
 
-type LoginId struct {
-	GaeObject    *GaeUserLoginIdItem
+type AccessToken struct {
+	GaeObject    *GaeAccessTokenItem
 	GaeObjectKey *datastore.Key
 	ItemKind     string
 }
@@ -36,13 +36,12 @@ type LoginId struct {
 //
 //
 
-func (obj *UserManager) NewLoginIdWithID(ctx context.Context, userName string, ip string, userAgent string, loginType string) *LoginId {
+func (obj *UserManager) NewAccessToken(ctx context.Context, userName string, ip string, userAgent string, loginType string) (*AccessToken, error) {
 	//
-	userObj := obj.NewUser(ctx, userName)
-	//userObj.PullFromDB(ctx)
-	ret := new(LoginId)
-	ret.GaeObject = new(GaeUserLoginIdItem)
-	deviceId, loginId, loginTime := MakeLoginId(userName, ip, userAgent)
+	userKey := obj.NewUserGaeObjectKey(ctx, userName)
+	ret := new(AccessToken)
+	ret.GaeObject = new(GaeAccessTokenItem)
+	deviceId, loginId, loginTime := obj.MakeLoginId(userName, ip, userAgent)
 	ret.GaeObject.LoginId = loginId
 	ret.GaeObject.IP = ip
 	ret.GaeObject.Type = loginType
@@ -52,76 +51,61 @@ func (obj *UserManager) NewLoginIdWithID(ctx context.Context, userName string, i
 	ret.GaeObject.UserAgent = userAgent
 
 	ret.ItemKind = obj.loginIdKind
-	ret.GaeObjectKey = ret.MakeGaeObjectKey(ctx, userObj.GaeObjectKey)
-	return ret
+	ret.GaeObjectKey = obj.NewLoginIdGaeObjectKey(ctx, userName, deviceId, userKey)
+
+	_, e := datastore.Put(ctx, ret.GaeObjectKey, ret.GaeObject)
+	return ret, e
 }
 
-func (obj *UserManager) NewLoginId(ctx context.Context, userName string, ip string, userAgent string, loginType string) *LoginId {
-	userObj := obj.NewLoginIdWithID(ctx, userName, ip, userAgent, loginType)
-	userObj.GaeObject.LoginId = ""
-	return userObj
+func (obj *UserManager) LoadAccessTokenFromLoginId(ctx context.Context, loginId string) (*AccessToken, error) {
+	deviceId, userName, err := obj.ExtractUserFromLoginId(loginId)
+	if err != nil {
+		return nil, err
+	}
+	userKey := obj.NewUserGaeObjectKey(ctx, userName)
+	ret := new(AccessToken)
+	ret.ItemKind = obj.loginIdKind
+	ret.GaeObject = new(GaeAccessTokenItem)
+	ret.GaeObjectKey = datastore.NewKey(ctx, obj.loginIdKind, deviceId, 0, userKey)
+
+	err = ret.LoadFromDB(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return ret, nil
 }
 
 //
-//
-//
-func (obj *UserManager) NewLoginIdFromGaeObject(key *datastore.Key, item *GaeUserLoginIdItem) *LoginId {
-	ret := new(LoginId)
+func (obj *UserManager) NewLoginIdFromGaeObject(key *datastore.Key, item *GaeAccessTokenItem) *AccessToken {
+	ret := new(AccessToken)
 	ret.GaeObject = item
 	ret.GaeObjectKey = key
 	ret.ItemKind = obj.loginIdKind
 	return ret
 }
 
-func (obj *LoginId) MakeGaeObjectKey(ctx context.Context, parentKey *datastore.Key) *datastore.Key {
-	return datastore.NewKey(ctx, obj.ItemKind, obj.MakeGaeObjectKeyStringId(), 0, parentKey)
+func (obj *UserManager) NewLoginIdGaeObjectKey(ctx context.Context, userName string, deviceId string, parentKey *datastore.Key) *datastore.Key {
+	return datastore.NewKey(ctx, obj.loginIdKind, obj.MakeLoginIdGaeObjectKeyStringId(userName, deviceId), 0, parentKey)
 }
 
-func (obj *LoginId) MakeGaeObjectKeyStringId() string {
-	return obj.ItemKind + ":" + obj.GaeObject.UserName + ":" + obj.GaeObject.DeviceID
+func (obj *UserManager) MakeLoginIdGaeObjectKeyStringId(userName string, deviceId string) string {
+	return obj.loginIdKind + ":" + userName + ":" + deviceId
 }
 
-func (obj *LoginId) LoadFromDB(ctx context.Context) error {
-	return datastore.Get(ctx, obj.GaeObjectKey, obj.GaeObject)
-}
-
-func (obj *LoginId) IsExistedOnDB(ctx context.Context) bool {
-	err := datastore.Get(ctx, obj.GaeObjectKey, obj.GaeObject)
-	if err == nil {
-		return true
-	} else {
-		return false
-	}
-}
-
-func (obj *LoginId) Login(ctx context.Context) error {
-	_, e := datastore.Put(ctx, obj.GaeObjectKey, obj.GaeObject)
-	return e
-}
-
-func (obj *LoginId) Logout(ctx context.Context) error {
-	obj.GaeObject.LoginId = ""
-	_, e := datastore.Put(ctx, obj.GaeObjectKey, obj.GaeObject)
-	return e
-}
-
-func (obj *LoginId) DeleteFromDB(ctx context.Context) error {
-	return datastore.Delete(ctx, obj.GaeObjectKey)
-}
-
-func ExtractUserFromLoginId(loginId string) (string, error) {
+func (obj *UserManager) ExtractUserFromLoginId(loginId string) (string, string, error) {
 	binary := []byte(loginId)
-	if len(binary) <= 28 {
-		return "", ErrorExtract
+	if len(binary) <= 28+28+1 {
+		return "", "", ErrorExtract
 	}
 
-	binaryUser, err := base64.StdEncoding.DecodeString(string(binary[28:]))
+	binaryUser, err := base64.StdEncoding.DecodeString(string(binary[28*2:]))
 	if err != nil {
-		return "", ErrorExtract
+		return "", "", ErrorExtract
 	}
-	return string(binaryUser), nil
+	return string(binary[28 : 28*2]), string(binaryUser), nil
 }
-func MakeLoginId(userName string, ip string, userAgent string) (string, string, time.Time) {
+
+func (obj *UserManager) MakeLoginId(userName string, ip string, userAgent string) (string, string, time.Time) {
 	t := time.Now()
 	uaObj := user_agent.New(userAgent)
 	DeviceID := ""
@@ -140,84 +124,39 @@ func MakeLoginId(userName string, ip string, userAgent string) (string, string, 
 		io.WriteString(sha1Hash, userName)
 		io.WriteString(sha1Hash, fmt.Sprintf("%X%X", t.UnixNano(), rand.Int63()))
 		loginId = base64.StdEncoding.EncodeToString(sha1Hash.Sum(nil))
+		loginId += DeviceID
 		loginId += base64.StdEncoding.EncodeToString([]byte(userName))
 	}
 	return DeviceID, loginId, t
 }
 
-//
-//
-//
-type LoginIdManager struct {
-	IdList []*LoginId
+///
+///
+///
+func (obj *AccessToken) LoadFromDB(ctx context.Context) error {
+	return datastore.Get(ctx, obj.GaeObjectKey, obj.GaeObject)
 }
 
-func (obj *UserManager) NewLoginIdManager(ctx context.Context, userName string) *LoginIdManager {
-	ret := new(LoginIdManager)
-	user := obj.NewUser(ctx, userName)
-	q := datastore.NewQuery(obj.loginIdKind).Ancestor(user.GaeObjectKey).Limit(20)
-	i := q.Run(ctx)
-
-	for {
-		var l GaeUserLoginIdItem
-		k, e := i.Next(&l)
-		if e != nil {
-			break
-		}
-		ret.IdList = append(ret.IdList, obj.NewLoginIdFromGaeObject(k, &l))
+func (obj *AccessToken) IsExistedOnDB(ctx context.Context) bool {
+	err := datastore.Get(ctx, obj.GaeObjectKey, obj.GaeObject)
+	if err == nil {
+		return true
+	} else {
+		return false
 	}
-	return ret
 }
 
-//--------------
-// sort.Interface
-//--------------
-func (obj LoginIdManager) Len() int {
-	return len(obj.IdList)
+func (obj *AccessToken) Save(ctx context.Context) error {
+	_, e := datastore.Put(ctx, obj.GaeObjectKey, obj.GaeObject)
+	return e
 }
 
-func (obj LoginIdManager) Less(i, j int) bool {
-	return obj.IdList[i].GaeObject.LoginTime.UnixNano() < obj.IdList[j].GaeObject.LoginTime.UnixNano()
+func (obj *AccessToken) Logout(ctx context.Context) error {
+	obj.GaeObject.LoginId = ""
+	_, e := datastore.Put(ctx, obj.GaeObjectKey, obj.GaeObject)
+	return e
 }
 
-func (obj LoginIdManager) Swap(i, j int) {
-	obj.IdList[i], obj.IdList[j] = obj.IdList[j], obj.IdList[i]
-}
-
-//--------------
-
-func (obj *LoginIdManager) Logout(ctx context.Context, loginId string) error {
-
-	l := len(obj.IdList)
-	for i := 0; i < l; i++ {
-		if obj.IdList[i].GaeObject.LoginId == loginId {
-			obj.IdList[i].Logout(ctx)
-		}
-	}
-	return nil
-}
-func (obj *LoginIdManager) DeleteOldLoginIds(ctx context.Context) error {
-
-	l := len(obj.IdList)
-	if l < 10 {
-		return nil
-	}
-	// sort
-	sort.Sort(*obj)
-	//
-	// delete old
-	for i := 0; i < l-10; i++ {
-		obj.IdList[i].DeleteFromDB(ctx)
-	}
-	return nil
-}
-
-func (obj *LoginIdManager) DeleteAllLoginIds(ctx context.Context) error {
-	l := len(obj.IdList)
-	//
-	// delete old
-	for i := 0; i < l; i++ {
-		obj.IdList[i].DeleteFromDB(ctx)
-	}
-	return nil
+func (obj *AccessToken) DeleteFromDB(ctx context.Context) error {
+	return datastore.Delete(ctx, obj.GaeObjectKey)
 }
