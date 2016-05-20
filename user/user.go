@@ -20,6 +20,7 @@ type GaeUserItem struct {
 	PassHash    string `datastore:",noindex"`
 	MeIcon      string `datastore:",noindex"`
 	Status      string
+	//	SecretInfo  string `datastore:",noindex"`
 }
 
 type User struct {

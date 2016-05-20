@@ -5,6 +5,11 @@ import (
 
 	"google.golang.org/appengine/datastore"
 
+	"crypto/rand"
+	"encoding/binary"
+	"encoding/json"
+	"strconv"
+
 	"golang.org/x/net/context"
 )
 
@@ -62,6 +67,32 @@ func (obj *UserManager) RegistUser(ctx context.Context, userName string, passIdF
 	return user, user.Regist(ctx, passIdFromClient, email)
 }
 
+//
+// And Regist LoginID
+//
+func (obj *UserManager) RegistUserFromTwitter(ctx context.Context, screenName string, userId string, oauthToken string, oauthSecret string) (*User, error) {
+	user := obj.NewUser(ctx, screenName+"@twitter")
+	dummyPass := screenName + obj.MakeRandomId() + obj.MakeRandomId()
+	return user, user.Regist(ctx, dummyPass, "")
+}
+
+func (obj *UserManager) LoginUserFromTwitter(ctx context.Context, //
+	screenName string, userId string, oauthToken string, oauthSecret string, //
+	remoteAddr string, userAgent string) (string, *User, error) {
+	userObj, err := obj.GetFromUserName(ctx, screenName+"@twitter")
+	if err != nil {
+		return "", nil, ErrorNotFound
+	}
+	//
+	//
+	m := map[string]interface{}{"oauth_token": oauthToken, "oauth_token_secret": oauthSecret, "screen_name ": screenName, "user_id": userId}
+	b, _ := json.Marshal(m)
+	//
+	loginIdObj, err1 := obj.NewAccessToken(ctx, screenName+"@twitter", remoteAddr, userAgent, string(b))
+
+	return loginIdObj.gaeObject.LoginId, userObj, err1
+}
+
 func (obj *UserManager) LoginUser(ctx context.Context, userName string, passIdFromClient string, remoteAddr string, userAgent string) (string, *User, error) {
 	userObj, err := obj.GetFromUserName(ctx, userName)
 	if err != nil {
@@ -116,4 +147,10 @@ func (obj *UserManager) DeleteUser(ctx context.Context, userName string, passIdF
 	user.gaeObject.Status = UserStatusDelete
 	err = user.PushToDB(ctx)
 	return err
+}
+
+func (obj *UserManager) MakeRandomId() string {
+	var n uint64
+	binary.Read(rand.Reader, binary.LittleEndian, &n)
+	return strconv.FormatUint(n, 36)
 }

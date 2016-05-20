@@ -28,6 +28,7 @@ const (
 	OAuthToken             = "oauth_token"
 	OAuthTokenSecret       = "oauth_token_secret"
 	OAuthCallbackConfirmed = "oauth_callback_confirmed"
+	OAuthVerifier          = "oauth_verifier"
 	UserID                 = "user_id"
 	ScreenName             = "screen_name"
 )
@@ -65,16 +66,19 @@ func (obj *Twitter) SendRequestToken(ctx context.Context) (string, map[string]st
 // OAuthTokenSecret
 // UserID
 // ScreenName
-func (obj *Twitter) OnCallbackSendRequestToken(ctx context.Context, url *url.URL) (string, error) {
+func (obj *Twitter) OnCallbackSendRequestToken(ctx context.Context, url *url.URL) (map[string]string, map[string]string, error) {
 	q := url.Query()
-	verifiers := q["oauth_verifier"]
-	tokens := q["oauth_token"]
+	verifiers := q[OAuthVerifier]
+	tokens := q[OAuthToken]
 
 	if len(verifiers) != 1 || len(tokens) != 1 {
-		return "", errors.New("unexpected query")
+		return nil, nil, errors.New("unexpected query")
 	}
-
-	return obj.SendAccessToken(ctx, tokens[0], verifiers[0])
+	ret1 := make(map[string]string, 0)
+	ret1[OAuthVerifier] = verifiers[0]
+	ret1[OAuthToken] = tokens[0]
+	ret2, ret3 := obj.SendAccessToken(ctx, tokens[0], verifiers[0])
+	return ret1, ret2, ret3
 }
 
 //
@@ -82,18 +86,18 @@ func (obj *Twitter) OnCallbackSendRequestToken(ctx context.Context, url *url.URL
 // OAuthTokenSecret
 // UserID
 // ScreenName
-func (obj *Twitter) SendAccessToken(ctx context.Context, oauthToken string, oauthVerifier string) (string, error) {
+func (obj *Twitter) SendAccessToken(ctx context.Context, oauthToken string, oauthVerifier string) (map[string]string, error) {
 	obj.oauthObj.Callback = ""
 	obj.oauthObj.AccessToken = oauthToken
 	result, err := obj.oauthObj.Post(ctx, AccessTokenURL, //
 		map[string]string{"Content-Type": "application/x-www-form-urlencoded"},
 		"oauth_verifier="+oauthVerifier+"\r\n")
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	keyvalue := obj.ExtractParamsFromBody(result)
 	log.Infof(ctx, "----------->>-> %s", keyvalue)
-	return "", nil
+	return keyvalue, nil
 }
 
 func (obj *Twitter) ExtractParamsFromBody(body string) map[string]string {
