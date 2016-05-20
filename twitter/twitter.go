@@ -23,8 +23,13 @@ type Twitter struct {
 }
 
 const (
-	RequestTokenURl = "https://api.twitter.com/oauth/request_token"
-	AccessTokenURL  = "https://api.twitter.com/oauth/access_token"
+	RequestTokenURl        = "https://api.twitter.com/oauth/request_token"
+	AccessTokenURL         = "https://api.twitter.com/oauth/access_token"
+	OAuthToken             = "oauth_token"
+	OAuthTokenSecret       = "oauth_token_secret"
+	OAuthCallbackConfirmed = "oauth_callback_confirmed"
+	UserID                 = "user_id"
+	ScreenName             = "screen_name"
 )
 
 func NewTwitter(consumerKey string, consumerSecret string, accessToken string, accessTokenSecret string, callbackUrl string) *Twitter {
@@ -38,32 +43,29 @@ func NewTwitter(consumerKey string, consumerSecret string, accessToken string, a
 	return ret
 }
 
-func (obj *Twitter) SendRequestToken(ctx context.Context) (string, error) {
+//
+// OAuthToken
+// OAuthTokenSecret
+// OAuthCallbackConfirmed
+func (obj *Twitter) SendRequestToken(ctx context.Context) (string, map[string]string, error) {
 	result, err := obj.oauthObj.Post(ctx, RequestTokenURl, make(map[string]string, 0), "")
 	if err != nil {
-		return "", err
+		return "", nil, err
 	}
-	keyvalues := strings.Split(result, "&")
-	oauth_token := ""
-	//oauth_token_secret := ""
-	for _, v := range keyvalues {
-		kv := strings.Split(v, "=")
-		if len(kv) == 2 {
-			if kv[0] == "oauth_token" {
-				oauth_token = kv[1]
-			}
-			//if kv[0] == "oauth_token_secret" {
-			//	oauth_token_secret = kv[1]
-			//}
-		}
-	}
+	keyvalue := obj.ExtractParamsFromBody(result)
+	oauth_token := keyvalue[OAuthToken]
 	if oauth_token == "" {
-		return "", err
+		return "", nil, err
 	}
-	return "https://api.twitter.com/oauth/authenticate?oauth_token=" + oauth_token, nil
+	return "https://api.twitter.com/oauth/authenticate?oauth_token=" + oauth_token, keyvalue, nil
 }
 
-func (obj *Twitter) OnOAuthCallback(ctx context.Context, url *url.URL) (string, error) {
+//
+// OAuthToken
+// OAuthTokenSecret
+// UserID
+// ScreenName
+func (obj *Twitter) OnCallbackSendRequestToken(ctx context.Context, url *url.URL) (string, error) {
 	q := url.Query()
 	verifiers := q["oauth_verifier"]
 	tokens := q["oauth_token"]
@@ -75,6 +77,11 @@ func (obj *Twitter) OnOAuthCallback(ctx context.Context, url *url.URL) (string, 
 	return obj.SendAccessToken(ctx, tokens[0], verifiers[0])
 }
 
+//
+// OAuthToken
+// OAuthTokenSecret
+// UserID
+// ScreenName
 func (obj *Twitter) SendAccessToken(ctx context.Context, oauthToken string, oauthVerifier string) (string, error) {
 	obj.oauthObj.Callback = ""
 	obj.oauthObj.AccessToken = oauthToken
@@ -84,6 +91,19 @@ func (obj *Twitter) SendAccessToken(ctx context.Context, oauthToken string, oaut
 	if err != nil {
 		return "", err
 	}
-	log.Infof(ctx, "----------->>-> %s", result)
+	keyvalue := obj.ExtractParamsFromBody(result)
+	log.Infof(ctx, "----------->>-> %s", keyvalue)
 	return "", nil
+}
+
+func (obj *Twitter) ExtractParamsFromBody(body string) map[string]string {
+	ret := make(map[string]string, 0)
+	keyvalues := strings.Split(body, "&")
+	for _, v := range keyvalues {
+		kv := strings.Split(v, "=")
+		if len(kv) == 2 {
+			ret[kv[0]] = kv[1]
+		}
+	}
+	return ret
 }
