@@ -5,9 +5,12 @@ package twitter
 // https://dev.twitter.com/web/sign-in/implementing
 //
 import (
+	"errors"
+	"net/url"
 	"strings"
 
 	"golang.org/x/net/context"
+	"google.golang.org/appengine/log"
 )
 
 type Twitter struct {
@@ -21,6 +24,7 @@ type Twitter struct {
 
 const (
 	RequestTokenURl = "https://api.twitter.com/oauth/request_token"
+	AccessTokenURL  = "https://api.twitter.com/oauth/access_token"
 )
 
 func NewTwitter(consumerKey string, consumerSecret string, accessToken string, accessTokenSecret string, callbackUrl string) *Twitter {
@@ -34,7 +38,7 @@ func NewTwitter(consumerKey string, consumerSecret string, accessToken string, a
 	return ret
 }
 
-func (obj *Twitter) RequestToken(ctx context.Context) (string, error) {
+func (obj *Twitter) SendRequestToken(ctx context.Context) (string, error) {
 	result, err := obj.oauthObj.Post(ctx, RequestTokenURl, make(map[string]string, 0), "")
 	if err != nil {
 		return "", err
@@ -57,4 +61,29 @@ func (obj *Twitter) RequestToken(ctx context.Context) (string, error) {
 		return "", err
 	}
 	return "https://api.twitter.com/oauth/authenticate?oauth_token=" + oauth_token, nil
+}
+
+func (obj *Twitter) OnOAuthCallback(ctx context.Context, url *url.URL) (string, error) {
+	q := url.Query()
+	verifiers := q["oauth_verifier"]
+	tokens := q["oauth_token"]
+
+	if len(verifiers) != 1 || len(tokens) != 1 {
+		return "", errors.New("unexpected query")
+	}
+
+	return obj.SendAccessToken(ctx, tokens[0], verifiers[0])
+}
+
+func (obj *Twitter) SendAccessToken(ctx context.Context, oauthToken string, oauthVerifier string) (string, error) {
+	obj.oauthObj.Callback = ""
+	obj.oauthObj.AccessToken = oauthToken
+	result, err := obj.oauthObj.Post(ctx, AccessTokenURL, //
+		map[string]string{"Content-Type": "application/x-www-form-urlencoded"},
+		"oauth_verifier="+oauthVerifier+"\r\n")
+	if err != nil {
+		return "", err
+	}
+	log.Infof(ctx, "----------->>-> %s", result)
+	return "", nil
 }
