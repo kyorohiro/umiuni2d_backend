@@ -1,5 +1,9 @@
-package oauth
+package twitter
 
+//
+// https://dev.twitter.com/oauth/overview
+// https://dev.twitter.com/web/sign-in/implementing
+//
 import (
 	"bytes"
 	"crypto/hmac"
