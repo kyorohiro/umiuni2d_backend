@@ -197,20 +197,27 @@ func (obj *UserManager) MakeLoginId(userName string, ip string, userAgent string
 func (obj *UserManager) CheckLoginIdFromCache(ctx context.Context, loginId string, ip string, userAgent string) (bool, error) {
 	deviceId, userName, err1 := obj.ExtractUserFromLoginId(loginId)
 	deviceIdMem, userNameMem, err2 := obj.GetLoginIdFromCache(ctx, loginId)
-	deviceIdCur, loginIdCur, _ := obj.MakeLoginId(userName, ip, userAgent)
+	deviceIdCur, _, _ := obj.MakeLoginId(userName, ip, userAgent)
 	if err1 != nil {
+		log.Infof(ctx, "--------------------------(1)")
 		return false, err1
 	}
 	if err2 != nil {
+		log.Infof(ctx, "--------------------------(2)")
 		return false, err2
 	}
 
 	if deviceIdMem != deviceId || userNameMem != userName {
+		log.Infof(ctx, "--------------------------(3)")
 		return false, errors.New("wrong DeviceID (1)")
 	}
-	if deviceIdCur != deviceId || loginIdCur != loginId {
+	if deviceIdCur != deviceId {
+		log.Infof(ctx, "--------------------------(4)")
+		//log.Infof(ctx, "---"+deviceIdCur+"--"+deviceId+":"+loginIdCur+"---"+loginId)
+		log.Infof(ctx, "--------------------------(4)")
 		return false, errors.New("wrong DeviceID (2)")
 	}
+	log.Infof(ctx, "--------------------------(5)")
 	return true, nil
 }
 
@@ -221,28 +228,40 @@ func (obj *UserManager) SetLoginIdFromCache(ctx context.Context, loginId string,
 	v := map[string]string{"loginId": loginId, "deviceId": deviceId, "userName": userName}
 	b, _ := json.Marshal(v)
 	c := string(b)
-	memcache.Set(ctx, &memcache.Item{
+	err := memcache.JSON.Set(ctx, &memcache.Item{
 		Key:        loginId,
 		Object:     &c,
 		Expiration: obj.MemcacheExpiration,
 	})
+	if err != nil {
+		log.Infof(ctx, "--------------------------(ZZ1Z)"+err.Error())
+	} else {
+		log.Infof(ctx, "--------------------------(ZZ2Z)"+loginId)
+	}
 }
 
 func (obj *UserManager) GetLoginIdFromCache(ctx context.Context, loginId string) (string, string, error) {
 	if obj.MemcacheExpiration < 0 {
+		log.Infof(ctx, "--------------------------(A)")
+
 		return "", "", errors.New("unuse memcache setting")
 	}
-	v := ""
+	var v string = ""
 	_, err := memcache.JSON.Get(ctx, loginId, &v)
 	if err == nil {
+		log.Infof(ctx, "--------------------------(B)")
+
 		var w map[string]string
 		json.Unmarshal([]byte(v), &w)
 		return w["deviceId"], w["userName"], nil
 	} else {
+		log.Infof(ctx, "------------------------"+loginId+"--(C)"+err.Error())
+
 		return "", "", err
 	}
 }
 
 func (obj *UserManager) DeleteLoginIdFromCache(ctx context.Context, loginId string) error {
-	return memcache.Delete(ctx, loginId)
+	//return memcache.Delete(ctx, loginId)
+	return nil
 }

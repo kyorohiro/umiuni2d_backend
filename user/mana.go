@@ -38,7 +38,7 @@ func NewUserManager(userKind string, loginIdKind string) *UserManager {
 	obj := new(UserManager)
 	obj.userKind = userKind
 	obj.loginIdKind = loginIdKind
-	obj.MemcacheExpiration = 3 * 60 * 60 * 1000 * 1000
+	obj.MemcacheExpiration = 60 * 60 * (1000 * 1000 * 1000)
 	return obj
 }
 
@@ -94,7 +94,9 @@ func (obj *UserManager) LoginUserFromTwitter(ctx context.Context, //
 	b, _ := json.Marshal(m)
 	//
 	loginIdObj, err1 := obj.NewAccessToken(ctx, screenName+"@twitter", remoteAddr, userAgent, string(b))
-
+	if err1 == nil {
+		obj.SetLoginIdFromCache(ctx, loginIdObj.gaeObject.LoginId, loginIdObj.gaeObject.DeviceID, loginIdObj.gaeObject.UserName)
+	}
 	return loginIdObj.gaeObject.LoginId, userObj, err1
 }
 
@@ -109,8 +111,8 @@ func (obj *UserManager) LoginUser(ctx context.Context, userName string, passIdFr
 		return "", userObj, ErrorInvalidPass
 	}
 	loginIdObj, err1 := obj.NewAccessToken(ctx, userName, remoteAddr, userAgent, "")
-	if err1 != nil {
-		obj.SetLoginIdFromCache(ctx, loginIdObj.gaeObject.UserName, loginIdObj.gaeObject.DeviceID, loginIdObj.gaeObject.UserName)
+	if err1 == nil {
+		obj.SetLoginIdFromCache(ctx, loginIdObj.gaeObject.LoginId, loginIdObj.gaeObject.DeviceID, loginIdObj.gaeObject.UserName)
 	}
 	return loginIdObj.gaeObject.LoginId, userObj, err1
 }
@@ -132,7 +134,7 @@ func (obj *UserManager) CheckLoginId(ctx context.Context, loginId string, remote
 		}
 		return false, nil, err
 	}
-	obj.SetLoginIdFromCache(ctx, loginIdObj.gaeObject.UserName, loginIdObj.gaeObject.DeviceID, loginIdObj.gaeObject.UserName)
+	obj.SetLoginIdFromCache(ctx, loginIdObj.gaeObject.LoginId, loginIdObj.gaeObject.DeviceID, loginIdObj.gaeObject.UserName)
 	return true, loginIdObj, nil
 }
 
