@@ -5,8 +5,6 @@ import (
 
 	"google.golang.org/appengine/datastore"
 
-	"time"
-
 	acm "umiuni2d_backend/user/accesstoken"
 
 	"golang.org/x/net/context"
@@ -25,20 +23,16 @@ var ErrorOnServer = errors.New("server error")
 var ErrorExtract = errors.New("failed to extract")
 
 type UserManager struct {
-	userKind           string
-	loginIdKind        string
-	MemcacheExpiration time.Duration
-	accessTokenManager *acm.AccessTokenManager
-	UseMemcache        bool
+	userKind       string
+	loginIdKind    string
+	sessionManager *acm.SessionManager
 }
 
 func NewUserManager(userKind string, loginIdKind string) *UserManager {
 	obj := new(UserManager)
-	obj.accessTokenManager = acm.NewAccessTokenManager(loginIdKind, obj.NewUserGaeObjectKey)
+	obj.sessionManager = acm.NewAccessTokenManager(loginIdKind, 60*60*(1000*1000*1000))
 	obj.userKind = userKind
 	obj.loginIdKind = loginIdKind
-	obj.MemcacheExpiration = 60 * 60 * (1000 * 1000 * 1000)
-	obj.UseMemcache = true
 	return obj
 }
 
@@ -82,7 +76,7 @@ func (obj *UserManager) LoginUser(ctx context.Context, userName string, passIdFr
 	if pass1 != pass2 {
 		return "", userObj, ErrorInvalidPass
 	}
-	loginIdObj, err1 := obj.accessTokenManager.Login(ctx, userName, remoteAddr, userAgent, "")
+	loginIdObj, err1 := obj.sessionManager.Login(ctx, userName, remoteAddr, userAgent, "")
 	if err != nil {
 		return "", userObj, err1
 	} else {
@@ -91,7 +85,7 @@ func (obj *UserManager) LoginUser(ctx context.Context, userName string, passIdFr
 }
 
 func (obj *UserManager) CheckLoginId(ctx context.Context, loginId string, remoteAddr string, userAgent string) (bool, *acm.AccessToken, error) {
-	isCheck, tokenObj, err := obj.accessTokenManager.CheckLoginId(ctx, loginId, remoteAddr, userAgent)
+	isCheck, tokenObj, err := obj.sessionManager.CheckLoginId(ctx, loginId, remoteAddr, userAgent)
 	if isCheck == false && tokenObj != nil {
 		if tokenObj.GetLoginId() != "" {
 			tokenObj.Logout(ctx)
@@ -101,7 +95,7 @@ func (obj *UserManager) CheckLoginId(ctx context.Context, loginId string, remote
 }
 
 func (obj *UserManager) LogoutUser(ctx context.Context, loginId string, remoteAddr string, userAgent string) error {
-	return obj.accessTokenManager.Logout(ctx, loginId, remoteAddr, userAgent)
+	return obj.sessionManager.Logout(ctx, loginId, remoteAddr, userAgent)
 }
 
 func (obj *UserManager) DeleteUser(ctx context.Context, userName string, passIdFromClient string) error {

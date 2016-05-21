@@ -27,22 +27,17 @@ type GaeAccessTokenItem struct {
 	LoginTime time.Time `datastore:",noindex"`
 }
 
-type AccessTokenManager struct {
+type SessionManager struct {
 	MemcacheExpiration time.Duration
 	UseMemcache        bool
 	loginIdKind        string
-	newUserKey         func(ctx context.Context, userName string) *datastore.Key
 }
 
-func NewAccessTokenManager(kind string, newUserKey func(ctx context.Context, userName string) *datastore.Key) *AccessTokenManager {
-	ret := new(AccessTokenManager)
+func NewAccessTokenManager(kind string, memcacheExpiration time.Duration) *SessionManager {
+	ret := new(SessionManager)
 	ret.loginIdKind = kind
-	ret.newUserKey = newUserKey
+	ret.MemcacheExpiration = memcacheExpiration
 	return ret
-}
-
-func (obj *AccessTokenManager) NewUserGaeObjectKey(ctx context.Context, userName string) *datastore.Key {
-	return nil
 }
 
 type AccessToken struct {
@@ -116,7 +111,7 @@ func (obj *AccessToken) DeleteFromDB(ctx context.Context) error {
 //
 //
 
-func (obj *AccessTokenManager) UpdateMemcache(ctx context.Context, tokenObj *AccessToken) {
+func (obj *SessionManager) UpdateMemcache(ctx context.Context, tokenObj *AccessToken) {
 	if obj.UseMemcache == false {
 		return
 	}
@@ -128,7 +123,7 @@ func (obj *AccessTokenManager) UpdateMemcache(ctx context.Context, tokenObj *Acc
 	})
 }
 
-func (obj *AccessTokenManager) GetMemcache(ctx context.Context, loginId string) (*AccessToken, error) {
+func (obj *SessionManager) GetMemcache(ctx context.Context, loginId string) (*AccessToken, error) {
 	if obj.UseMemcache == false {
 		return nil, errors.New("unuse memcache mode")
 	}
@@ -140,12 +135,12 @@ func (obj *AccessTokenManager) GetMemcache(ctx context.Context, loginId string) 
 	}
 	//
 	deviceId, userName, err := obj.ExtractUserFromLoginId(loginId)
-	loginIdObjKey := obj.NewAccessTokenGaeObjectKey(ctx, userName, deviceId, obj.NewUserGaeObjectKey(ctx, userName)) // MakeLoginIdGaeObjectKeyStringId(userName, deviceId)
+	loginIdObjKey := obj.NewAccessTokenGaeObjectKey(ctx, userName, deviceId, nil) // MakeLoginIdGaeObjectKeyStringId(userName, deviceId)
 	//
 	return obj.NewAccessTokenFromGaeObject(loginIdObjKey, &gaeObject), nil
 }
 
-func (obj *AccessTokenManager) DeleteLoginIdFromCache(ctx context.Context, loginId string) error {
+func (obj *SessionManager) DeleteLoginIdFromCache(ctx context.Context, loginId string) error {
 	if obj.UseMemcache == false {
 		return nil
 	}

@@ -6,8 +6,6 @@ import (
 	"google.golang.org/appengine/datastore"
 )
 
-//
-//
 func (obj *UserManager) NewUser(ctx context.Context, userName string) *User {
 	ret := new(User)
 	ret.kind = obj.userKind
@@ -17,8 +15,6 @@ func (obj *UserManager) NewUser(ctx context.Context, userName string) *User {
 	return ret
 }
 
-//
-// need load or make
 func (obj *UserManager) NewUserFromsGaeObject(key *datastore.Key, item *GaeUserItem) *User {
 	ret := new(User)
 	ret.gaeObject = item
@@ -27,10 +23,10 @@ func (obj *UserManager) NewUserFromsGaeObject(key *datastore.Key, item *GaeUserI
 	return ret
 }
 
-func (obj *UserManager) MakeUserGaeObjectKeyStringId(userName string) string {
+func (obj *UserManager) makeUserGaeObjectKeyStringId(userName string) string {
 	return obj.userKind + ":" + userName
 }
 
 func (obj *UserManager) NewUserGaeObjectKey(ctx context.Context, userName string) *datastore.Key {
-	return datastore.NewKey(ctx, obj.userKind, obj.MakeUserGaeObjectKeyStringId(userName), 0, nil)
+	return datastore.NewKey(ctx, obj.userKind, obj.makeUserGaeObjectKeyStringId(userName), 0, nil)
 }
