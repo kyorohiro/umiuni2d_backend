@@ -1,4 +1,4 @@
-package gaeuser
+package accesstoken
 
 import (
 	"time"
@@ -19,7 +19,7 @@ import (
 	"google.golang.org/appengine/memcache"
 )
 
-func (obj *UserManager) NewAccessToken(ctx context.Context, userName string, ip string, userAgent string, loginType string) (*AccessToken, error) {
+func (obj *AccessTokenManager) NewAccessToken(ctx context.Context, userName string, ip string, userAgent string, loginType string) (*AccessToken, error) {
 	//
 	userKey := obj.NewUserGaeObjectKey(ctx, userName)
 	ret := new(AccessToken)
@@ -40,7 +40,7 @@ func (obj *UserManager) NewAccessToken(ctx context.Context, userName string, ip 
 	return ret, e
 }
 
-func (obj *UserManager) LoadAccessTokenFromLoginId(ctx context.Context, loginId string) (*AccessToken, error) {
+func (obj *AccessTokenManager) LoadAccessTokenFromLoginId(ctx context.Context, loginId string) (*AccessToken, error) {
 	deviceId, userName, err := obj.ExtractUserFromLoginId(loginId)
 	if err != nil {
 		return nil, err
@@ -59,7 +59,7 @@ func (obj *UserManager) LoadAccessTokenFromLoginId(ctx context.Context, loginId 
 }
 
 //
-func (obj *UserManager) NewAccessTokenFromGaeObject(key *datastore.Key, item *GaeAccessTokenItem) *AccessToken {
+func (obj *AccessTokenManager) NewAccessTokenFromGaeObject(key *datastore.Key, item *GaeAccessTokenItem) *AccessToken {
 	ret := new(AccessToken)
 	ret.gaeObject = item
 	ret.gaeObjectKey = key
@@ -67,15 +67,15 @@ func (obj *UserManager) NewAccessTokenFromGaeObject(key *datastore.Key, item *Ga
 	return ret
 }
 
-func (obj *UserManager) NewAccessTokenGaeObjectKey(ctx context.Context, userName string, deviceId string, parentKey *datastore.Key) *datastore.Key {
+func (obj *AccessTokenManager) NewAccessTokenGaeObjectKey(ctx context.Context, userName string, deviceId string, parentKey *datastore.Key) *datastore.Key {
 	return datastore.NewKey(ctx, obj.loginIdKind, obj.MakeLoginIdGaeObjectKeyStringId(userName, deviceId), 0, parentKey)
 }
 
-func (obj *UserManager) MakeLoginIdGaeObjectKeyStringId(userName string, deviceId string) string {
+func (obj *AccessTokenManager) MakeLoginIdGaeObjectKeyStringId(userName string, deviceId string) string {
 	return obj.loginIdKind + ":" + userName + ":" + deviceId
 }
 
-func (obj *UserManager) ExtractUserFromLoginId(loginId string) (string, string, error) {
+func (obj *AccessTokenManager) ExtractUserFromLoginId(loginId string) (string, string, error) {
 	binary := []byte(loginId)
 	if len(binary) <= 28+28+1 {
 		return "", "", ErrorExtract
@@ -88,7 +88,7 @@ func (obj *UserManager) ExtractUserFromLoginId(loginId string) (string, string, 
 	return string(binary[28 : 28*2]), string(binaryUser), nil
 }
 
-func (obj *UserManager) MakeLoginId(userName string, ip string, userAgent string) (string, string, time.Time) {
+func (obj *AccessTokenManager) MakeLoginId(userName string, ip string, userAgent string) (string, string, time.Time) {
 	t := time.Now()
 	uaObj := user_agent.New(userAgent)
 	DeviceID := ""
@@ -113,33 +113,12 @@ func (obj *UserManager) MakeLoginId(userName string, ip string, userAgent string
 	return DeviceID, loginId, t
 }
 
-func (obj *UserManager) CheckLoginIdFromCache(ctx context.Context, loginId string, ip string, userAgent string) (bool, *AccessToken, error) {
-	if obj.UseMemcache == false {
-		return false, nil, errors.New("unuse memcache mode")
-	}
-	deviceId, userName, err1 := obj.ExtractUserFromLoginId(loginId)
-	if err1 != nil {
-		return false, nil, err1
-	}
-	loginIdObj, err2 := obj.GetMemcache(ctx, loginId)
+//
+//
+//
+//
 
-	if err2 != nil {
-		return false, nil, err2
-	}
-	deviceIdMem := loginIdObj.gaeObject.DeviceID
-	userNameMem := loginIdObj.gaeObject.UserName
-	deviceIdCur, _, _ := obj.MakeLoginId(userName, ip, userAgent)
-
-	if deviceIdMem != deviceId || userNameMem != userName {
-		return false, nil, errors.New("wrong DeviceID (1)")
-	}
-	if deviceIdCur != deviceId {
-		return false, nil, errors.New("wrong DeviceID (2)")
-	}
-	return true, loginIdObj, nil
-}
-
-func (obj *UserManager) UpdateMemcache(ctx context.Context, tokenObj *AccessToken) {
+func (obj *AccessTokenManager) UpdateMemcache(ctx context.Context, tokenObj *AccessToken) {
 	if obj.UseMemcache == false {
 		return
 	}
@@ -151,7 +130,7 @@ func (obj *UserManager) UpdateMemcache(ctx context.Context, tokenObj *AccessToke
 	})
 }
 
-func (obj *UserManager) GetMemcache(ctx context.Context, loginId string) (*AccessToken, error) {
+func (obj *AccessTokenManager) GetMemcache(ctx context.Context, loginId string) (*AccessToken, error) {
 	if obj.UseMemcache == false {
 		return nil, errors.New("unuse memcache mode")
 	}
@@ -168,7 +147,7 @@ func (obj *UserManager) GetMemcache(ctx context.Context, loginId string) (*Acces
 	return obj.NewAccessTokenFromGaeObject(loginIdObjKey, &gaeObject), nil
 }
 
-func (obj *UserManager) DeleteLoginIdFromCache(ctx context.Context, loginId string) error {
+func (obj *AccessTokenManager) DeleteLoginIdFromCache(ctx context.Context, loginId string) error {
 	if obj.UseMemcache == false {
 		return nil
 	}

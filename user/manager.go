@@ -7,6 +7,8 @@ import (
 
 	"time"
 
+	acm "umiuni2d_backend/user/accesstoken"
+
 	"golang.org/x/net/context"
 	//	"google.golang.org/appengine/log"
 )
@@ -27,11 +29,13 @@ type UserManager struct {
 	userKind           string
 	loginIdKind        string
 	MemcacheExpiration time.Duration
+	accessTokenManager *acm.AccessTokenManager
 	UseMemcache        bool
 }
 
 func NewUserManager(userKind string, loginIdKind string) *UserManager {
 	obj := new(UserManager)
+	obj.accessTokenManager = acm.NewAccessTokenManager(loginIdKind, obj.NewUserGaeObjectKey)
 	obj.userKind = userKind
 	obj.loginIdKind = loginIdKind
 	obj.MemcacheExpiration = 60 * 60 * (1000 * 1000 * 1000)
@@ -79,34 +83,35 @@ func (obj *UserManager) LoginUser(ctx context.Context, userName string, passIdFr
 	if pass1 != pass2 {
 		return "", userObj, ErrorInvalidPass
 	}
-	loginIdObj, err1 := obj.NewAccessToken(ctx, userName, remoteAddr, userAgent, "")
+	loginIdObj, err1 := obj.accessTokenManager.NewAccessToken(ctx, userName, remoteAddr, userAgent, "")
 	if err1 == nil {
-		obj.UpdateMemcache(ctx, loginIdObj)
+		obj.accessTokenManager.UpdateMemcache(ctx, loginIdObj)
 	}
-	return loginIdObj.gaeObject.LoginId, userObj, err1
+	return loginIdObj.GetLoginId(), userObj, err1
 }
 
-func (obj *UserManager) CheckLoginId(ctx context.Context, loginId string, remoteAddr string, userAgent string) (bool, *AccessToken, error) {
+func (obj *UserManager) CheckLoginId(ctx context.Context, loginId string, remoteAddr string, userAgent string) (bool, *acm.AccessToken, error) {
 	//
-	cisLogin, cloginIdObj, cerr := obj.CheckLoginIdFromCache(ctx, loginId, remoteAddr, userAgent)
-	if cerr == nil {
-		return cisLogin, cloginIdObj, cerr
+	//	cisLogin, cloginIdObj, cerr := obj.CheckLoginIdFromCache(ctx, loginId, remoteAddr, userAgent)
+	var loginIdObj *acm.AccessToken
+	var err error
+
+	loginIdObj, err = obj.accessTokenManager.GetMemcache(ctx, loginId)
+	if err != nil {
+		loginIdObj, err = obj.accessTokenManager.LoadAccessTokenFromLoginId(ctx, loginId)
 	}
-	//
-	loginIdObj, err := obj.LoadAccessTokenFromLoginId(ctx, loginId)
 	if err != nil {
 		return false, nil, err
 	}
 
-	reqDeviceId, _, _ := obj.MakeLoginId(loginIdObj.gaeObject.UserName, remoteAddr, userAgent)
-	if loginIdObj.gaeObject.DeviceID != reqDeviceId || loginIdObj.gaeObject.LoginId != loginId {
-		if loginIdObj.gaeObject.LoginId != "" {
-			loginIdObj.gaeObject.LoginId = ""
-			loginIdObj.Save(ctx)
+	reqDeviceId, _, _ := obj.accessTokenManager.MakeLoginId(loginIdObj.GetUserName(), remoteAddr, userAgent)
+	if loginIdObj.GetDeviceId() != reqDeviceId || loginIdObj.GetLoginId() != loginId {
+		if loginIdObj.GetLoginId() != "" {
+			loginIdObj.Logout(ctx)
 		}
 		return false, nil, err
 	}
-	obj.UpdateMemcache(ctx, loginIdObj)
+	obj.accessTokenManager.UpdateMemcache(ctx, loginIdObj)
 	return true, loginIdObj, nil
 }
 
@@ -118,7 +123,7 @@ func (obj *UserManager) LogoutUser(ctx context.Context, loginId string, remoteAd
 	if isLogin == false {
 		return nil
 	}
-	obj.DeleteLoginIdFromCache(ctx, loginId)
+	obj.accessTokenManager.DeleteLoginIdFromCache(ctx, loginId)
 	return loginIdObj.Logout(ctx)
 }
 

@@ -1,11 +1,20 @@
-package gaeuser
+package accesstoken
 
 import (
+	"errors"
 	"time"
 
 	"golang.org/x/net/context"
 	"google.golang.org/appengine/datastore"
 )
+
+var ErrorNotFound = errors.New("not found")
+var ErrorAlreadyRegist = errors.New("already found")
+var ErrorAlreadyUseMail = errors.New("already use mail")
+var ErrorInvalid = errors.New("invalid")
+var ErrorInvalidPass = errors.New("invalid password")
+var ErrorOnServer = errors.New("server error")
+var ErrorExtract = errors.New("failed to extract")
 
 type GaeAccessTokenItem struct {
 	LoginId   string    `datastore:",noindex"`
@@ -15,6 +24,24 @@ type GaeAccessTokenItem struct {
 	Type      string    `datastore:",noindex"`
 	UserAgent string    `datastore:",noindex"`
 	LoginTime time.Time `datastore:",noindex"`
+}
+
+type AccessTokenManager struct {
+	MemcacheExpiration time.Duration
+	UseMemcache        bool
+	loginIdKind        string
+	newUserKey         func(ctx context.Context, userName string) *datastore.Key
+}
+
+func NewAccessTokenManager(kind string, newUserKey func(ctx context.Context, userName string) *datastore.Key) *AccessTokenManager {
+	ret := new(AccessTokenManager)
+	ret.loginIdKind = kind
+	ret.newUserKey = newUserKey
+	return ret
+}
+
+func (obj *AccessTokenManager) NewUserGaeObjectKey(ctx context.Context, userName string) *datastore.Key {
+	return nil
 }
 
 type AccessToken struct {
@@ -37,6 +64,10 @@ func (obj *AccessToken) GetIP() string {
 
 func (obj *AccessToken) GetUserAgent() string {
 	return obj.gaeObject.UserAgent
+}
+
+func (obj *AccessToken) GetDeviceId() string {
+	return obj.gaeObject.DeviceID
 }
 
 func (obj *AccessToken) GetLoginTime() time.Time {
