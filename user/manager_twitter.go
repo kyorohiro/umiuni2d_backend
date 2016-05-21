@@ -21,7 +21,7 @@ func (obj *UserManager) RegistUserFromTwitter(ctx context.Context, screenName st
 func (obj *UserManager) LoginUserFromTwitter(ctx context.Context, //
 	screenName string, userId string, oauthToken string, oauthSecret string, //
 	remoteAddr string, userAgent string) (string, *User, error) {
-	userObj, err := obj.GetFromUserName(ctx, screenName+"@twitter")
+	userObj, err := obj.FindUserFromUserName(ctx, screenName+"@twitter")
 	if err != nil {
 		return "", nil, ErrorNotFound
 	}

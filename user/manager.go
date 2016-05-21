@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"golang.org/x/net/context"
-	"google.golang.org/appengine/log"
+	//	"google.golang.org/appengine/log"
 )
 
 const (
@@ -26,7 +26,7 @@ var ErrorExtract = errors.New("failed to extract")
 type UserManager struct {
 	userKind           string
 	loginIdKind        string
-	MemcacheExpiration time.Duration //nanosecond
+	MemcacheExpiration time.Duration
 	UseMemcache        bool
 }
 
@@ -47,13 +47,13 @@ func (obj *UserManager) GetLoginIdKind() string {
 	return obj.loginIdKind
 }
 
-func (obj *UserManager) GetFromUserName(ctx context.Context, userName string) (*User, error) {
+func (obj *UserManager) FindUserFromUserName(ctx context.Context, userName string) (*User, error) {
 	user := obj.NewUser(ctx, userName)
 	e := user.LoadFromDB(ctx)
 	return user, e
 }
 
-func (obj *UserManager) GetUserFromMail(ctx context.Context, mail string) (*User, error) {
+func (obj *UserManager) FindUserFromMail(ctx context.Context, mail string) (*User, error) {
 	q := datastore.NewQuery(obj.userKind).Filter("Mail =", mail).Limit(1)
 	i := q.Run(ctx)
 	var userIns GaeUserItem
@@ -70,7 +70,7 @@ func (obj *UserManager) RegistUser(ctx context.Context, userName string, passIdF
 }
 
 func (obj *UserManager) LoginUser(ctx context.Context, userName string, passIdFromClient string, remoteAddr string, userAgent string) (string, *User, error) {
-	userObj, err := obj.GetFromUserName(ctx, userName)
+	userObj, err := obj.FindUserFromUserName(ctx, userName)
 	if err != nil {
 		return "", nil, ErrorNotFound
 	}
@@ -95,13 +95,11 @@ func (obj *UserManager) CheckLoginId(ctx context.Context, loginId string, remote
 	//
 	loginIdObj, err := obj.LoadAccessTokenFromLoginId(ctx, loginId)
 	if err != nil {
-		log.Infof(ctx, "### A ### %s", err.Error())
 		return false, nil, err
 	}
 
 	reqDeviceId, _, _ := obj.MakeLoginId(loginIdObj.gaeObject.UserName, remoteAddr, userAgent)
 	if loginIdObj.gaeObject.DeviceID != reqDeviceId || loginIdObj.gaeObject.LoginId != loginId {
-		log.Infof(ctx, "### B ### %s==%s :", loginIdObj.gaeObject.DeviceID, reqDeviceId)
 		if loginIdObj.gaeObject.LoginId != "" {
 			loginIdObj.gaeObject.LoginId = ""
 			loginIdObj.Save(ctx)
