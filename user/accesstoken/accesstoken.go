@@ -18,13 +18,14 @@ var ErrorOnServer = errors.New("server error")
 var ErrorExtract = errors.New("failed to extract")
 
 type GaeAccessTokenItem struct {
-	LoginId   string    `datastore:",noindex"`
-	DeviceID  string    `datastore:",noindex"`
-	IP        string    `datastore:",noindex"`
-	UserName  string    `datastore:",noindex"`
-	Type      string    `datastore:",noindex"`
-	UserAgent string    `datastore:",noindex"`
-	LoginTime time.Time `datastore:",noindex"`
+	UserName  string
+	LoginTime time.Time
+
+	LoginId   string `datastore:",noindex"`
+	DeviceID  string `datastore:",noindex"`
+	IP        string `datastore:",noindex"`
+	Type      string `datastore:",noindex"`
+	UserAgent string `datastore:",noindex"`
 }
 
 type SessionManager struct {
