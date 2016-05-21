@@ -11,7 +11,7 @@ import (
 	"math/rand"
 	//	"sort"
 
-	"google.golang.org/appengine/log"
+	//	"google.golang.org/appengine/log"
 
 	"github.com/mssola/user_agent"
 	"golang.org/x/net/context"
@@ -34,7 +34,7 @@ func (obj *UserManager) NewAccessToken(ctx context.Context, userName string, ip 
 	ret.gaeObject.UserAgent = userAgent
 
 	ret.ItemKind = obj.loginIdKind
-	ret.gaeObjectKey = obj.NewLoginIdGaeObjectKey(ctx, userName, deviceId, userKey)
+	ret.gaeObjectKey = obj.NewAccessTokenGaeObjectKey(ctx, userName, deviceId, userKey)
 
 	_, e := datastore.Put(ctx, ret.gaeObjectKey, ret.gaeObject)
 	return ret, e
@@ -49,20 +49,17 @@ func (obj *UserManager) LoadAccessTokenFromLoginId(ctx context.Context, loginId 
 	ret := new(AccessToken)
 	ret.ItemKind = obj.loginIdKind
 	ret.gaeObject = new(GaeAccessTokenItem)
-	ret.gaeObjectKey = obj.NewLoginIdGaeObjectKey(ctx, userName, deviceId, userKey)
+	ret.gaeObjectKey = obj.NewAccessTokenGaeObjectKey(ctx, userName, deviceId, userKey)
 
 	err = ret.LoadFromDB(ctx)
 	if err != nil {
-		log.Infof(ctx, "###[ B ]### %s %s %s %s", err.Error(), deviceId, obj.loginIdKind, userKey.StringID())
-		log.Infof(ctx, "###[ B1 ]### %s", ret.gaeObjectKey.Kind())
 		return nil, err
 	}
-	log.Infof(ctx, "###[ C ]### %s %s %s")
 	return ret, nil
 }
 
 //
-func (obj *UserManager) NewLoginIdFromGaeObject(key *datastore.Key, item *GaeAccessTokenItem) *AccessToken {
+func (obj *UserManager) NewAccessTokenFromGaeObject(key *datastore.Key, item *GaeAccessTokenItem) *AccessToken {
 	ret := new(AccessToken)
 	ret.gaeObject = item
 	ret.gaeObjectKey = key
@@ -70,7 +67,7 @@ func (obj *UserManager) NewLoginIdFromGaeObject(key *datastore.Key, item *GaeAcc
 	return ret
 }
 
-func (obj *UserManager) NewLoginIdGaeObjectKey(ctx context.Context, userName string, deviceId string, parentKey *datastore.Key) *datastore.Key {
+func (obj *UserManager) NewAccessTokenGaeObjectKey(ctx context.Context, userName string, deviceId string, parentKey *datastore.Key) *datastore.Key {
 	return datastore.NewKey(ctx, obj.loginIdKind, obj.MakeLoginIdGaeObjectKeyStringId(userName, deviceId), 0, parentKey)
 }
 
@@ -166,9 +163,9 @@ func (obj *UserManager) GetMemcache(ctx context.Context, loginId string) (*Acces
 	}
 	//
 	deviceId, userName, err := obj.ExtractUserFromLoginId(loginId)
-	loginIdObjKey := obj.NewLoginIdGaeObjectKey(ctx, userName, deviceId, obj.NewUserGaeObjectKey(ctx, userName)) // MakeLoginIdGaeObjectKeyStringId(userName, deviceId)
+	loginIdObjKey := obj.NewAccessTokenGaeObjectKey(ctx, userName, deviceId, obj.NewUserGaeObjectKey(ctx, userName)) // MakeLoginIdGaeObjectKeyStringId(userName, deviceId)
 	//
-	return obj.NewLoginIdFromGaeObject(loginIdObjKey, &gaeObject), nil
+	return obj.NewAccessTokenFromGaeObject(loginIdObjKey, &gaeObject), nil
 }
 
 func (obj *UserManager) DeleteLoginIdFromCache(ctx context.Context, loginId string) error {
