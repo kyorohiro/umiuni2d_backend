@@ -23,10 +23,10 @@ func (obj *UserManager) NewUserFromsGaeObject(key *datastore.Key, item *GaeUserI
 	return ret
 }
 
-func (obj *UserManager) makeUserGaeObjectKeyStringId(userName string) string {
-	return obj.userKind + ":" + userName
-}
-
 func (obj *UserManager) NewUserGaeObjectKey(ctx context.Context, userName string) *datastore.Key {
 	return datastore.NewKey(ctx, obj.userKind, obj.makeUserGaeObjectKeyStringId(userName), 0, nil)
+}
+
+func (obj *UserManager) makeUserGaeObjectKeyStringId(userName string) string {
+	return obj.userKind + ":" + userName
 }

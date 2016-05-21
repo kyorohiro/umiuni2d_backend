@@ -30,7 +30,7 @@ type UserManager struct {
 
 func NewUserManager(userKind string, loginIdKind string) *UserManager {
 	obj := new(UserManager)
-	obj.sessionManager = acm.NewAccessTokenManager(loginIdKind, 60*60*(1000*1000*1000))
+	obj.sessionManager = acm.NewSessionManager(loginIdKind, 60*60*(1000*1000*1000))
 	obj.userKind = userKind
 	obj.loginIdKind = loginIdKind
 	return obj
@@ -66,21 +66,21 @@ func (obj *UserManager) RegistUser(ctx context.Context, userName string, passIdF
 	return user, user.Regist(ctx, passIdFromClient, email)
 }
 
-func (obj *UserManager) LoginUser(ctx context.Context, userName string, passIdFromClient string, remoteAddr string, userAgent string) (string, *User, error) {
+func (obj *UserManager) LoginUser(ctx context.Context, userName string, passIdFromClient string, remoteAddr string, userAgent string) (*acm.AccessToken, *User, error) {
 	userObj, err := obj.FindUserFromUserName(ctx, userName)
 	if err != nil {
-		return "", nil, ErrorNotFound
+		return nil, nil, ErrorNotFound
 	}
 	pass1 := userObj.MakeSha1Pass(passIdFromClient)
 	pass2 := userObj.gaeObject.PassHash
 	if pass1 != pass2 {
-		return "", userObj, ErrorInvalidPass
+		return nil, userObj, ErrorInvalidPass
 	}
 	loginIdObj, err1 := obj.sessionManager.Login(ctx, userName, remoteAddr, userAgent, "")
 	if err != nil {
-		return "", userObj, err1
+		return nil, userObj, err1
 	} else {
-		return loginIdObj.GetLoginId(), userObj, err1
+		return loginIdObj, userObj, err1
 	}
 }
 

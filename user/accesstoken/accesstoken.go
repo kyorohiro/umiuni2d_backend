@@ -34,7 +34,7 @@ type SessionManager struct {
 	loginIdKind        string
 }
 
-func NewAccessTokenManager(kind string, memcacheExpiration time.Duration) *SessionManager {
+func NewSessionManager(kind string, memcacheExpiration time.Duration) *SessionManager {
 	ret := new(SessionManager)
 	ret.loginIdKind = kind
 	ret.MemcacheExpiration = memcacheExpiration
