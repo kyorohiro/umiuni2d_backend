@@ -10,7 +10,6 @@ import (
 	acm "umiuni2d_backend/user/accesstoken"
 
 	"golang.org/x/net/context"
-	//	"google.golang.org/appengine/log"
 )
 
 const (
@@ -83,48 +82,26 @@ func (obj *UserManager) LoginUser(ctx context.Context, userName string, passIdFr
 	if pass1 != pass2 {
 		return "", userObj, ErrorInvalidPass
 	}
-	loginIdObj, err1 := obj.accessTokenManager.NewAccessToken(ctx, userName, remoteAddr, userAgent, "")
-	if err1 == nil {
-		obj.accessTokenManager.UpdateMemcache(ctx, loginIdObj)
+	loginIdObj, err1 := obj.accessTokenManager.Login(ctx, userName, remoteAddr, userAgent, "")
+	if err != nil {
+		return "", userObj, err1
+	} else {
+		return loginIdObj.GetLoginId(), userObj, err1
 	}
-	return loginIdObj.GetLoginId(), userObj, err1
 }
 
 func (obj *UserManager) CheckLoginId(ctx context.Context, loginId string, remoteAddr string, userAgent string) (bool, *acm.AccessToken, error) {
-	//
-	//	cisLogin, cloginIdObj, cerr := obj.CheckLoginIdFromCache(ctx, loginId, remoteAddr, userAgent)
-	var loginIdObj *acm.AccessToken
-	var err error
-
-	loginIdObj, err = obj.accessTokenManager.GetMemcache(ctx, loginId)
-	if err != nil {
-		loginIdObj, err = obj.accessTokenManager.LoadAccessTokenFromLoginId(ctx, loginId)
-	}
-	if err != nil {
-		return false, nil, err
-	}
-
-	reqDeviceId, _, _ := obj.accessTokenManager.MakeLoginId(loginIdObj.GetUserName(), remoteAddr, userAgent)
-	if loginIdObj.GetDeviceId() != reqDeviceId || loginIdObj.GetLoginId() != loginId {
-		if loginIdObj.GetLoginId() != "" {
-			loginIdObj.Logout(ctx)
+	isCheck, tokenObj, err := obj.accessTokenManager.CheckLoginId(ctx, loginId, remoteAddr, userAgent)
+	if isCheck == false && tokenObj != nil {
+		if tokenObj.GetLoginId() != "" {
+			tokenObj.Logout(ctx)
 		}
-		return false, nil, err
 	}
-	obj.accessTokenManager.UpdateMemcache(ctx, loginIdObj)
-	return true, loginIdObj, nil
+	return isCheck, tokenObj, err
 }
 
 func (obj *UserManager) LogoutUser(ctx context.Context, loginId string, remoteAddr string, userAgent string) error {
-	isLogin, loginIdObj, err := obj.CheckLoginId(ctx, loginId, remoteAddr, userAgent)
-	if err != nil {
-		return err
-	}
-	if isLogin == false {
-		return nil
-	}
-	obj.accessTokenManager.DeleteLoginIdFromCache(ctx, loginId)
-	return loginIdObj.Logout(ctx)
+	return obj.accessTokenManager.Logout(ctx, loginId, remoteAddr, userAgent)
 }
 
 func (obj *UserManager) DeleteUser(ctx context.Context, userName string, passIdFromClient string) error {

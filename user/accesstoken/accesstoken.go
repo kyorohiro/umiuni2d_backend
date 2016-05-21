@@ -6,6 +6,7 @@ import (
 
 	"golang.org/x/net/context"
 	"google.golang.org/appengine/datastore"
+	"google.golang.org/appengine/memcache"
 )
 
 var ErrorNotFound = errors.New("not found")
@@ -104,4 +105,49 @@ func (obj *AccessToken) Logout(ctx context.Context) error {
 
 func (obj *AccessToken) DeleteFromDB(ctx context.Context) error {
 	return datastore.Delete(ctx, obj.gaeObjectKey)
+}
+
+//
+//
+//
+
+//
+//
+//
+//
+
+func (obj *AccessTokenManager) UpdateMemcache(ctx context.Context, tokenObj *AccessToken) {
+	if obj.UseMemcache == false {
+		return
+	}
+	// err :=
+	memcache.JSON.Set(ctx, &memcache.Item{
+		Key:        tokenObj.gaeObject.LoginId,
+		Object:     tokenObj.gaeObject,
+		Expiration: obj.MemcacheExpiration,
+	})
+}
+
+func (obj *AccessTokenManager) GetMemcache(ctx context.Context, loginId string) (*AccessToken, error) {
+	if obj.UseMemcache == false {
+		return nil, errors.New("unuse memcache mode")
+	}
+	var gaeObject GaeAccessTokenItem
+	_, err := memcache.JSON.Get(ctx, loginId, &gaeObject)
+	//
+	if err != nil {
+		return nil, err
+	}
+	//
+	deviceId, userName, err := obj.ExtractUserFromLoginId(loginId)
+	loginIdObjKey := obj.NewAccessTokenGaeObjectKey(ctx, userName, deviceId, obj.NewUserGaeObjectKey(ctx, userName)) // MakeLoginIdGaeObjectKeyStringId(userName, deviceId)
+	//
+	return obj.NewAccessTokenFromGaeObject(loginIdObjKey, &gaeObject), nil
+}
+
+func (obj *AccessTokenManager) DeleteLoginIdFromCache(ctx context.Context, loginId string) error {
+	if obj.UseMemcache == false {
+		return nil
+	}
+	return memcache.Delete(ctx, loginId)
 }

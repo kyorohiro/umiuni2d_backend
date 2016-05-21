@@ -30,11 +30,12 @@ func (obj *UserManager) LoginUserFromTwitter(ctx context.Context, //
 	m := map[string]interface{}{"oauth_token": oauthToken, "oauth_token_secret": oauthSecret, "screen_name ": screenName, "user_id": userId}
 	b, _ := json.Marshal(m)
 	//
-	loginIdObj, err1 := obj.accessTokenManager.NewAccessToken(ctx, screenName+"@twitter", remoteAddr, userAgent, string(b))
-	if err1 == nil {
-		obj.accessTokenManager.UpdateMemcache(ctx, loginIdObj)
+	loginIdObj, err1 := obj.accessTokenManager.Login(ctx, screenName+"@twitter", remoteAddr, userAgent, string(b))
+	if err != nil {
+		return "", userObj, err1
+	} else {
+		return loginIdObj.GetLoginId(), userObj, err1
 	}
-	return loginIdObj.GetLoginId(), userObj, err1
 }
 
 func (obj *UserManager) MakeRandomId() string {

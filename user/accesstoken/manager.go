@@ -5,7 +5,7 @@ import (
 
 	"crypto/sha1"
 	"encoding/base64"
-	"errors"
+	//	"errors"
 	"fmt"
 	"io"
 	"math/rand"
@@ -16,7 +16,7 @@ import (
 	"github.com/mssola/user_agent"
 	"golang.org/x/net/context"
 	"google.golang.org/appengine/datastore"
-	"google.golang.org/appengine/memcache"
+	//	"google.golang.org/appengine/memcache"
 )
 
 func (obj *AccessTokenManager) NewAccessToken(ctx context.Context, userName string, ip string, userAgent string, loginType string) (*AccessToken, error) {
@@ -88,68 +88,66 @@ func (obj *AccessTokenManager) ExtractUserFromLoginId(loginId string) (string, s
 	return string(binary[28 : 28*2]), string(binaryUser), nil
 }
 
+func (obj *AccessTokenManager) MakeDeviceId(userName string, ip string, userAgent string) string {
+	uaObj := user_agent.New(userAgent)
+	sha1Hash := sha1.New()
+	b, _ := uaObj.Browser()
+	io.WriteString(sha1Hash, b)
+	io.WriteString(sha1Hash, uaObj.OS())
+	io.WriteString(sha1Hash, uaObj.Platform())
+	return base64.StdEncoding.EncodeToString(sha1Hash.Sum(nil))
+}
+
 func (obj *AccessTokenManager) MakeLoginId(userName string, ip string, userAgent string) (string, string, time.Time) {
 	t := time.Now()
-	uaObj := user_agent.New(userAgent)
-	DeviceID := ""
+	DeviceID := obj.MakeDeviceId(userName, ip, userAgent)
 	loginId := ""
-	{
-		sha1Hash := sha1.New()
-		b, _ := uaObj.Browser()
-		io.WriteString(sha1Hash, b)
-		io.WriteString(sha1Hash, uaObj.OS())
-		io.WriteString(sha1Hash, uaObj.Platform())
-		DeviceID = base64.StdEncoding.EncodeToString(sha1Hash.Sum(nil))
-	}
-	{
-		sha1Hash := sha1.New()
-		io.WriteString(sha1Hash, DeviceID)
-		io.WriteString(sha1Hash, userName)
-		io.WriteString(sha1Hash, fmt.Sprintf("%X%X", t.UnixNano(), rand.Int63()))
-		loginId = base64.StdEncoding.EncodeToString(sha1Hash.Sum(nil))
-		loginId += DeviceID
-		loginId += base64.StdEncoding.EncodeToString([]byte(userName))
-	}
+	sha1Hash := sha1.New()
+	io.WriteString(sha1Hash, DeviceID)
+	io.WriteString(sha1Hash, userName)
+	io.WriteString(sha1Hash, fmt.Sprintf("%X%X", t.UnixNano(), rand.Int63()))
+	loginId = base64.StdEncoding.EncodeToString(sha1Hash.Sum(nil))
+	loginId += DeviceID
+	loginId += base64.StdEncoding.EncodeToString([]byte(userName))
 	return DeviceID, loginId, t
 }
 
-//
-//
-//
-//
-
-func (obj *AccessTokenManager) UpdateMemcache(ctx context.Context, tokenObj *AccessToken) {
-	if obj.UseMemcache == false {
-		return
-	}
-	// err :=
-	memcache.JSON.Set(ctx, &memcache.Item{
-		Key:        tokenObj.gaeObject.LoginId,
-		Object:     tokenObj.gaeObject,
-		Expiration: obj.MemcacheExpiration,
-	})
-}
-
-func (obj *AccessTokenManager) GetMemcache(ctx context.Context, loginId string) (*AccessToken, error) {
-	if obj.UseMemcache == false {
-		return nil, errors.New("unuse memcache mode")
-	}
-	var gaeObject GaeAccessTokenItem
-	_, err := memcache.JSON.Get(ctx, loginId, &gaeObject)
+func (obj *AccessTokenManager) CheckLoginId(ctx context.Context, loginId string, remoteAddr string, userAgent string) (bool, *AccessToken, error) {
 	//
+	var loginIdObj *AccessToken
+	var err error
+
+	loginIdObj, err = obj.GetMemcache(ctx, loginId)
 	if err != nil {
-		return nil, err
+		loginIdObj, err = obj.LoadAccessTokenFromLoginId(ctx, loginId)
 	}
-	//
-	deviceId, userName, err := obj.ExtractUserFromLoginId(loginId)
-	loginIdObjKey := obj.NewAccessTokenGaeObjectKey(ctx, userName, deviceId, obj.NewUserGaeObjectKey(ctx, userName)) // MakeLoginIdGaeObjectKeyStringId(userName, deviceId)
-	//
-	return obj.NewAccessTokenFromGaeObject(loginIdObjKey, &gaeObject), nil
+	if err != nil {
+		return false, nil, err
+	}
+	reqDeviceId, _, _ := obj.MakeLoginId(loginIdObj.GetUserName(), remoteAddr, userAgent)
+	if loginIdObj.GetDeviceId() != reqDeviceId || loginIdObj.GetLoginId() != loginId {
+		return false, loginIdObj, nil
+	}
+	obj.UpdateMemcache(ctx, loginIdObj)
+	return true, loginIdObj, nil
 }
 
-func (obj *AccessTokenManager) DeleteLoginIdFromCache(ctx context.Context, loginId string) error {
-	if obj.UseMemcache == false {
+func (obj *AccessTokenManager) Login(ctx context.Context, userName string, remoteAddr string, userAgent string, loginType string) (*AccessToken, error) {
+	loginIdObj, err1 := obj.NewAccessToken(ctx, userName, remoteAddr, userAgent, loginType)
+	if err1 == nil {
+		obj.UpdateMemcache(ctx, loginIdObj)
+	}
+	return loginIdObj, err1
+}
+
+func (obj *AccessTokenManager) Logout(ctx context.Context, loginId string, remoteAddr string, userAgent string) error {
+	isLogin, loginIdObj, err := obj.CheckLoginId(ctx, loginId, remoteAddr, userAgent)
+	if err != nil {
+		return err
+	}
+	if isLogin == false {
 		return nil
 	}
-	return memcache.Delete(ctx, loginId)
+	obj.DeleteLoginIdFromCache(ctx, loginId)
+	return loginIdObj.Logout(ctx)
 }
