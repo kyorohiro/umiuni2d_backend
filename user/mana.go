@@ -10,7 +10,10 @@ import (
 	"encoding/json"
 	"strconv"
 
+	"time"
+
 	"golang.org/x/net/context"
+	"google.golang.org/appengine/log"
 )
 
 const (
@@ -26,14 +29,16 @@ var ErrorOnServer = errors.New("server error")
 var ErrorExtract = errors.New("failed to extract")
 
 type UserManager struct {
-	userKind    string
-	loginIdKind string
+	userKind           string
+	loginIdKind        string
+	MemcacheExpiration time.Duration //nanosecond
 }
 
 func NewUserManager(userKind string, loginIdKind string) *UserManager {
 	obj := new(UserManager)
 	obj.userKind = userKind
 	obj.loginIdKind = loginIdKind
+	obj.MemcacheExpiration = 3 * 60 * 60 * 1000 * 1000
 	return obj
 }
 
@@ -104,7 +109,9 @@ func (obj *UserManager) LoginUser(ctx context.Context, userName string, passIdFr
 		return "", userObj, ErrorInvalidPass
 	}
 	loginIdObj, err1 := obj.NewAccessToken(ctx, userName, remoteAddr, userAgent, "")
-
+	if err1 != nil {
+		obj.SetLoginIdFromCache(ctx, loginIdObj.gaeObject.UserName, loginIdObj.gaeObject.DeviceID, loginIdObj.gaeObject.UserName)
+	}
 	return loginIdObj.gaeObject.LoginId, userObj, err1
 }
 
@@ -112,18 +119,20 @@ func (obj *UserManager) CheckLoginId(ctx context.Context, loginId string, remote
 
 	loginIdObj, err := obj.LoadAccessTokenFromLoginId(ctx, loginId)
 	if err != nil {
+		log.Infof(ctx, "### A ### %s", err.Error())
 		return false, nil, err
 	}
 
 	reqDeviceId, _, _ := obj.MakeLoginId(loginIdObj.gaeObject.UserName, remoteAddr, userAgent)
 	if loginIdObj.gaeObject.DeviceID != reqDeviceId || loginIdObj.gaeObject.LoginId != loginId {
+		log.Infof(ctx, "### B ### %s==%s :", loginIdObj.gaeObject.DeviceID, reqDeviceId)
 		if loginIdObj.gaeObject.LoginId != "" {
 			loginIdObj.gaeObject.LoginId = ""
 			loginIdObj.Save(ctx)
 		}
 		return false, nil, err
 	}
-
+	obj.SetLoginIdFromCache(ctx, loginIdObj.gaeObject.UserName, loginIdObj.gaeObject.DeviceID, loginIdObj.gaeObject.UserName)
 	return true, loginIdObj, nil
 }
 
@@ -135,6 +144,7 @@ func (obj *UserManager) LogoutUser(ctx context.Context, loginId string, remoteAd
 	if isLogin == false {
 		return nil
 	}
+	obj.DeleteLoginIdFromCache(ctx, loginId)
 	return loginIdObj.Logout(ctx)
 }
 
