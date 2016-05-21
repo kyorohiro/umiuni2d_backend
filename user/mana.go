@@ -32,6 +32,7 @@ type UserManager struct {
 	userKind           string
 	loginIdKind        string
 	MemcacheExpiration time.Duration //nanosecond
+	UseMemcache        bool
 }
 
 func NewUserManager(userKind string, loginIdKind string) *UserManager {
@@ -39,6 +40,7 @@ func NewUserManager(userKind string, loginIdKind string) *UserManager {
 	obj.userKind = userKind
 	obj.loginIdKind = loginIdKind
 	obj.MemcacheExpiration = 60 * 60 * (1000 * 1000 * 1000)
+	obj.UseMemcache = true
 	return obj
 }
 
@@ -118,7 +120,12 @@ func (obj *UserManager) LoginUser(ctx context.Context, userName string, passIdFr
 }
 
 func (obj *UserManager) CheckLoginId(ctx context.Context, loginId string, remoteAddr string, userAgent string) (bool, *AccessToken, error) {
-
+	//
+	cisLogin, cloginIdObj, cerr := obj.CheckLoginIdFromCache(ctx, loginId, remoteAddr, userAgent)
+	if cerr == nil {
+		return cisLogin, cloginIdObj, cerr
+	}
+	//
 	loginIdObj, err := obj.LoadAccessTokenFromLoginId(ctx, loginId)
 	if err != nil {
 		log.Infof(ctx, "### A ### %s", err.Error())

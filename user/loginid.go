@@ -192,50 +192,48 @@ func (obj *UserManager) MakeLoginId(userName string, ip string, userAgent string
 	return DeviceID, loginId, t
 }
 
-func (obj *UserManager) CheckLoginIdFromCache(ctx context.Context, loginId string, ip string, userAgent string) (bool, error) {
+func (obj *UserManager) CheckLoginIdFromCache(ctx context.Context, loginId string, ip string, userAgent string) (bool, *AccessToken, error) {
+	if obj.UseMemcache == false {
+		return false, nil, errors.New("unuse memcache mode")
+	}
 	deviceId, userName, err1 := obj.ExtractUserFromLoginId(loginId)
 	if err1 != nil {
-		log.Infof(ctx, "--------------------------(1)")
-		return false, err1
+		return false, nil, err1
 	}
 	loginIdObj, err2 := obj.GetMemcache(ctx, loginId)
 
 	if err2 != nil {
-		log.Infof(ctx, "--------------------------(2)")
-		return false, err2
+		return false, nil, err2
 	}
 	deviceIdMem := loginIdObj.gaeObject.DeviceID
 	userNameMem := loginIdObj.gaeObject.UserName
 	deviceIdCur, _, _ := obj.MakeLoginId(userName, ip, userAgent)
 
 	if deviceIdMem != deviceId || userNameMem != userName {
-		log.Infof(ctx, "--------------------------(3)")
-		return false, errors.New("wrong DeviceID (1)")
+		return false, nil, errors.New("wrong DeviceID (1)")
 	}
 	if deviceIdCur != deviceId {
-		log.Infof(ctx, "--------------------------(4)")
-		//log.Infof(ctx, "---"+deviceIdCur+"--"+deviceId+":"+loginIdCur+"---"+loginId)
-		log.Infof(ctx, "--------------------------(4)")
-		return false, errors.New("wrong DeviceID (2)")
+		return false, nil, errors.New("wrong DeviceID (2)")
 	}
-	log.Infof(ctx, "--------------------------(5)")
-	return true, nil
+	return true, loginIdObj, nil
 }
 
 func (obj *UserManager) UpdateMemcache(ctx context.Context, tokenObj *AccessToken) {
-	err := memcache.JSON.Set(ctx, &memcache.Item{
+	if obj.UseMemcache == false {
+		return
+	}
+	// err :=
+	memcache.JSON.Set(ctx, &memcache.Item{
 		Key:        tokenObj.gaeObject.LoginId,
 		Object:     tokenObj.gaeObject,
 		Expiration: obj.MemcacheExpiration,
 	})
-	if err != nil {
-		log.Infof(ctx, "--------------------------ZZ(ZZ1Z)"+err.Error())
-	} else {
-		log.Infof(ctx, "--------------------------ZZ(ZZ2Z)")
-	}
 }
 
 func (obj *UserManager) GetMemcache(ctx context.Context, loginId string) (*AccessToken, error) {
+	if obj.UseMemcache == false {
+		return nil, errors.New("unuse memcache mode")
+	}
 	var gaeObject GaeAccessTokenItem
 	_, err := memcache.JSON.Get(ctx, loginId, &gaeObject)
 	//
@@ -250,5 +248,8 @@ func (obj *UserManager) GetMemcache(ctx context.Context, loginId string) (*Acces
 }
 
 func (obj *UserManager) DeleteLoginIdFromCache(ctx context.Context, loginId string) error {
+	if obj.UseMemcache == false {
+		return nil
+	}
 	return memcache.Delete(ctx, loginId)
 }
