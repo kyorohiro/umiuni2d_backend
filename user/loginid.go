@@ -262,6 +262,5 @@ func (obj *UserManager) GetLoginIdFromCache(ctx context.Context, loginId string)
 }
 
 func (obj *UserManager) DeleteLoginIdFromCache(ctx context.Context, loginId string) error {
-	//return memcache.Delete(ctx, loginId)
-	return nil
+	return memcache.Delete(ctx, loginId)
 }
