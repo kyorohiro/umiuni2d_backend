@@ -11,8 +11,6 @@ import (
 	"math/rand"
 	//	"sort"
 
-	"encoding/json"
-
 	"google.golang.org/appengine/log"
 
 	"github.com/mssola/user_agent"
@@ -196,16 +194,19 @@ func (obj *UserManager) MakeLoginId(userName string, ip string, userAgent string
 
 func (obj *UserManager) CheckLoginIdFromCache(ctx context.Context, loginId string, ip string, userAgent string) (bool, error) {
 	deviceId, userName, err1 := obj.ExtractUserFromLoginId(loginId)
-	deviceIdMem, userNameMem, err2 := obj.GetLoginIdFromCache(ctx, loginId)
-	deviceIdCur, _, _ := obj.MakeLoginId(userName, ip, userAgent)
 	if err1 != nil {
 		log.Infof(ctx, "--------------------------(1)")
 		return false, err1
 	}
+	loginIdObj, err2 := obj.GetMemcache(ctx, loginId)
+
 	if err2 != nil {
 		log.Infof(ctx, "--------------------------(2)")
 		return false, err2
 	}
+	deviceIdMem := loginIdObj.gaeObject.DeviceID
+	userNameMem := loginIdObj.gaeObject.UserName
+	deviceIdCur, _, _ := obj.MakeLoginId(userName, ip, userAgent)
 
 	if deviceIdMem != deviceId || userNameMem != userName {
 		log.Infof(ctx, "--------------------------(3)")
@@ -221,44 +222,31 @@ func (obj *UserManager) CheckLoginIdFromCache(ctx context.Context, loginId strin
 	return true, nil
 }
 
-func (obj *UserManager) SetLoginIdFromCache(ctx context.Context, loginId string, deviceId string, userName string) {
-	if obj.MemcacheExpiration < 0 {
-		return
-	}
-	v := map[string]string{"loginId": loginId, "deviceId": deviceId, "userName": userName}
-	b, _ := json.Marshal(v)
-	c := string(b)
+func (obj *UserManager) UpdateMemcache(ctx context.Context, tokenObj *AccessToken) {
 	err := memcache.JSON.Set(ctx, &memcache.Item{
-		Key:        loginId,
-		Object:     &c,
+		Key:        tokenObj.gaeObject.LoginId,
+		Object:     tokenObj.gaeObject,
 		Expiration: obj.MemcacheExpiration,
 	})
 	if err != nil {
-		log.Infof(ctx, "--------------------------(ZZ1Z)"+err.Error())
+		log.Infof(ctx, "--------------------------ZZ(ZZ1Z)"+err.Error())
 	} else {
-		log.Infof(ctx, "--------------------------(ZZ2Z)"+loginId)
+		log.Infof(ctx, "--------------------------ZZ(ZZ2Z)")
 	}
 }
 
-func (obj *UserManager) GetLoginIdFromCache(ctx context.Context, loginId string) (string, string, error) {
-	if obj.MemcacheExpiration < 0 {
-		log.Infof(ctx, "--------------------------(A)")
-
-		return "", "", errors.New("unuse memcache setting")
+func (obj *UserManager) GetMemcache(ctx context.Context, loginId string) (*AccessToken, error) {
+	var gaeObject GaeAccessTokenItem
+	_, err := memcache.JSON.Get(ctx, loginId, &gaeObject)
+	//
+	if err != nil {
+		return nil, err
 	}
-	var v string = ""
-	_, err := memcache.JSON.Get(ctx, loginId, &v)
-	if err == nil {
-		log.Infof(ctx, "--------------------------(B)")
-
-		var w map[string]string
-		json.Unmarshal([]byte(v), &w)
-		return w["deviceId"], w["userName"], nil
-	} else {
-		log.Infof(ctx, "------------------------"+loginId+"--(C)"+err.Error())
-
-		return "", "", err
-	}
+	//
+	deviceId, userName, err := obj.ExtractUserFromLoginId(loginId)
+	loginIdObjKey := obj.NewLoginIdGaeObjectKey(ctx, userName, deviceId, obj.NewUserGaeObjectKey(ctx, userName)) // MakeLoginIdGaeObjectKeyStringId(userName, deviceId)
+	//
+	return obj.NewLoginIdFromGaeObject(loginIdObjKey, &gaeObject), nil
 }
 
 func (obj *UserManager) DeleteLoginIdFromCache(ctx context.Context, loginId string) error {

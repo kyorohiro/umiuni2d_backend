@@ -95,7 +95,7 @@ func (obj *UserManager) LoginUserFromTwitter(ctx context.Context, //
 	//
 	loginIdObj, err1 := obj.NewAccessToken(ctx, screenName+"@twitter", remoteAddr, userAgent, string(b))
 	if err1 == nil {
-		obj.SetLoginIdFromCache(ctx, loginIdObj.gaeObject.LoginId, loginIdObj.gaeObject.DeviceID, loginIdObj.gaeObject.UserName)
+		obj.UpdateMemcache(ctx, loginIdObj)
 	}
 	return loginIdObj.gaeObject.LoginId, userObj, err1
 }
@@ -112,7 +112,7 @@ func (obj *UserManager) LoginUser(ctx context.Context, userName string, passIdFr
 	}
 	loginIdObj, err1 := obj.NewAccessToken(ctx, userName, remoteAddr, userAgent, "")
 	if err1 == nil {
-		obj.SetLoginIdFromCache(ctx, loginIdObj.gaeObject.LoginId, loginIdObj.gaeObject.DeviceID, loginIdObj.gaeObject.UserName)
+		obj.UpdateMemcache(ctx, loginIdObj)
 	}
 	return loginIdObj.gaeObject.LoginId, userObj, err1
 }
@@ -134,7 +134,7 @@ func (obj *UserManager) CheckLoginId(ctx context.Context, loginId string, remote
 		}
 		return false, nil, err
 	}
-	obj.SetLoginIdFromCache(ctx, loginIdObj.gaeObject.LoginId, loginIdObj.gaeObject.DeviceID, loginIdObj.gaeObject.UserName)
+	obj.UpdateMemcache(ctx, loginIdObj)
 	return true, loginIdObj, nil
 }
 
