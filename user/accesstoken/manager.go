@@ -11,7 +11,7 @@ import (
 	"math/rand"
 	//	"sort"
 
-	//	"google.golang.org/appengine/log"
+	"google.golang.org/appengine/log"
 
 	"github.com/mssola/user_agent"
 	"golang.org/x/net/context"
@@ -120,13 +120,16 @@ func (obj *SessionManager) CheckLoginId(ctx context.Context, loginId string, rem
 
 	loginIdObj, err = obj.GetMemcache(ctx, loginId)
 	if err != nil {
+		log.Infof(ctx, "(Z1)failed from mem"+loginId)
 		loginIdObj, err = obj.NewAccessTokenFromLoginId(ctx, loginId)
 	}
 	if err != nil {
+		log.Infof(ctx, "(Z2)failed from store"+loginId)
 		return false, nil, err
 	}
 	reqDeviceId, _, _ := obj.MakeLoginId(loginIdObj.GetUserName(), remoteAddr, userAgent)
 	if loginIdObj.GetDeviceId() != reqDeviceId || loginIdObj.GetLoginId() != loginId {
+		log.Infof(ctx, "(Z3)zzzz")
 		return false, loginIdObj, nil
 	}
 	obj.UpdateMemcache(ctx, loginIdObj)
