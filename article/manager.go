@@ -24,6 +24,7 @@ func (obj *ArticleManager) NewArticleFromGaeObject(ctx context.Context, gaeKey *
 	ret := new(Article)
 	ret.gaeObject = gaeObj
 	ret.gaeObjectKey = gaeKey
+	ret.kind = obj.kindArticle
 	return ret
 }
 
@@ -38,12 +39,13 @@ func (obj *ArticleManager) NewArticle(ctx context.Context, userName string, pare
 		artKey = obj.makeArticleKey(userName, parentId, created, secretKey)
 		key = obj.NewGaeObjectKey(ctx, artKey)
 		err := datastore.Get(ctx, key, &art)
-		if err == nil {
+		if err != nil {
 			break
 		}
 	}
 	//
 	ret := new(Article)
+	ret.kind = obj.kindArticle
 	ret.gaeObject = &art
 	ret.gaeObjectKey = key
 	ret.gaeObject.UserName = userName
@@ -60,7 +62,7 @@ func (obj *ArticleManager) NewGaeObjectKey(ctx context.Context, articleId string
 }
 
 func (obj *ArticleManager) makeArticleKey(userName string, parentId string, created time.Time, secretKey string) string {
-	hashKey := obj.hash(fmt.Sprintf("v1e%s%s%s%s%d", secretKey, userName, userName, parentId, created.UnixNano()))
+	hashKey := obj.hashStr(fmt.Sprintf("v1e%s%s%s%s%d", secretKey, userName, userName, parentId, created.UnixNano()))
 	userName64 := base64.StdEncoding.EncodeToString([]byte(userName))
 	return "v1e" + hashKey + parentId + userName64
 }
@@ -69,6 +71,12 @@ func (obj *ArticleManager) hash(v string) string {
 	sha1Obj := sha1.New()
 	sha1Obj.Write([]byte(v))
 	return string(sha1Obj.Sum(nil))
+}
+
+func (obj *ArticleManager) hashStr(v string) string {
+	sha1Obj := sha1.New()
+	sha1Obj.Write([]byte(v))
+	return string(base64.StdEncoding.EncodeToString(sha1Obj.Sum(nil)))
 }
 
 func (obj *ArticleManager) makeRandomId() string {

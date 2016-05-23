@@ -10,7 +10,6 @@ import (
 type GaeObjectArticle struct {
 	UserName  string
 	Title     string
-	SubTitle  string
 	Tag       string
 	Cont      string
 	State     string
@@ -24,10 +23,92 @@ type GaeObjectArticle struct {
 type Article struct {
 	gaeObjectKey *datastore.Key
 	gaeObject    *GaeObjectArticle
+	kind         string
 }
 
+func (obj *Article) GetGaeObjectKind() string {
+	return obj.kind
+}
+
+func (obj *Article) GetGaeObjectKey() *datastore.Key {
+	return obj.gaeObjectKey
+}
+
+func (obj *Article) GetUserName() string {
+	return obj.gaeObject.UserName
+}
+
+func (obj *Article) SetUserName(v string) {
+	obj.gaeObject.UserName = v
+}
+
+func (obj *Article) GetTitle() string {
+	return obj.gaeObject.Title
+}
+
+func (obj *Article) SetTitle(v string) {
+	obj.gaeObject.Title = v
+}
+
+func (obj *Article) GetTag() string {
+	return obj.gaeObject.Tag
+}
+
+func (obj *Article) SetTag(v string) {
+	obj.gaeObject.Tag = v
+}
+
+func (obj *Article) GetCont() string {
+	return obj.gaeObject.Cont
+}
+
+func (obj *Article) SetCont(v string) {
+	obj.gaeObject.Cont = v
+}
+
+func (obj *Article) GetState() string {
+	return obj.gaeObject.State
+}
+
+func (obj *Article) SetState(v string) {
+	obj.gaeObject.State = v
+}
+
+func (obj *Article) GetParentId() string {
+	return obj.gaeObject.ParentId
+}
+
+func (obj *Article) SetParentId(v string) {
+	obj.gaeObject.ParentId = v
+}
+
+func (obj *Article) GetArticleId() string {
+	return obj.gaeObject.ArticleId
+}
+
+func (obj *Article) GetCreated() time.Time {
+	return obj.gaeObject.Created
+}
+
+func (obj *Article) GetUpdated() time.Time {
+	return obj.gaeObject.Updated
+}
+
+func (obj *Article) SetUpdated(v time.Time) {
+	obj.gaeObject.Updated = v
+}
+
+//
+//
+//
+//
 type ArticleManager struct {
 	kindArticle string
+}
+
+func (obj *Article) SaveOnDB(ctx context.Context) error {
+	_, err := datastore.Put(ctx, obj.gaeObjectKey, obj.gaeObject)
+	return err
 }
 
 func (obj *ArticleManager) newCursorFromSrc(cursorSrc string) *datastore.Cursor {
