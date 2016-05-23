@@ -129,12 +129,22 @@ func (obj *ArticleManager) makeCursorSrc(founds *datastore.Iterator) string {
 	}
 }
 
+func (obj *ArticleManager) GetArticleFromArticleId(ctx context.Context, articleId string) (*Article, error) {
+	k := obj.NewGaeObjectKey(ctx, articleId)
+	var a GaeObjectArticle
+	err := datastore.Get(ctx, k, &a)
+	if err != nil {
+		return nil, err
+	}
+	return obj.NewArticleFromGaeObject(ctx, k, &a), nil
+}
+
 func (obj *ArticleManager) GetArticleFromUserName(ctx context.Context, userName string, cursorSrc string) ([]*Article, string, string) {
 	q := datastore.NewQuery(obj.kindArticle).Filter("UserName =", userName).Limit(20)
 	return obj.GetArticleFromQuery(ctx, q, cursorSrc)
 }
 
-func (obj *ArticleManager) GetArticleWithNewOrder(ctx context.Context, userName string, cursorSrc string) ([]*Article, string, string) {
+func (obj *ArticleManager) GetArticleWithNewOrder(ctx context.Context, cursorSrc string) ([]*Article, string, string) {
 	q := datastore.NewQuery(obj.kindArticle).Filter("State =", "public").Order("-Updated").Limit(20)
 	return obj.GetArticleFromQuery(ctx, q, cursorSrc)
 }
