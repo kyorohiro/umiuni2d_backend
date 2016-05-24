@@ -1,5 +1,4 @@
-// gaeuser project gaeuser.go
-package gaeuser
+package user
 
 import (
 	"golang.org/x/net/context"

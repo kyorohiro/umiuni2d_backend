@@ -1,5 +1,5 @@
 // gaeuser project gaeuser.go
-package gaeuser
+package user
 
 import (
 	"crypto/sha1"

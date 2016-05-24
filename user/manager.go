@@ -1,4 +1,4 @@
-package gaeuser
+package user
 
 import (
 	"errors"

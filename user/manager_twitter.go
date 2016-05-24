@@ -1,4 +1,4 @@
-package gaeuser
+package user
 
 import (
 	"crypto/rand"
