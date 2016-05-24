@@ -9,15 +9,15 @@ import (
 
 type GaeObjectArticle struct {
 	UserName  string
-	Title     string
-	Tag       string
-	Cont      string
+	Title     string `datastore:",noindex"`
+	Tag       string `datastore:",noindex"`
+	Cont      string `datastore:",noindex"`
 	State     string
 	ParentId  string
-	ArticleId string
+	ArticleId string `datastore:",noindex"`
 	Created   time.Time
 	Updated   time.Time
-	SecretKey string
+	SecretKey string `datastore:",noindex"`
 }
 
 type Article struct {
@@ -139,17 +139,17 @@ func (obj *ArticleManager) GetArticleFromArticleId(ctx context.Context, articleI
 	return obj.NewArticleFromGaeObject(ctx, k, &a), nil
 }
 
-func (obj *ArticleManager) GetArticleFromUserName(ctx context.Context, userName string, cursorSrc string) ([]*Article, string, string) {
-	q := datastore.NewQuery(obj.kindArticle).Filter("UserName =", userName).Limit(20)
-	return obj.GetArticleFromQuery(ctx, q, cursorSrc)
+func (obj *ArticleManager) FindArticleFromUserName(ctx context.Context, userName string, parentId string, cursorSrc string) ([]*Article, string, string) {
+	q := datastore.NewQuery(obj.kindArticle).Filter("UserName =", userName).Filter("ParentId =", parentId).Limit(20)
+	return obj.FindArticleFromQuery(ctx, q, cursorSrc)
 }
 
-func (obj *ArticleManager) GetArticleWithNewOrder(ctx context.Context, cursorSrc string) ([]*Article, string, string) {
-	q := datastore.NewQuery(obj.kindArticle).Filter("State =", "public").Order("-Updated").Limit(20)
-	return obj.GetArticleFromQuery(ctx, q, cursorSrc)
+func (obj *ArticleManager) FindArticleWithNewOrder(ctx context.Context, parentId string, cursorSrc string) ([]*Article, string, string) {
+	q := datastore.NewQuery(obj.kindArticle).Filter("State =", "public").Filter("ParentId =", parentId).Order("-Updated").Limit(20)
+	return obj.FindArticleFromQuery(ctx, q, cursorSrc)
 }
 
-func (obj *ArticleManager) GetArticleFromQuery(ctx context.Context, q *datastore.Query, cursorSrc string) ([]*Article, string, string) {
+func (obj *ArticleManager) FindArticleFromQuery(ctx context.Context, q *datastore.Query, cursorSrc string) ([]*Article, string, string) {
 	cursor := obj.newCursorFromSrc(cursorSrc)
 	if cursor != nil {
 		q = q.Start(*cursor)

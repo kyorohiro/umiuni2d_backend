@@ -1,4 +1,4 @@
-package accesstoken
+package session
 
 import (
 	"time"

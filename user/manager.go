@@ -5,7 +5,7 @@ import (
 
 	"google.golang.org/appengine/datastore"
 
-	acm "umiuni2d_backend/user/accesstoken"
+	acm "umiuni2d_backend/session"
 
 	"golang.org/x/net/context"
 )
