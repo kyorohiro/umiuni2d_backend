@@ -5,6 +5,8 @@ import (
 
 	"net/url"
 
+	"encoding/base64"
+
 	"golang.org/x/net/context"
 	//	"google.golang.org/appengine"
 
@@ -15,9 +17,14 @@ import (
 
 	"mime/multipart"
 
+	"time"
+
+	"google.golang.org/appengine"
 	"google.golang.org/appengine/blobstore"
 	"google.golang.org/appengine/datastore"
 	"google.golang.org/appengine/urlfetch"
+	//
+	"google.golang.org/appengine/log"
 )
 
 type BlobManager struct {
@@ -29,6 +36,8 @@ type GaeObjectBlobItem struct {
 	Parent  string
 	Name    string
 	BlobKey string
+	Owner   string
+	Updated time.Time
 }
 
 type BlobItem struct {
@@ -43,13 +52,36 @@ func NewBlobManager(uploadUrlBase string, blobItemKind string) *BlobManager {
 	return ret
 }
 
+func (obj *BlobManager) GetBlobItem(ctx context.Context, parent string, name string) (*BlobItem, error) {
+	key := obj.NewBlobItemKey(ctx, parent, name)
+	var item GaeObjectBlobItem
+	err := datastore.Get(ctx, key, &item)
+	if err != nil {
+		return nil, err
+	} else {
+		return obj.NewBlobItemFromGaeObject(ctx, key, &item), nil
+	}
+}
+
+func (obj *BlobManager) NewBlobItemKey(ctx context.Context, parent string, name string) *datastore.Key {
+	return datastore.NewKey(ctx, obj.blobItemKind, ""+parent+"/"+name, 0, nil)
+}
+
 func (obj *BlobManager) NewBlobItem(ctx context.Context, parent string, name string, blobKey string) *BlobItem {
 	ret := new(BlobItem)
 	ret.gaeObject = new(GaeObjectBlobItem)
 	ret.gaeObject.Parent = parent
 	ret.gaeObject.Name = name
 	ret.gaeObject.BlobKey = blobKey
+	ret.gaeObject.Updated = time.Now()
 	ret.gaeObjectKey = datastore.NewKey(ctx, obj.blobItemKind, ""+parent+"/"+name, 0, nil)
+	return ret
+}
+
+func (obj *BlobManager) NewBlobItemFromGaeObject(ctx context.Context, gaeKey *datastore.Key, gaeObj *GaeObjectBlobItem) *BlobItem {
+	ret := new(BlobItem)
+	ret.gaeObject = gaeObj
+	ret.gaeObjectKey = gaeKey
 	return ret
 }
 
@@ -70,19 +102,78 @@ func (obj *BlobItem) GetBlobKey() string {
 	return obj.gaeObject.BlobKey
 }
 
-// filepath "/gs/bucket_name/object_name"
-// basepath "/api/v1/on_uploaded"
+//	Parent  string
+//	Name    string
+//	BlobKey string
+/*
+- kind: BlobItem
+  properties:
+  - name: Parent
+  - name: Updated
+    direction: asc
+
+- kind: BlobItem
+  properties:
+  - name: Parent
+  - name: Updated
+    direction: desc
+https://cloud.google.com/appengine/docs/go/config/indexconfig#updating_indexes
+*/
+
+//	GetBlobManager().NewBlobItemFromGaeObject(ctx, "/user/"+name+"/meicon")
+func (obj *BlobManager) FindBlobItemFromParent(ctx context.Context, parent string, cursorSrc string) ([]*BlobItem, string, string) {
+	//
+	q := datastore.NewQuery(obj.blobItemKind).Filter("Parent =", parent).Order("-Updated")
+	//
+	return obj.FindBlobItemFromQuery(ctx, q, cursorSrc)
+}
+
+//
+//
+func (obj *BlobManager) FindBlobItemFromQuery(ctx context.Context, q *datastore.Query, cursorSrc string) ([]*BlobItem, string, string) {
+	cursor := obj.newCursorFromSrc(cursorSrc)
+	if cursor != nil {
+		q = q.Start(*cursor)
+	}
+	founds := q.Run(ctx)
+
+	var retUser []*BlobItem
+
+	var cursorNext string = ""
+	var cursorOne string = ""
+
+	for i := 0; ; i++ {
+		var d GaeObjectBlobItem
+		key, err := founds.Next(&d)
+		if err != nil || err == datastore.Done {
+			break
+		} else {
+			retUser = append(retUser, obj.NewBlobItemFromGaeObject(ctx, key, &d))
+		}
+		if i == 0 {
+			cursorOne = obj.makeCursorSrc(founds)
+		}
+	}
+	cursorNext = obj.makeCursorSrc(founds)
+	return retUser, cursorOne, cursorNext
+}
+
 func (obj *BlobManager) MakeRequestUrl(ctx context.Context, dirName string, fileName string, opt string) (string, error) {
 	if opt == "" {
 		opt = "none"
 	}
 
-	option := blobstore.UploadURLOptions{
-		//MaxUploadBytes: 1024 * 1024 * 1024,
-		StorageBucket: dirName,
-	}
-	var ary = []string{obj.BasePath + "?dir=", url.QueryEscape(dirName), "&file=", url.QueryEscape(fileName), "&opt=", opt}
-	uu, err2 := blobstore.UploadURL(ctx, strings.Join(ary, ""), &option)
+	//option := nil
+	//blobstore.UploadURLOptions{
+	//MaxUploadBytes: 1024 * 1024 * 1024,
+	//StorageBucket: dirName,
+	//}
+	var ary = []string{obj.BasePath + //
+		"?dir=", url.QueryEscape(base64.StdEncoding.EncodeToString([]byte(dirName))), //
+		"&file=", url.QueryEscape(fileName), //
+		"&opt=", opt}
+	log.Infof(ctx, "XX=====>"+strings.Join(ary, ""))
+	uu, err2 := blobstore.UploadURL(ctx, strings.Join(ary, ""), nil) //&option)
 	return uu.String(), err2
 }
 
@@ -90,9 +181,14 @@ func (obj *BlobManager) HandleUploaded(ctx context.Context, r *http.Request) (*B
 	blobs, _, err := blobstore.ParseUpload(r)
 	if err != nil {
 		// error
-		return nil, "", errors.New("")
+		return nil, "", err
 	}
-	dirName := r.FormValue("dir")
+	dirNameSrc, err1 := base64.StdEncoding.DecodeString(r.FormValue("dir"))
+	if err1 != nil {
+		// error
+		return nil, "", err1
+	}
+	dirName := string(dirNameSrc)
 	fileName := r.FormValue("file")
 	reqId := string(r.FormValue("opt"))
 
@@ -104,6 +200,9 @@ func (obj *BlobManager) HandleUploaded(ctx context.Context, r *http.Request) (*B
 	blobKey := string(file[0].BlobKey)
 	blobItem := obj.NewBlobItem(ctx, dirName, fileName, blobKey)
 	err = blobItem.SaveDB(ctx)
+	if err != nil {
+		blobstore.Delete(ctx, appengine.BlobKey(blobKey))
+	}
 	return blobItem, reqId, err
 }
 
@@ -146,4 +245,24 @@ func (obj *BlobManager) SaveData(c context.Context, url string, sampleData []byt
 	}
 	// Everything went fine.
 	return nil
+}
+
+//
+
+func (obj *BlobManager) newCursorFromSrc(cursorSrc string) *datastore.Cursor {
+	c1, e := datastore.DecodeCursor(cursorSrc)
+	if e != nil {
+		return nil
+	} else {
+		return &c1
+	}
+}
+
+func (obj *BlobManager) makeCursorSrc(founds *datastore.Iterator) string {
+	c, e := founds.Cursor()
+	if e == nil {
+		return c.String()
+	} else {
+		return ""
+	}
 }
