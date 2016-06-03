@@ -18,7 +18,6 @@ type GaeUserItem struct {
 	Logined     time.Time `datastore:",noindex"`
 	Mail        string
 	PassHash    string `datastore:",noindex"`
-	MeIcon      string `datastore:",noindex"`
 	Status      string
 	//	SecretInfo  string `datastore:",noindex"`
 }
@@ -47,14 +46,6 @@ func (obj *User) GetMail() string {
 
 func (obj *User) SetMail(v string) {
 	obj.gaeObject.Mail = v
-}
-
-func (obj *User) GetMeIcon() string {
-	return obj.gaeObject.MeIcon
-}
-
-func (obj *User) SetMeIcon(v string) {
-	obj.gaeObject.MeIcon = v
 }
 
 func (obj *User) GetStatus() string {

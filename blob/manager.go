@@ -8,7 +8,6 @@ import (
 	"encoding/base64"
 
 	"golang.org/x/net/context"
-	//	"google.golang.org/appengine"
 
 	"bytes"
 	"net/http"
@@ -23,8 +22,6 @@ import (
 	"google.golang.org/appengine/blobstore"
 	"google.golang.org/appengine/datastore"
 	"google.golang.org/appengine/urlfetch"
-	//
-	"google.golang.org/appengine/log"
 )
 
 type BlobManager struct {
@@ -102,9 +99,6 @@ func (obj *BlobItem) GetBlobKey() string {
 	return obj.gaeObject.BlobKey
 }
 
-//	Parent  string
-//	Name    string
-//	BlobKey string
 /*
 - kind: BlobItem
   properties:
@@ -119,8 +113,6 @@ func (obj *BlobItem) GetBlobKey() string {
     direction: desc
 https://cloud.google.com/appengine/docs/go/config/indexconfig#updating_indexes
 */
-
-//	GetBlobManager().NewBlobItemFromGaeObject(ctx, "/user/"+name+"/meicon")
 func (obj *BlobManager) FindBlobItemFromParent(ctx context.Context, parent string, cursorSrc string) ([]*BlobItem, string, string) {
 	//
 	q := datastore.NewQuery(obj.blobItemKind).Filter("Parent =", parent).Order("-Updated")
@@ -158,25 +150,25 @@ func (obj *BlobManager) FindBlobItemFromQuery(ctx context.Context, q *datastore.
 	return retUser, cursorOne, cursorNext
 }
 
+//
+//
+//
 func (obj *BlobManager) MakeRequestUrl(ctx context.Context, dirName string, fileName string, opt string) (string, error) {
 	if opt == "" {
 		opt = "none"
 	}
 
-	//option := nil
-	//blobstore.UploadURLOptions{
-	//MaxUploadBytes: 1024 * 1024 * 1024,
-	//StorageBucket: dirName,
-	//}
 	var ary = []string{obj.BasePath + //
 		"?dir=", url.QueryEscape(base64.StdEncoding.EncodeToString([]byte(dirName))), //
 		"&file=", url.QueryEscape(fileName), //
 		"&opt=", opt}
-	log.Infof(ctx, "XX=====>"+strings.Join(ary, ""))
 	uu, err2 := blobstore.UploadURL(ctx, strings.Join(ary, ""), nil) //&option)
 	return uu.String(), err2
 }
 
+//
+//
+//
 func (obj *BlobManager) HandleUploaded(ctx context.Context, r *http.Request) (*BlobItem, string, error) {
 	blobs, _, err := blobstore.ParseUpload(r)
 	if err != nil {
@@ -198,7 +190,14 @@ func (obj *BlobManager) HandleUploaded(ctx context.Context, r *http.Request) (*B
 		return nil, "", errors.New("")
 	}
 	blobKey := string(file[0].BlobKey)
-	blobItem := obj.NewBlobItem(ctx, dirName, fileName, blobKey)
+	blobItem, err2 := obj.GetBlobItem(ctx, dirName, fileName)
+	if err2 == nil {
+		blobstore.Delete(ctx, appengine.BlobKey(blobItem.GetBlobKey()))
+		blobItem.gaeObject.BlobKey = blobKey
+	} else {
+		blobItem = obj.NewBlobItem(ctx, dirName, fileName, blobKey)
+	}
+
 	err = blobItem.SaveDB(ctx)
 	if err != nil {
 		blobstore.Delete(ctx, appengine.BlobKey(blobKey))
