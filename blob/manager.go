@@ -34,6 +34,7 @@ type GaeObjectBlobItem struct {
 	Name    string
 	BlobKey string
 	Owner   string
+	Info    string `datastore:",noindex"`
 	Updated time.Time
 }
 
@@ -57,6 +58,20 @@ func (obj *BlobManager) GetBlobItem(ctx context.Context, parent string, name str
 		return nil, err
 	} else {
 		return obj.NewBlobItemFromGaeObject(ctx, key, &item), nil
+	}
+}
+
+func (obj *BlobManager) GetBlobItemWithNew(ctx context.Context, parent string, name string) *BlobItem {
+	key := obj.NewBlobItemKey(ctx, parent, name)
+	var item GaeObjectBlobItem
+	err := datastore.Get(ctx, key, &item)
+	if err != nil {
+		item.Name = name
+		item.Parent = parent
+		ret := obj.NewBlobItemFromGaeObject(ctx, key, &item)
+		return ret
+	} else {
+		return obj.NewBlobItemFromGaeObject(ctx, key, &item)
 	}
 }
 
@@ -87,6 +102,11 @@ func (obj *BlobItem) SaveDB(ctx context.Context) error {
 	return e
 }
 
+func (obj *BlobItem) DeleteFromDB(ctx context.Context) error {
+	blobstore.Delete(ctx, appengine.BlobKey(obj.GetBlobKey()))
+	return datastore.Delete(ctx, obj.gaeObjectKey)
+}
+
 func (obj *BlobItem) GetParent() string {
 	return obj.gaeObject.Parent
 }
@@ -97,6 +117,14 @@ func (obj *BlobItem) GetName() string {
 
 func (obj *BlobItem) GetBlobKey() string {
 	return obj.gaeObject.BlobKey
+}
+
+func (obj *BlobItem) GetInfo() string {
+	return obj.gaeObject.Info
+}
+
+func (obj *BlobItem) SetInfo(v string) {
+	obj.gaeObject.Info = v
 }
 
 /*
@@ -182,6 +210,7 @@ func (obj *BlobManager) HandleUploaded(ctx context.Context, r *http.Request) (*B
 	}
 	dirName := string(dirNameSrc)
 	fileName := r.FormValue("file")
+
 	reqId := string(r.FormValue("opt"))
 
 	file := blobs["file"]
@@ -190,6 +219,9 @@ func (obj *BlobManager) HandleUploaded(ctx context.Context, r *http.Request) (*B
 		return nil, "", errors.New("")
 	}
 	blobKey := string(file[0].BlobKey)
+	if fileName == "" {
+		fileName = blobKey
+	}
 	blobItem, err2 := obj.GetBlobItem(ctx, dirName, fileName)
 	if err2 == nil {
 		blobstore.Delete(ctx, appengine.BlobKey(blobItem.GetBlobKey()))

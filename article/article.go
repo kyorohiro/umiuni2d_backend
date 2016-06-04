@@ -12,6 +12,7 @@ type GaeObjectArticle struct {
 	Title     string `datastore:",noindex"`
 	Tag       string `datastore:",noindex"`
 	Cont      string `datastore:",noindex"`
+	Info      string `datastore:",noindex"`
 	State     string
 	ParentId  string
 	ArticleId string `datastore:",noindex"`
@@ -36,6 +37,14 @@ func (obj *Article) GetGaeObjectKey() *datastore.Key {
 
 func (obj *Article) GetUserName() string {
 	return obj.gaeObject.UserName
+}
+
+func (obj *Article) GetInfo() string {
+	return obj.gaeObject.Info
+}
+
+func (obj *Article) SetInfo(v string) {
+	obj.gaeObject.Info = v
 }
 
 func (obj *Article) SetUserName(v string) {
