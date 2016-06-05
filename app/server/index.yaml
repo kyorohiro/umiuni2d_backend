@@ -1,0 +1,57 @@
+indexes:
+
+- kind: Article
+  properties:
+  - name: UserName
+  - name: ParentId
+  - name: Updated
+    direction: asc
+
+- kind: Article
+  properties:
+  - name: UserName
+  - name: ParentId
+  - name: Updated
+    direction: desc
+
+- kind: Article
+  properties:
+  - name: State
+  - name: ParentId
+  - name: Updated
+    direction: asc
+
+- kind: Article
+  properties:
+  - name: State
+  - name: ParentId
+  - name: Updated
+    direction: desc
+
+- kind: ArticleTag
+  properties:
+  - name: MainTag
+  - name: SubTag
+  - name: OptTag
+  - name: Updated
+    direction: asc
+
+- kind: ArticleTag
+  properties:
+  - name: MainTag
+  - name: SubTag
+  - name: OptTag
+  - name: Updated
+    direction: desc
+
+- kind: ArticleTag
+  properties:
+  - name: TargetId
+  - name: Updated
+    direction: asc
+
+- kind: ArticleTag
+  properties:
+  - name: TargetId
+  - name: Updated
+    direction: desc
