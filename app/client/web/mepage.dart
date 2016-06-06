@@ -10,11 +10,9 @@ class MePage {
         print("=Me=> ${html.window.location.hash} :");
         if (hash == "#/Me") {
           update();
-        }
-        else if (hash == "#/Me/register") {
+        } else if (hash == "#/Me/register") {
           updateRegister();
-        }
-        else if (hash == "#/Me/login") {
+        } else if (hash == "#/Me/login") {
           updateLogin();
         }
       }
@@ -30,7 +28,7 @@ class MePage {
       """	color: white;""", //
       """}""", //
       """nav.mepage ul {""", //
-    //  """	display: flex;""", //
+      //  """	display: flex;""", //
       """	flex-flow: row;""", //
       """	margin: 0;""", //
       """	padding: 6px;""", //
