@@ -3,14 +3,14 @@ import 'dart:async';
 import '../netbox/netbox.dart' as netboxm;
 import '../netbox/status.dart' as netboxs;
 
-class MePage {
+class MePageLogout {
   String rootId;
   netboxs.MyStatus status;
   netboxm.NetBox netbox;
   static String propUserName = "userName";
   static String propPassword = "password";
 
-  MePage(this.status, this.netbox, this.rootId) {
+  MePageLogout(this.status, this.netbox, this.rootId) {
     init();
     html.window.onHashChange.listen((_) {
       updateFromHash();
@@ -18,6 +18,9 @@ class MePage {
   }
 
   Future updateFromHash() async {
+    if (this.status.isLogin == true) {
+      return;
+    }
     String hash = html.window.location.hash;
     Map prop = {};
     if (hash.indexOf("?") > 0) {
@@ -91,26 +94,15 @@ class MePage {
   update() {
     html.Element elm = html.document.body.querySelector("#${this.rootId}");
     elm.children.clear();
-    if (this.status.isLogin) {
-      elm.appendHtml([
-        """<H3>${this.status.userName}</H3>""",
-        """<nav class="mepage">""", //
-        """ <ul>""",
-        """		<li>xxx</li>""", //
-        """ </ul>""",
-        """</nav>""",
-      ].join());
-    } else {
-      elm.appendHtml([
-        """<H3>User</H3>""",
-        """<nav class="mepage">""", //
-        """ <ul>""",
-        """		<li><a href="#/Me/login">Login</a></li>""", //
-        """		<li><a href="#/Me/register">Register</a></li>""", //
-        """ </ul>""",
-        """</nav>""",
-      ].join());
-    }
+    elm.appendHtml([
+      """<H3>User</H3>""",
+      """<nav class="mepage">""", //
+      """ <ul>""",
+      """		<li><a href="#/Me/login">Login</a></li>""", //
+      """		<li><a href="#/Me/register">Register</a></li>""", //
+      """ </ul>""",
+      """</nav>""",
+    ].join());
   }
 
   updateRegister(Map prop) {

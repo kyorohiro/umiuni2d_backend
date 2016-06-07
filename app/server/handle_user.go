@@ -7,6 +7,7 @@ import (
 	//	"umiuni2d_backend/user"
 
 	"google.golang.org/appengine"
+	"google.golang.org/appengine/blobstore"
 )
 
 // ------
@@ -137,4 +138,17 @@ func meCheckHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+}
+
+//
+func userGetIconHandle(w http.ResponseWriter, r *http.Request) {
+	name := r.FormValue("name")
+	ctx := appengine.NewContext(r)
+
+	b, e := GetBlobManager().GetBlobItem(ctx, "/user/"+name, "meicon")
+	if e != nil {
+		http.Redirect(w, r, "/images/meicon.png", http.StatusFound)
+		return
+	}
+	blobstore.Send(w, appengine.BlobKey(b.GetBlobKey()))
 }

@@ -89,6 +89,8 @@ func init() {
 	// mem_ana
 	http.HandleFunc("/api/v1/me_mana/regist_user", registHandler)
 	http.HandleFunc("/api/v1/me_mana/login", loginHandler)
+	// user
+	http.HandleFunc("/api/v1/me_mana/get_icon", userGetIconHandle)
 
 	//
 	http.HandleFunc("/api/v1/me/check", meCheckHandler)
@@ -100,9 +102,6 @@ func init() {
 	http.HandleFunc("/api/v1/file/on_uploaded", fileOnUploadedHandler)
 	http.HandleFunc("/api/v1/file/get", fileGetHandle)
 	http.HandleFunc("/api/v1/file/find_from_article", fileFindFromArticleHandler)
-
-	// user
-	http.HandleFunc("/api/v1/user/get_icon", userGetIconHandle)
 
 	// me
 	http.HandleFunc("/api/v1/me/update_mail", meUpdateMailHandler)

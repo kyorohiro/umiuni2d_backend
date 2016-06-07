@@ -108,19 +108,6 @@ func fileDeleteHandler(w http.ResponseWriter, r *http.Request) {
 	Response(w, map[string]interface{}{"ret": "ok", "stat": "good", "reqId": reqId})
 }
 
-//
-func userGetIconHandle(w http.ResponseWriter, r *http.Request) {
-	name := r.FormValue("name")
-	ctx := appengine.NewContext(r)
-
-	b, e := GetBlobManager().GetBlobItem(ctx, "/user/"+name, "meicon")
-	if e != nil {
-		http.Redirect(w, r, "/images/meicon.png", http.StatusFound)
-		return
-	}
-	blobstore.Send(w, appengine.BlobKey(b.GetBlobKey()))
-}
-
 func fileGetHandle(w http.ResponseWriter, r *http.Request) {
 	blobstore.Send(w, appengine.BlobKey(r.FormValue("blobKey")))
 }

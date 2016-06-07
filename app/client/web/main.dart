@@ -1,5 +1,6 @@
 //
-import './page/mepage.dart';
+import './page/mepage_login.dart';
+import './page/mepage_logout.dart';
 import 'netbox/netbox.dart' as netbox;
 import 'netbox/netboxme.dart' as netboxme;
 import 'netbox/status.dart' as netbox;
@@ -25,6 +26,8 @@ void main() {
   });
   MePage myPage = new MePage(new netbox.MyStatus(), rootBox, "main");
   myPage.updateFromHash();
+  MePageLogout myPageLogout = new MePageLogout(new netbox.MyStatus(), rootBox, "main");
+  myPageLogout.updateFromHash();
 }
 
 class BaseLine {
