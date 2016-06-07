@@ -1,4 +1,3 @@
-
 import 'dart:html' as html;
 import 'dart:async';
 import '../netbox/netbox.dart' as netboxm;
@@ -30,6 +29,8 @@ class MePage {
         update();
       } else if (hash == "#/Me/register") {
         updateRegister(prop);
+      } else if (hash == "#/Me/login") {
+        updateLogin();
       } else if (hash == "#/Me/register/do") {
         html.Element elm = html.document.body.querySelector("#${this.rootId}");
         html.InputElement userNameElm = elm.querySelector("#${propUserName}");
@@ -42,8 +43,18 @@ class MePage {
         } else {
           html.window.location.assign("#/Me/register?code=${r.code}");
         }
-      } else if (hash == "#/Me/login") {
-        updateLogin();
+      } else if (hash == "#/Me/login/do") {
+        html.Element elm = html.document.body.querySelector("#${this.rootId}");
+        html.InputElement userNameElm = elm.querySelector("#${propUserName}");
+        html.InputElement passwordElm = elm.querySelector("#${propPassword}");
+        var r = await this.netbox.newMeManager().login(userNameElm.value, passwordElm.value);
+        if (r.code == 200) {
+          this.status.userName = userNameElm.value;
+          this.status.userObjectId = r.loginId;
+          html.window.location.assign("#/Me");
+        } else {
+          html.window.location.assign("#/Me/login?code=${r.code}");
+        }
       }
     }
   }

@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"umiuni2d_backend/user"
+	//	"umiuni2d_backend/user"
 
 	"google.golang.org/appengine"
 )
@@ -37,11 +37,10 @@ func registHandler(w http.ResponseWriter, r *http.Request) {
 
 	loginId, _, _ := GetUserManager().LoginUser(ctx, propUserName, propPassword, r.RemoteAddr, r.UserAgent())
 
-	m := map[string]interface{}{ //
+	Response(w, map[string]interface{}{ //
 		ReqPropertyCode:      ReqPropertyCodeOK,
 		ReqPropertyRequestID: propRequestId, //
-		ReqPropertyLoginId:   loginId.GetLoginId()}
-	Response(w, m)
+		ReqPropertyLoginId:   loginId.GetLoginId()})
 
 }
 
@@ -50,7 +49,7 @@ func registHandler(w http.ResponseWriter, r *http.Request) {
 // ------
 func loginHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Access-Control-Allow-Origin", "*")
-	w.Header().Add("Access-Control-Allow-Headers", "apikey")
+	//	w.Header().Add("Access-Control-Allow-Headers", "apikey")
 	if r.Method != "POST" {
 		return
 	}
@@ -64,16 +63,13 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 	loginId, _, err1 := GetUserManager().LoginUser(ctx, propUserName, propPassword, r.RemoteAddr, r.UserAgent())
 
 	if err1 != nil {
-		state := err1.Error()
-		if err1 == user.ErrorNotFound || err1 == user.ErrorInvalidPass {
-			state = ReqPropertyStateWrongNamePass
-		}
-		m := map[string]interface{}{"ret": "ng", "stat": state, "reqId": propRequestId, "dev": err1.Error()}
-		Response(w, m)
-		return
+		//		state := err1.Error()
+		//		if err1 == user.ErrorNotFound || err1 == user.ErrorInvalidPass {
+		//			state = ReqPropertyStateWrongNamePass
+		//		}
+		Response(w, map[string]interface{}{ReqPropertyCode: ReqPropertyCodeNotFound, ReqPropertyRequestID: propRequestId})
 	} else {
-		m := map[string]interface{}{"ret": "ok", "stat": "good", "reqId": propRequestId, "loginId": loginId.GetLoginId()}
-		Response(w, m)
+		Response(w, map[string]interface{}{ReqPropertyCode: ReqPropertyCodeOK, ReqPropertyRequestID: propRequestId, ReqPropertyLoginId: loginId.GetLoginId()})
 	}
 }
 

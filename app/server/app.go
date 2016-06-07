@@ -42,6 +42,7 @@ const (
 	ReqPropertyStateWrongNamePassID = -1
 	ReqPropertyCodeOK               = 200
 	ReqPropertyCodeAlreadyExist     = 1000
+	ReqPropertyCodeNotFound         = 1001
 )
 
 const (
@@ -87,9 +88,10 @@ func init() {
 
 	// mem_ana
 	http.HandleFunc("/api/v1/me_mana/regist_user", registHandler)
+	http.HandleFunc("/api/v1/me_mana/login", loginHandler)
+
 	//
 	http.HandleFunc("/api/v1/me/check", meCheckHandler)
-	http.HandleFunc("/api/v1/login", loginHandler)
 	http.HandleFunc("/api/v1/logout", logoutHandler)
 
 	// fileshare

@@ -18,6 +18,20 @@ class NetBoxMeManagerRegist {
   }
 }
 
+class NetBoxMeManagerLogin {
+  int code;
+  String requestId;
+  String loginId;
+
+  NetBoxMeManagerLogin(TinyNetRequesterResponse response) {
+    String body = conv.UTF8.decode(response.response.asUint8List());
+    Map<String,Object> ret = conv.JSON.decode(body);
+    this.code = ret[NetBox.ReqPropertyCode];
+    this.requestId = ret[NetBox.ReqPropertyRequestID];
+    this.loginId = ret[NetBox.ReqPropertyLoginId];
+  }
+}
+
 class NetBoxMeManager {
   String backendAddr;
   String apiKey;
@@ -43,19 +57,26 @@ class NetBoxMeManager {
         }));
     return new NetBoxMeManagerRegist(response);
   }
-/*
-  Future<Map<String, String>> login(String name, String pass) async {
-    print("--");
+
+  Future<NetBoxMeManagerLogin> login(String name, String pass) async {
     TinyNetHtml5Builder builder = new TinyNetHtml5Builder();
     TinyNetRequester requester = await builder.createRequester();
-    String url = "${targetHost}/api/v1/login";
+    String url = "${backendAddr}/api/${version}/me_mana/login";
 
-    TinyNetRequesterResponse response = await requester.request(TinyNetRequester.TYPE_POST, url, //
-      headers: {"apikey": apiKey,}, data: conv.JSON.encode({"userName": name, "pass": pass, "reqId": "AABBCC"}));
-    print(">> ${conv.UTF8.decode(response.response.asUint8List())}");
-    return conv.JSON.decode(conv.UTF8.decode(response.response.asUint8List()));
+    TinyNetRequesterResponse response = await requester.request(//
+      TinyNetRequester.TYPE_POST, url, //
+        data: conv.JSON.encode({
+          NetBox.ReqPropertyName: name, //
+          NetBox.ReqPropertyPass: conv.BASE64.encode(//
+            crypto.sha256.convert(conv.UTF8.encode(//
+            ""+name+":"+passwordKey+":"+pass)).bytes), //
+          NetBox.ReqPropertyRequestID: "AABBCC", //
+          NetBox.ReqPropertyApiKey: apiKey
+        }));
+    return new NetBoxMeManagerLogin(response);
   }
 
+/*
 //
   Future<Map<String, String>> password(String userName, String newpass, String pass, String loginId) async {
     print("--");
