@@ -8,6 +8,5 @@ handlers:
   script: _go_app
 
 - url: /images/meicon.gif
-  static_files: static/images/meicon.gif
-  upload: static/images/meicon.gif
-
+  static_files: images/meicon.gif
+  upload: images/meicon.gif

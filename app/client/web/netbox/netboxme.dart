@@ -39,6 +39,10 @@ class NetBoxMeManager {
   String passwordKey;
   NetBoxMeManager(this.backendAddr, this.apiKey, {this.version: "v1",this.passwordKey:"umiuni2d"}) {}
 
+  String makeImgUserIconSrc(String name) {
+    return """${backendAddr}/api/v1/me_mana/get_icon?name=${name}""";
+  }
+
   Future<NetBoxMeManagerRegist> regist(String name, String mail, String pass) async {
     TinyNetHtml5Builder builder = new TinyNetHtml5Builder();
     TinyNetRequester requester = await builder.createRequester();

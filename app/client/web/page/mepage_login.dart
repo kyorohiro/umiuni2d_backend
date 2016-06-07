@@ -67,14 +67,23 @@ class MePage {
     html.Element elm = html.document.body.querySelector("#${this.rootId}");
     elm.children.clear();
     if (this.status.isLogin) {
-      elm.appendHtml([
-        """<H3>${this.status.userName}</H3>""",
-        """<nav class="mepage">""", //
-        """ <ul>""",
-        """		<li>xxx</li>""", //
-        """ </ul>""",
-        """</nav>""",
-      ].join());
+      elm.appendHtml(
+          [
+            """<H3>${this.status.userName}</H3>""",
+            """<H5>Image</H3>""",
+            //
+            """    <div>""", //
+          //  """      <span>Icon</span><a><i>edit</i></a>""", //
+            """      <div><img id="icon" style="background-color:#99cc00" src="${netbox.newMeManager().makeImgUserIconSrc(this.status.userName)}"></div>""", //
+            """    </div>""", //
+            //
+            """<nav class="mepage">""", //
+            """ <ul>""",
+            """		<li>xxx</li>""", //
+            """ </ul>""",
+            """</nav>""",
+          ].join(),
+          treeSanitizer: html.NodeTreeSanitizer.trusted);
     }
   }
 }

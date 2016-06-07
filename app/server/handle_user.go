@@ -147,7 +147,7 @@ func userGetIconHandle(w http.ResponseWriter, r *http.Request) {
 
 	b, e := GetBlobManager().GetBlobItem(ctx, "/user/"+name, "meicon")
 	if e != nil {
-		http.Redirect(w, r, "/images/meicon.png", http.StatusFound)
+		http.Redirect(w, r, "/images/meicon.gif", http.StatusFound)
 		return
 	}
 	blobstore.Send(w, appengine.BlobKey(b.GetBlobKey()))
