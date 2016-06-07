@@ -26,9 +26,10 @@ import (
 const (
 	ReqPropertyName                 = "userName"
 	ReqPropertyFileName             = "fileName"
-	ReqPropertyPass                 = "pass"
-	ReqPropertyNewPass              = "newpass"
-	ReqPropertyRequestID            = "reqId"
+	ReqPropertyPass                 = "password"
+	ReqPropertyNewPass              = "newpassword"
+	ReqPropertyRequestID            = "requestId"
+	ReqPropertyCode                 = "code"
 	ReqPropertyCursor               = "cursor"
 	ReqPropertyMail                 = "mail"
 	ReqPropertyLoginId              = "loginId"
@@ -39,6 +40,8 @@ const (
 	ReqPropertyArticleState         = "state"
 	ReqPropertyStateWrongNamePass   = "wrong name/pass"
 	ReqPropertyStateWrongNamePassID = -1
+	ReqPropertyCodeOK               = 200
+	ReqPropertyCodeAlreadyExist     = 1000
 )
 
 const (
@@ -82,9 +85,10 @@ func Response(w http.ResponseWriter, v map[string]interface{}) {
 
 func init() {
 
-	// login
+	// mem_ana
+	http.HandleFunc("/api/v1/me_mana/regist_user", registHandler)
+	//
 	http.HandleFunc("/api/v1/me/check", meCheckHandler)
-	http.HandleFunc("/api/v1/regist", registHandler)
 	http.HandleFunc("/api/v1/login", loginHandler)
 	http.HandleFunc("/api/v1/logout", logoutHandler)
 

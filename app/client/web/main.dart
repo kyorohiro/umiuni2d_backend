@@ -1,35 +1,42 @@
-import 'dart:html' as html;
-import 'mepage.dart';
-
+//
+import './page/mepage.dart';
+import 'netbox/netbox.dart' as netbox;
+import 'netbox/netboxme.dart' as netboxme;
+import 'netbox/status.dart' as netbox;
+import 'dart:html' as aahtml;
 BaseLine baseLine = new BaseLine();
+netbox.NetBox rootBox = new netbox.NetBox("http://127.0.0.1:8080", "A91A3E1B-15F0-4DEE-8ECE-F5DD1A06230E");
+
+//
+//
 void main() {
   baseLine.makeToolbar(//
       ["Home", "Article", "Q/A", "Vote", "Me"], ["Home", "Article", "Q/A", "Vote", "Me"]);
   baseLine.makeMain();
 
-  html.window.onHashChange.listen((_) {
-    print("==> ${html.window.location.hash} :");
-    var hash = Uri.decodeComponent(html.window.location.hash);
+  aahtml.window.onHashChange.listen((_) {
+    var hash = Uri.decodeComponent(aahtml.window.location.hash);
     for (var v in ["Home", "Article", "Q/A", "Vote"]) {
       if (hash == "#/${v}") {
-        html.Element elm = html.document.body.querySelector("#main");
+        aahtml.Element elm = aahtml.document.body.querySelector("#main");
         elm.children.clear();
       }
     }
   });
-  MePage myPage = new MePage("main");
+  MePage myPage = new MePage(new netbox.MyStatus(), rootBox, "main");
+  myPage.updateFromHash();
 }
 
 class BaseLine {
   makeMain() {
-    html.document.body.appendHtml([
+    aahtml.document.body.appendHtml([
       """<div id="main">""", //
       """</div>"""
     ].join("\r\n"));
   }
 
   makeToolbar(List<String> titles, List<String> hashs) {
-    html.StyleElement styleElement = new html.StyleElement();
+    aahtml.StyleElement styleElement = new aahtml.StyleElement();
     styleElement.type = "text/css";
     styleElement.text = [
       """.atoolbar body {""", //
@@ -57,7 +64,7 @@ class BaseLine {
       """	background-color: #8cae47;""", //
       """}"""
     ].join("\r\n"); //
-    html.document.head.append(styleElement);
+    aahtml.document.head.append(styleElement);
     var a = [];
     a.addAll([
       """<nav class="atoolbar">""", //
@@ -74,7 +81,7 @@ class BaseLine {
       """</nav>"""
     ]);
 
-    html.document.body.appendHtml(a.join("\r\n")); //
+    aahtml.document.body.appendHtml(a.join("\r\n")); //
   }
 }
 //

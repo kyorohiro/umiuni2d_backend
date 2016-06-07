@@ -14,7 +14,7 @@ import (
 // ------
 func registHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Access-Control-Allow-Origin", "*")
-	w.Header().Add("Access-Control-Allow-Headers", "apikey")
+	//	w.Header().Add("Access-Control-Allow-Headers", "apikey")
 	if r.Method != "POST" {
 		return
 	}
@@ -29,14 +29,18 @@ func registHandler(w http.ResponseWriter, r *http.Request) {
 	_, err1 := GetUserManager().RegistUser(ctx, propUserName, propPassword, propMail)
 
 	if err1 != nil {
-		m := map[string]interface{}{"ret": "ng", "stat": "error", "reqId": propRequestId, "dev": err1.Error()}
-		Response(w, m)
+		Response(w, map[string]interface{}{ //
+			ReqPropertyCode:      ReqPropertyCodeAlreadyExist, //
+			ReqPropertyRequestID: propRequestId})
 		return
 	}
 
 	loginId, _, _ := GetUserManager().LoginUser(ctx, propUserName, propPassword, r.RemoteAddr, r.UserAgent())
 
-	m := map[string]interface{}{"ret": "ok", "stat": "good", "reqId": propRequestId, "loginId": loginId.GetLoginId()}
+	m := map[string]interface{}{ //
+		ReqPropertyCode:      ReqPropertyCodeOK,
+		ReqPropertyRequestID: propRequestId, //
+		ReqPropertyLoginId:   loginId.GetLoginId()}
 	Response(w, m)
 
 }
