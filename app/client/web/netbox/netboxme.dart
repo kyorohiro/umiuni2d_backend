@@ -53,6 +53,7 @@ class NetBoxMeManager {
   String apiKey;
   String version;
   String passwordKey;
+
   NetBoxMeManager(this.backendAddr, this.apiKey, {this.version: "v1",this.passwordKey:"umiuni2d"}) {}
 
   String makeImgUserIconSrc(String name) {

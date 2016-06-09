@@ -3,15 +3,17 @@ import 'dart:async';
 import '../netbox/netbox.dart' as nbox;
 import '../netbox/netboxme.dart' as nbox;
 import '../netbox/status.dart' as nbox;
+import 'dialog_image.dart' as dialog;
 
 class MePage {
   String rootId;
+  String editIconId;
   nbox.MyStatus status;
   nbox.NetBox netbox;
   static String propUserName = "userName";
   static String propPassword = "password";
 
-  MePage(this.status, this.netbox, this.rootId) {
+  MePage(this.status, this.netbox, this.rootId,{this.editIconId: "editIconBtn"}) {
     init();
     html.window.onHashChange.listen((_) {
       updateFromHash();
@@ -23,9 +25,9 @@ class MePage {
       return;
     }
     String hash = html.window.location.hash;
-    Map prop = {};
+// prop = {};
     if (hash.indexOf("?") > 0) {
-      prop = Uri.splitQueryString(hash.substring(hash.indexOf("?") + 1));
+//      prop = Uri.splitQueryString(hash.substring(hash.indexOf("?") + 1));
       hash = hash.substring(0, hash.indexOf("?"));
     }
     if (hash.startsWith("#/Me")) {
@@ -74,11 +76,20 @@ class MePage {
             """<H5>Icon</H3>""",
             //
             """ <div>""", //
-            """  <div><img id="icon" style="background-color:#99cc00" src="${netbox.newMeManager().makeImgUserIconSrc(this.status.userName)}"></div>""", //
+            """ <img id="icon" style="display:inline; background-color:#99cc00;" src="${netbox.newMeManager().makeImgUserIconSrc(this.status.userName)}">""", //
+            """ <br><button id="${editIconId}" style="display:inline; padding: 12px 24px;">Edit</button>""",
             """ </div>""", //
             //
           ].join(),
           treeSanitizer: html.NodeTreeSanitizer.trusted);
+      elm.querySelector("#${editIconId}").onClick.listen((_){
+        dialog.ImgageDialog imgDialog = new dialog.ImgageDialog();
+        imgDialog.init();
+        imgDialog.show(onUpdated: (dialog.ImgageDialog d, String src){
+          netbox.newMeManager();
+          return false;
+        });
+      });
       //
       //
       nbox.NetBoxMeManagerGetInfo rt = await this.netbox.newMeManager().getMyInfo(status.userObjectId);
