@@ -46,6 +46,7 @@ const (
 	ReqPropertyCodeError            = 2000
 	ReqPropertyCodeAlreadyExist     = 1000
 	ReqPropertyCodeNotFound         = 1001
+	ReqPropertyCodeWrongNamePass    = 1002
 )
 
 const (
@@ -95,6 +96,8 @@ func init() {
 	// user
 	http.HandleFunc("/api/v1/me_mana/get_icon", userGetIconHandle)
 	http.HandleFunc("/api/v1/me_mana/get_info", meGetInfoHandler)
+	http.HandleFunc("/api/v1/me_mana/update_mail", meUpdateMailHandler)
+
 	//
 	http.HandleFunc("/api/v1/me/check", meCheckHandler)
 	http.HandleFunc("/api/v1/logout", logoutHandler)
@@ -108,7 +111,6 @@ func init() {
 	http.HandleFunc("/api/v1/file/find_from_article", fileFindFromArticleHandler)
 
 	// me
-	http.HandleFunc("/api/v1/me/update_mail", meUpdateMailHandler)
 
 	http.HandleFunc("/api/v1/me/update_password", meUpdatePasswordHandler)
 

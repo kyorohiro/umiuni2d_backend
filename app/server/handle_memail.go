@@ -82,40 +82,33 @@ func meUpdateMailHandler(w http.ResponseWriter, r *http.Request) {
 	reqId := data[ReqPropertyRequestID].(string)
 	pass := data[ReqPropertyPass].(string)
 	email := data[ReqPropertyMail].(string)
+	//
 	// find user
 	ctx := appengine.NewContext(r)
 	isLogin, accessTokenObj, _ := loginCheckHandler(ctx, r, data)
 	if isLogin == false {
-		m := map[string]string{"ret": "ng", "stat": "not found1", "reqId": reqId}
-		b, _ := json.Marshal(m)
-		fmt.Fprintln(w, string(b))
+		Response(w, map[string]interface{}{ReqPropertyCode: ReqPropertyCodeNotFound, ReqPropertyRequestID: reqId})
 		return
 	}
 
 	userObj, err1 := GetUserManager().FindUserFromUserName(ctx, accessTokenObj.GetUserName())
 	if err1 != nil {
-		m := map[string]string{"ret": "ng", "stat": "not found2", "reqId": reqId}
-		b, _ := json.Marshal(m)
-		fmt.Fprintln(w, string(b))
+		Response(w, map[string]interface{}{ReqPropertyCode: ReqPropertyCodeNotFound, ReqPropertyRequestID: reqId})
 		return
 	}
 	userObj.CheckPassword(pass)
 	if userObj.CheckPassword(pass) == false {
-		m := map[string]string{"ret": "ng", "stat": "not found3", "reqId": reqId}
-		b, _ := json.Marshal(m)
-		fmt.Fprintln(w, string(b))
+		Response(w, map[string]interface{}{ReqPropertyCode: ReqPropertyCodeWrongNamePass, ReqPropertyRequestID: reqId})
 		return
 	}
 	userObj.SetMail(email)
 	err := userObj.PushToDB(ctx)
 	if err != nil {
-		m := map[string]string{"ret": "ng", "stat": "error", "reqId": reqId}
-		b, _ := json.Marshal(m)
-		fmt.Fprintln(w, string(b))
+		Response(w, map[string]interface{}{ReqPropertyCode: ReqPropertyCodeError, ReqPropertyRequestID: reqId})
+		return
 	} else {
-		m := map[string]string{"ret": "ok", "stat": "good", "reqId": reqId}
-		b, _ := json.Marshal(m)
-		fmt.Fprintln(w, string(b))
+		Response(w, map[string]interface{}{ReqPropertyCode: ReqPropertyCodeOK, ReqPropertyRequestID: reqId})
+		return
 	}
 }
 

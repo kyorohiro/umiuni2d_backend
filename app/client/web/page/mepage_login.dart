@@ -7,7 +7,6 @@ import '../netbox/status.dart' as nbox;
 import 'dialog_image.dart' as dialog;
 import 'dialog_text_with_pass.dart' as dialog;
 
-
 class MePage {
   String rootId;
   String editIconId;
@@ -120,9 +119,13 @@ class MePage {
       elm.querySelector("#${this.editMailId}").onClick.listen((_) {
         dialog.TextDialogWithPass d = new dialog.TextDialogWithPass();
         d.init();
-        d.show(onUpdated: (dialog.TextDialogWithPass d, String pass, String v) async{
-          print("--> ${pass} ${v}");
-          return true;
+        d.show(onUpdated: (dialog.TextDialogWithPass d, String pass, String mail) async {
+          var r = await netbox.newMeManager().mail(status.userName, mail, pass, status.userObjectId);
+          if (r.code == nbox.NetBox.ReqPropertyCodeOK) {
+            return true;
+          } else {
+            return false;
+          }
         });
       });
     }
