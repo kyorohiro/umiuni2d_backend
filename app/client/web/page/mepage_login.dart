@@ -2,6 +2,7 @@ import 'dart:html' as html;
 import 'dart:async';
 import '../netbox/netbox.dart' as nbox;
 import '../netbox/netboxme.dart' as nbox;
+import '../netbox/netboxfile.dart' as nbox;
 import '../netbox/status.dart' as nbox;
 import 'dialog_image.dart' as dialog;
 
@@ -82,11 +83,12 @@ class MePage {
             //
           ].join(),
           treeSanitizer: html.NodeTreeSanitizer.trusted);
+          //
       elm.querySelector("#${editIconId}").onClick.listen((_){
         dialog.ImgageDialog imgDialog = new dialog.ImgageDialog();
         imgDialog.init();
         imgDialog.show(onUpdated: (dialog.ImgageDialog d, String src){
-          netbox.newMeManager();
+          netbox.newFileShareManager().fileShare(src, "meicon", status.userObjectId);
           return false;
         });
       });

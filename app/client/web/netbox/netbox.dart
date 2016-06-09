@@ -1,5 +1,5 @@
 import 'netboxme.dart';
-
+import 'netboxfile.dart';
 
 class NetBox {
   static final String ReqPropertyName = "userName";
@@ -12,6 +12,7 @@ class NetBox {
   static final String ReqPropertyCode = "code";
   static final String ReqPropertyCursor = "cursor";
   static final String ReqPropertyLoginId = "loginId";
+  static final String ReqPropertyArticleId = "articleId";
   static final int ReqPropertyCodeOK = 200;
   static final int ReqPropertyCodeAlreadyExist = 1000;
   String backendAddr;
@@ -19,9 +20,13 @@ class NetBox {
   String version;
   String passwordKey;
 
-  NetBox(this.backendAddr, this.apiKey, {this.version: "v1", this.passwordKey:"umiuni2d"}) {}
+  NetBox(this.backendAddr, this.apiKey, {this.version: "v1", this.passwordKey: "umiuni2d"}) {}
 
   NetBoxMeManager newMeManager() {
     return new NetBoxMeManager(this.backendAddr, this.apiKey, version: this.version);
+  }
+
+  NetBoxFileShareManager newFileShareManager() {
+    return new NetBoxFileShareManager(this.backendAddr, this.apiKey, version: this.version);
   }
 }

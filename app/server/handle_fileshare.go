@@ -70,7 +70,8 @@ func fileGetRequestIdHandler(w http.ResponseWriter, r *http.Request) {
 	//
 	//WriteLog(ctx, "====> bef uploaded"+uploaded)
 	// ok
-	m := map[string]interface{}{"ret": "ok", "stat": "good", "reqId": reqId, "url": uploaded}
+	m := map[string]interface{}{ReqPropertyCode: ReqPropertyCodeOK, //
+		ReqPropertyRequestID: reqId, ReqPropertyUrl: uploaded}
 	Response(w, m)
 }
 

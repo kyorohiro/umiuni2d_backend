@@ -14,7 +14,7 @@ import (
 
 	"golang.org/x/net/context"
 
-	"io"
+	//	"io"
 
 	"crypto/rand"
 	"encoding/binary"
@@ -32,6 +32,7 @@ const (
 	ReqPropertyCode                 = "code"
 	ReqPropertyCursor               = "cursor"
 	ReqPropertyMail                 = "mail"
+	ReqPropertyUrl                  = "url"
 	ReqPropertyLoginId              = "loginId"
 	ReqPropertyArticleCont          = "cont"
 	ReqPropertyArticleTitle         = "title"
@@ -135,12 +136,6 @@ func apiHandler(w http.ResponseWriter, r *http.Request) {
 			registHandler(w, r)
 		})
 	}
-}
-
-func serveError(ctx context.Context, w http.ResponseWriter, err error) {
-	w.WriteHeader(http.StatusInternalServerError)
-	w.Header().Set("Content-Type", "text/plain")
-	io.WriteString(w, "Internal Server Error")
 }
 
 func makeRandomId() string {
