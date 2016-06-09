@@ -1,6 +1,6 @@
 //
-import './page/mepage_login.dart';
-import './page/mepage_logout.dart';
+import './page/me/stlogin.dart';
+import './page/me/stlogout.dart';
 
 import 'netbox/netbox.dart' as netbox;
 import 'netbox/status.dart' as netbox;
