@@ -11,6 +11,7 @@ class MePage {
   String rootId;
   String editIconId;
   String editMailId;
+  String editPasswordId;
   String iconId;
 
   nbox.MyStatus status;
@@ -20,8 +21,9 @@ class MePage {
 
   MePage(this.status, this.netbox, this.rootId, //
       {this.editIconId: "editIconBtn",
-      this.editMailId: "editMailBtn",//
-      this.iconId: "iconId"}) {
+      this.editMailId: "editMailBtn", //
+      this.iconId: "iconId",
+      this.editPasswordId: "editPasswordId"}) {
     init();
     html.window.onHashChange.listen((_) {
       updateFromHash();
@@ -80,8 +82,8 @@ class MePage {
     if (this.status.isLogin) {
       elm.appendHtml(
           [
-            """<H3>${this.status.userName}</H3>""",
-            """<H5>Icon</H3>""",
+            """<H2>${this.status.userName}</H2>""",
+            """<H3>Icon</H3>""",
             //
             """ <div>""", //
             """ <img id="${this.iconId}" style="display:inline; background-color:#99cc00;" src="${netbox.newMeManager().makeImgUserIconSrc(this.status.userName)}">""", //
@@ -112,7 +114,7 @@ class MePage {
       elm.appendHtml(
           [
             //
-            """<H5>EMail</H5>""",
+            """<H3>Mail</H3>""",
             """ <div>""", //
             """  <div>${rt.mail}</div>""", //
             """  <br><button id="${this.editMailId}" style="display:inline; padding: 12px 24px;">Edit</button>""",
@@ -131,6 +133,22 @@ class MePage {
             return false;
           }
         });
+      });
+      //
+      //
+      elm.appendHtml(
+          [
+            //
+            """<H3>Password</H3>""",
+            """ <div>""", //
+            """  <div>${rt.mail}</div>""", //
+            """  <br><button id="${this.editPasswordId}" style="display:inline; padding: 12px 24px;">Edit</button>""",
+            """ </div>""", //
+            //
+          ].join(),
+          treeSanitizer: html.NodeTreeSanitizer.trusted);
+      elm.querySelector("#${this.editPasswordId}").onClick.listen((_) {
+        print("---> pass");
       });
     }
   }
