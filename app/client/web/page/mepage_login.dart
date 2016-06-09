@@ -9,12 +9,16 @@ import 'dialog_image.dart' as dialog;
 class MePage {
   String rootId;
   String editIconId;
+  String editMailId;
+
   nbox.MyStatus status;
   nbox.NetBox netbox;
   static String propUserName = "userName";
   static String propPassword = "password";
 
-  MePage(this.status, this.netbox, this.rootId,{this.editIconId: "editIconBtn"}) {
+  MePage(this.status, this.netbox, this.rootId, //
+      {this.editIconId: "editIconBtn",
+      this.editMailId: "editMailBtn"}) {
     init();
     html.window.onHashChange.listen((_) {
       updateFromHash();
@@ -78,18 +82,18 @@ class MePage {
             //
             """ <div>""", //
             """ <img id="icon" style="display:inline; background-color:#99cc00;" src="${netbox.newMeManager().makeImgUserIconSrc(this.status.userName)}">""", //
-            """ <br><button id="${editIconId}" style="display:inline; padding: 12px 24px;">Edit</button>""",
+            """ <br><button id="${this.editIconId}" style="display:inline; padding: 12px 24px;">Edit</button>""",
             """ </div>""", //
             //
           ].join(),
           treeSanitizer: html.NodeTreeSanitizer.trusted);
-          //
-      elm.querySelector("#${editIconId}").onClick.listen((_){
+      //
+      elm.querySelector("#${editIconId}").onClick.listen((_) {
         dialog.ImgageDialog imgDialog = new dialog.ImgageDialog();
         imgDialog.init();
-        imgDialog.show(onUpdated: (dialog.ImgageDialog d, String src){
-          netbox.newFileShareManager().fileShare(src, "meicon", status.userObjectId);
-          return false;
+        imgDialog.show(onUpdated: (dialog.ImgageDialog d, String src) async {
+          var r = await netbox.newFileShareManager().fileShare(src, "meicon", status.userObjectId);
+          return (r.code == nbox.NetBox.ReqPropertyCodeOK);
         });
       });
       //
@@ -99,16 +103,26 @@ class MePage {
       //rt.requestId;
       //rt.mail;
       //rt.name;
+      // this.editMailId
       elm.appendHtml(
           [
             //
             """<H5>EMail</H5>""",
             """ <div>""", //
             """  <div>${rt.mail}</div>""", //
+            """ <br><button id="${this.editMailId}" style="display:inline; padding: 12px 24px;">Edit</button>""",
             """ </div>""", //
             //
           ].join(),
           treeSanitizer: html.NodeTreeSanitizer.trusted);
+      elm.querySelector("#${this.editMailId}").onClick.listen((_) {
+        dialog.ImgageDialog imgDialog = new dialog.ImgageDialog();
+        imgDialog.init();
+        imgDialog.show(onUpdated: (dialog.ImgageDialog d, String src) async {
+          var r = await netbox.newFileShareManager().fileShare(src, "meicon", status.userObjectId);
+          return (r.code == nbox.NetBox.ReqPropertyCodeOK);
+        });
+      });
     }
   }
 }

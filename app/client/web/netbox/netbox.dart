@@ -13,8 +13,10 @@ class NetBox {
   static final String ReqPropertyCursor = "cursor";
   static final String ReqPropertyLoginId = "loginId";
   static final String ReqPropertyArticleId = "articleId";
+  static final String ReqPropertyBlobKey = "blobKey";
   static final int ReqPropertyCodeOK = 200;
   static final int ReqPropertyCodeAlreadyExist = 1000;
+
   String backendAddr;
   String apiKey;
   String version;

@@ -26,6 +26,7 @@ import (
 const (
 	ReqPropertyName                 = "userName"
 	ReqPropertyFileName             = "fileName"
+	ReqPropertyBlobKey              = "blobKey"
 	ReqPropertyPass                 = "password"
 	ReqPropertyNewPass              = "newpassword"
 	ReqPropertyRequestID            = "requestId"
@@ -42,6 +43,7 @@ const (
 	ReqPropertyStateWrongNamePass   = "wrong name/pass"
 	ReqPropertyStateWrongNamePassID = -1
 	ReqPropertyCodeOK               = 200
+	ReqPropertyCodeError            = 2000
 	ReqPropertyCodeAlreadyExist     = 1000
 	ReqPropertyCodeNotFound         = 1001
 )
@@ -99,8 +101,9 @@ func init() {
 
 	// fileshare
 	http.HandleFunc("/api/v1/file/get_request_id", fileGetRequestIdHandler)
-	http.HandleFunc("/api/v1/file/delete", fileDeleteHandler)
 	http.HandleFunc("/api/v1/file/on_uploaded", fileOnUploadedHandler)
+
+	http.HandleFunc("/api/v1/file/delete", fileDeleteHandler)
 	http.HandleFunc("/api/v1/file/get", fileGetHandle)
 	http.HandleFunc("/api/v1/file/find_from_article", fileFindFromArticleHandler)
 

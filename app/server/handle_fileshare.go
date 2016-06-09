@@ -18,14 +18,14 @@ func fileOnUploadedHandler(w http.ResponseWriter, r *http.Request) {
 	item, opt, err := GetBlobManager().HandleUploaded(ctx, r)
 
 	if err != nil {
-		m := map[string]interface{}{"ret": "ng", "stat": "error", "reqId": opt}
-		Response(w, m)
+		Response(w, map[string]interface{}{ReqPropertyCode: ReqPropertyCodeError, ReqPropertyRequestID: opt})
 		return
+	} else {
+		Response(w, map[string]interface{}{ //
+			ReqPropertyCode:      ReqPropertyCodeOK, //
+			ReqPropertyRequestID: opt,               //
+			ReqPropertyBlobKey:   item.GetBlobKey()})
 	}
-	// ok
-	m := map[string]interface{}{"ret": "ok", "stat": "good", "reqId": opt, "itemId": item.GetBlobKey()}
-	b, _ := json.Marshal(m)
-	fmt.Fprintln(w, string(b))
 }
 
 func fileGetRequestIdHandler(w http.ResponseWriter, r *http.Request) {

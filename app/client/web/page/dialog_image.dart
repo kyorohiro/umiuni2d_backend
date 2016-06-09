@@ -39,7 +39,7 @@ class ImgageDialog {
       uploadBtn.style.display = "none";
       try {
         if (onUpdated != null) {
-          if(true == onUpdated(this, imageTmp.src)) {
+          if(true == await onUpdated(this, imageTmp.src)) {
             this.close();
           }
         }
