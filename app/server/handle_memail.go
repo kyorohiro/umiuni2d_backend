@@ -84,7 +84,7 @@ func meUpdateMailHandler(w http.ResponseWriter, r *http.Request) {
 	email := data[ReqPropertyMail].(string)
 	// find user
 	ctx := appengine.NewContext(r)
-	isLogin, accessTokenObj, _ := loginCheckHandler(ctx, r)
+	isLogin, accessTokenObj, _ := loginCheckHandler(ctx, r, data)
 	if isLogin == false {
 		m := map[string]string{"ret": "ng", "stat": "not found1", "reqId": reqId}
 		b, _ := json.Marshal(m)
@@ -141,7 +141,7 @@ func meUpdatePasswordHandler(w http.ResponseWriter, r *http.Request) {
 
 	// find user
 	ctx := appengine.NewContext(r)
-	isLogin, accessTokenObj, _ := loginCheckHandler(ctx, r)
+	isLogin, accessTokenObj, _ := loginCheckHandler(ctx, r, data)
 	if isLogin == false {
 		m := map[string]string{"ret": "ng", "stat": "not found1", "reqId": reqId}
 		b, _ := json.Marshal(m)

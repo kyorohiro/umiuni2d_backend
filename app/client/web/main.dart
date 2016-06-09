@@ -1,6 +1,7 @@
 //
 import './page/mepage_login.dart';
 import './page/mepage_logout.dart';
+import './page/dialog.dart';
 import 'netbox/netbox.dart' as netbox;
 import 'netbox/netboxme.dart' as netboxme;
 import 'netbox/status.dart' as netbox;
@@ -11,6 +12,12 @@ netbox.NetBox rootBox = new netbox.NetBox("http://127.0.0.1:8080", "A91A3E1B-15F
 //
 //
 void main() {
+
+ImgageDialog d = new ImgageDialog();
+d.init();
+d.show();
+
+  //
   baseLine.makeToolbar(//
       ["Home", "Article", "Q/A", "Vote", "Me"], ["Home", "Article", "Q/A", "Vote", "Me"]);
   baseLine.makeMain();
@@ -28,6 +35,9 @@ void main() {
   myPage.updateFromHash();
   MePageLogout myPageLogout = new MePageLogout(new netbox.MyStatus(), rootBox, "main");
   myPageLogout.updateFromHash();
+
+  //
+
 }
 
 class BaseLine {

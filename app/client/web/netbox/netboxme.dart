@@ -32,6 +32,22 @@ class NetBoxMeManagerLogin {
   }
 }
 
+class NetBoxMeManagerGetInfo {
+  int code;
+  String requestId;
+  String name;
+  String mail;
+
+  NetBoxMeManagerGetInfo(TinyNetRequesterResponse response) {
+    String body = conv.UTF8.decode(response.response.asUint8List());
+    Map<String,Object> ret = conv.JSON.decode(body);
+    this.code = ret[NetBox.ReqPropertyCode];
+    this.requestId = ret[NetBox.ReqPropertyRequestID];
+    this.name = ret[NetBox.ReqPropertyName];
+    this.mail = ret[NetBox.ReqPropertyMail];
+  }
+}
+
 class NetBoxMeManager {
   String backendAddr;
   String apiKey;
@@ -80,6 +96,20 @@ class NetBoxMeManager {
     return new NetBoxMeManagerLogin(response);
   }
 
+  Future<NetBoxMeManagerGetInfo> getMyInfo(String loginId) async {
+    TinyNetHtml5Builder builder = new TinyNetHtml5Builder();
+    TinyNetRequester requester = await builder.createRequester();
+    String url = "${backendAddr}/api/${version}/me_mana/get_info";
+
+    TinyNetRequesterResponse response = await requester.request(//
+      TinyNetRequester.TYPE_POST, url, //
+        data: conv.JSON.encode({
+          NetBox.ReqPropertyLoginId: loginId, //
+          NetBox.ReqPropertyRequestID: "AABBCC", //
+          NetBox.ReqPropertyApiKey: apiKey
+        }));
+    return new NetBoxMeManagerGetInfo(response);
+  }
 /*
 //
   Future<Map<String, String>> password(String userName, String newpass, String pass, String loginId) async {
@@ -132,17 +162,6 @@ class NetBoxMeManager {
     return conv.JSON.decode(conv.UTF8.decode(response.response.asUint8List()));
   }
 
-  Future<Map<String, Object>> getMyInfo(String loginId) async {
-    print("--");
-    TinyNetHtml5Builder builder = new TinyNetHtml5Builder();
-    TinyNetRequester requester = await builder.createRequester();
-    String url = "${targetHost}/api/v1/me/get_info";
 
-    TinyNetRequesterResponse response = await requester.request(TinyNetRequester.TYPE_POST, url,//
-       headers: {"apikey": apiKey,},//
-       data: conv.JSON.encode({"loginId": loginId, "reqId": "AABBCC"}));
-    print(">> ${conv.UTF8.decode(response.response.asUint8List())}");
-    return conv.JSON.decode(conv.UTF8.decode(response.response.asUint8List()));
-  }
   */
 }

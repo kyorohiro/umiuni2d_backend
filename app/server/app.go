@@ -91,7 +91,7 @@ func init() {
 	http.HandleFunc("/api/v1/me_mana/login", loginHandler)
 	// user
 	http.HandleFunc("/api/v1/me_mana/get_icon", userGetIconHandle)
-
+	http.HandleFunc("/api/v1/me_mana/get_info", meGetInfoHandler)
 	//
 	http.HandleFunc("/api/v1/me/check", meCheckHandler)
 	http.HandleFunc("/api/v1/logout", logoutHandler)
@@ -105,7 +105,7 @@ func init() {
 
 	// me
 	http.HandleFunc("/api/v1/me/update_mail", meUpdateMailHandler)
-	http.HandleFunc("/api/v1/me/get_info", meGetInfoHandler)
+
 	http.HandleFunc("/api/v1/me/update_password", meUpdatePasswordHandler)
 
 	// article
@@ -149,9 +149,7 @@ func makeRandomId() string {
 	return strconv.FormatUint(n, 36)
 }
 
-func loginCheckHandler(ctx context.Context, r *http.Request) (bool, *session.AccessToken, error) {
-	var data map[string]interface{}
-	json.NewDecoder(r.Body).Decode(&data)
+func loginCheckHandler(ctx context.Context, r *http.Request, data map[string]interface{}) (bool, *session.AccessToken, error) {
 	loginHash := data[ReqPropertyLoginId].(string)
 	return GetUserManager().CheckLoginId(ctx, loginHash, r.RemoteAddr, r.UserAgent())
 }

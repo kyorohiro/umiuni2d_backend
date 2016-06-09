@@ -1,12 +1,13 @@
 import 'dart:html' as html;
 import 'dart:async';
-import '../netbox/netbox.dart' as netboxm;
-import '../netbox/status.dart' as netboxs;
+import '../netbox/netbox.dart' as nbox;
+import '../netbox/netboxme.dart' as nbox;
+import '../netbox/status.dart' as nbox;
 
 class MePage {
   String rootId;
-  netboxs.MyStatus status;
-  netboxm.NetBox netbox;
+  nbox.MyStatus status;
+  nbox.NetBox netbox;
   static String propUserName = "userName";
   static String propPassword = "password";
 
@@ -63,25 +64,36 @@ class MePage {
     html.document.head.append(styleElement);
   }
 
-  update() {
+  update() async {
     html.Element elm = html.document.body.querySelector("#${this.rootId}");
     elm.children.clear();
     if (this.status.isLogin) {
       elm.appendHtml(
           [
             """<H3>${this.status.userName}</H3>""",
-            """<H5>Image</H3>""",
+            """<H5>Icon</H3>""",
             //
-            """    <div>""", //
-          //  """      <span>Icon</span><a><i>edit</i></a>""", //
-            """      <div><img id="icon" style="background-color:#99cc00" src="${netbox.newMeManager().makeImgUserIconSrc(this.status.userName)}"></div>""", //
-            """    </div>""", //
+            """ <div>""", //
+            """  <div><img id="icon" style="background-color:#99cc00" src="${netbox.newMeManager().makeImgUserIconSrc(this.status.userName)}"></div>""", //
+            """ </div>""", //
             //
-            """<nav class="mepage">""", //
-            """ <ul>""",
-            """		<li>xxx</li>""", //
-            """ </ul>""",
-            """</nav>""",
+          ].join(),
+          treeSanitizer: html.NodeTreeSanitizer.trusted);
+      //
+      //
+      nbox.NetBoxMeManagerGetInfo rt = await this.netbox.newMeManager().getMyInfo(status.userObjectId);
+      //rt.code;
+      //rt.requestId;
+      //rt.mail;
+      //rt.name;
+      elm.appendHtml(
+          [
+            //
+            """<H5>EMail</H5>""",
+            """ <div>""", //
+            """  <div>${rt.mail}</div>""", //
+            """ </div>""", //
+            //
           ].join(),
           treeSanitizer: html.NodeTreeSanitizer.trusted);
     }

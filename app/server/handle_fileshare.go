@@ -46,7 +46,7 @@ func fileGetRequestIdHandler(w http.ResponseWriter, r *http.Request) {
 
 	//
 	//
-	isLogin, accessTokenObj, _ := loginCheckHandler(ctx, r)
+	isLogin, accessTokenObj, _ := loginCheckHandler(ctx, r, data)
 	if isLogin == false {
 		return
 	}
@@ -93,7 +93,7 @@ func fileDeleteHandler(w http.ResponseWriter, r *http.Request) {
 
 	//
 	//
-	isLogin, _, _ := loginCheckHandler(ctx, r)
+	isLogin, _, _ := loginCheckHandler(ctx, r, data)
 	if isLogin == false {
 		return
 	}

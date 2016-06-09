@@ -113,7 +113,7 @@ func articlePostCommentHandler(w http.ResponseWriter, r *http.Request) {
 	//
 	// login check
 	ctx := appengine.NewContext(r)
-	isLogin, accessTokenObj, _ := loginCheckHandler(ctx, r)
+	isLogin, accessTokenObj, _ := loginCheckHandler(ctx, r, data)
 	if isLogin == false {
 		m := map[string]interface{}{"ret": "ng", "stat": "need login", "reqId": reqId} //, "dev": v}
 		Response(w, m)

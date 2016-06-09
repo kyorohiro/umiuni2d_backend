@@ -49,50 +49,6 @@ func articleGetWithNewOrderHandler(w http.ResponseWriter, r *http.Request) {
 	Response(w, m)
 }
 
-//----
-// myArticleHandler
-//---
-func meGetInfoHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Add("Access-Control-Allow-Origin", "*")
-	w.Header().Add("Access-Control-Allow-Headers", "apikey")
-
-	if r.Method != "POST" {
-		// you must to consider HEAD
-		return
-	}
-	ctx := appengine.NewContext(r)
-	// parse
-	var data map[string]interface{}
-	json.NewDecoder(r.Body).Decode(&data)
-	reqId := data[ReqPropertyRequestID].(string)
-
-	// find user
-	isLogin, accessTokenObj, _ := loginCheckHandler(ctx, r)
-	if isLogin == false {
-		m := map[string]interface{}{"ret": "ng", "stat": "need to login", "reqId": reqId}
-		Response(w, m)
-		return
-	}
-
-	userObj, err := GetUserManager().FindUserFromUserName(ctx, accessTokenObj.GetUserName())
-	if err != nil {
-		m := map[string]interface{}{"ret": "ng", "stat": "not found user", "reqId": reqId}
-		Response(w, m)
-		return
-	}
-
-	//
-	// ok
-	m := map[string]interface{}{
-		"ret":   "ok",
-		"stat":  "good",
-		"name":  userObj.GetUserName(),
-		"mail":  userObj.GetMail(),
-		"reqId": reqId,
-	}
-	Response(w, m)
-}
-
 func articlefindFromUserNameHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Access-Control-Allow-Origin", "*")
 	w.Header().Add("Access-Control-Allow-Headers", "apikey")

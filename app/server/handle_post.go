@@ -69,7 +69,7 @@ func articlePostHandler(w http.ResponseWriter, r *http.Request) {
 	state := data[ReqPropertyArticleState].(string)
 	userName := data[ReqPropertyName].(string)
 
-	isLogin, _, _ := loginCheckHandler(ctx, r)
+	isLogin, _, _ := loginCheckHandler(ctx, r, data)
 	if isLogin == false {
 		m := map[string]interface{}{"ret": "ng", "stat": "not found", "reqId": reqId}
 		Response(w, m)
