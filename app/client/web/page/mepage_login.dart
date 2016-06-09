@@ -5,6 +5,8 @@ import '../netbox/netboxme.dart' as nbox;
 import '../netbox/netboxfile.dart' as nbox;
 import '../netbox/status.dart' as nbox;
 import 'dialog_image.dart' as dialog;
+import 'dialog_text_with_pass.dart' as dialog;
+
 
 class MePage {
   String rootId;
@@ -110,17 +112,17 @@ class MePage {
             """<H5>EMail</H5>""",
             """ <div>""", //
             """  <div>${rt.mail}</div>""", //
-            """ <br><button id="${this.editMailId}" style="display:inline; padding: 12px 24px;">Edit</button>""",
+            """  <br><button id="${this.editMailId}" style="display:inline; padding: 12px 24px;">Edit</button>""",
             """ </div>""", //
             //
           ].join(),
           treeSanitizer: html.NodeTreeSanitizer.trusted);
       elm.querySelector("#${this.editMailId}").onClick.listen((_) {
-        dialog.ImgageDialog imgDialog = new dialog.ImgageDialog();
-        imgDialog.init();
-        imgDialog.show(onUpdated: (dialog.ImgageDialog d, String src) async {
-          var r = await netbox.newFileShareManager().fileShare(src, "meicon", status.userObjectId);
-          return (r.code == nbox.NetBox.ReqPropertyCodeOK);
+        dialog.TextDialogWithPass d = new dialog.TextDialogWithPass();
+        d.init();
+        d.show(onUpdated: (dialog.TextDialogWithPass d, String pass, String v) async{
+          print("--> ${pass} ${v}");
+          return true;
         });
       });
     }
