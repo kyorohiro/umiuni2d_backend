@@ -1,7 +1,7 @@
 import 'dart:html' as html;
 import 'dart:async';
-import '../netbox/netbox.dart' as netboxm;
-import '../netbox/status.dart' as netboxs;
+import '../../netbox/netbox.dart' as netboxm;
+import '../../netbox/status.dart' as netboxs;
 
 class MePageLogout {
   String rootId;
