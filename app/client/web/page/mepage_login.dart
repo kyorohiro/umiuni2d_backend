@@ -11,6 +11,7 @@ class MePage {
   String rootId;
   String editIconId;
   String editMailId;
+  String iconId;
 
   nbox.MyStatus status;
   nbox.NetBox netbox;
@@ -19,7 +20,8 @@ class MePage {
 
   MePage(this.status, this.netbox, this.rootId, //
       {this.editIconId: "editIconBtn",
-      this.editMailId: "editMailBtn"}) {
+      this.editMailId: "editMailBtn",//
+      this.iconId: "iconId"}) {
     init();
     html.window.onHashChange.listen((_) {
       updateFromHash();
@@ -82,7 +84,7 @@ class MePage {
             """<H5>Icon</H3>""",
             //
             """ <div>""", //
-            """ <img id="icon" style="display:inline; background-color:#99cc00;" src="${netbox.newMeManager().makeImgUserIconSrc(this.status.userName)}">""", //
+            """ <img id="${this.iconId}" style="display:inline; background-color:#99cc00;" src="${netbox.newMeManager().makeImgUserIconSrc(this.status.userName)}">""", //
             """ <br><button id="${this.editIconId}" style="display:inline; padding: 12px 24px;">Edit</button>""",
             """ </div>""", //
             //
@@ -94,17 +96,19 @@ class MePage {
         imgDialog.init();
         imgDialog.show(onUpdated: (dialog.ImgageDialog d, String src) async {
           var r = await netbox.newFileShareManager().fileShare(src, "meicon", status.userObjectId);
-          return (r.code == nbox.NetBox.ReqPropertyCodeOK);
+          if (r.code == nbox.NetBox.ReqPropertyCodeOK) {
+            print("---<<<>>>>> ${r.blobKey}");
+            html.ImageElement imgElm = elm.querySelector("#${this.iconId}");
+            imgElm.src = netbox.newFileShareManager().makeUrlFromBlobKey(r.blobKey);
+            return true;
+          } else {
+            return false;
+          }
         });
       });
       //
       //
       nbox.NetBoxMeManagerGetInfo rt = await this.netbox.newMeManager().getMyInfo(status.userObjectId);
-      //rt.code;
-      //rt.requestId;
-      //rt.mail;
-      //rt.name;
-      // this.editMailId
       elm.appendHtml(
           [
             //
