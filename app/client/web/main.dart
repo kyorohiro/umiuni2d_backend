@@ -1,11 +1,8 @@
 //
 import './page/mepage_login.dart';
 import './page/mepage_logout.dart';
-import './page/dialog.dart';
-import './page/dialog_image.dart';
 
 import 'netbox/netbox.dart' as netbox;
-import 'netbox/netboxme.dart' as netboxme;
 import 'netbox/status.dart' as netbox;
 import 'dart:html' as aahtml;
 BaseLine baseLine = new BaseLine();

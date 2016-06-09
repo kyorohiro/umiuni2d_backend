@@ -1,21 +1,16 @@
 import 'dart:html' as html;
+import '../util/imageutil.dart';
 import 'dialog.dart';
 import 'dart:async';
 
-class TextDialogWithPass {
+class ImgageDialog {
   Dialog base;
   String dialogName;
+  String fileBtnId;
   String uploadBtnId;
   String closeBtn;
-  String passId;
-  String inputValueId;
 
-  TextDialogWithPass(
-      {this.dialogName: "dialog_load_text",
-      this.uploadBtnId: "uploadBtn",
-      this.closeBtn: "closeBtn", //
-      this.passId: "passId",
-      this.inputValueId: "inputValueId"}) {
+  ImgageDialog({this.dialogName: "dialog_load_img", this.fileBtnId: "fileBtn", this.uploadBtnId: "uploadBtn", this.closeBtn: "closeBtn"}) {
     base = new Dialog(this.dialogName);
   }
 
@@ -23,31 +18,28 @@ class TextDialogWithPass {
     base.init();
   }
 
-  show({Future<bool> onUpdated(TextDialogWithPass dialog, String pass, String src): null, String type: "text"}) {
+  show({Future<bool> onUpdated(ImgageDialog dialog, String src): null}) {
     html.ImageElement imageTmp = null;
     List<String> c = [
-      """<h3>Text Edit</h3>""", //
-      """<input placeholder="pass" type="password" id=${this.passId}><br>""",
-      """<input placeholder="value" type="${type}" id=${this.inputValueId}><br><br>""",
-      """<button id="${this.uploadBtnId}" style="display:inline; padding: 12px 24px;">upload</button>""",
+      """<h3>Image Uploader</h3>""", //
+      """<input id="${this.fileBtnId}" style="display:block" type="file">""",
+      """<button id="${this.uploadBtnId}" style="display:none; padding: 12px 24px;">upload</button>""",
       """<button id="${this.closeBtn}" style="display:inline; padding: 12px 24px;">close</button>""",
     ];
     html.DialogElement elm = base.show(c.join("\r\n"));
     var uploadBtn = elm.querySelector("#${this.uploadBtnId}");
 
-    html.InputElement passElm = elm.querySelector("#${this.passId}");
-    html.InputElement valueElm = elm.querySelector("#${this.inputValueId}");
     //
     bool click = false;
     uploadBtn.onClick.listen((_) async {
-      if (click == true) {
+      if(click == true) {
         return;
       }
       click = true;
       uploadBtn.style.display = "none";
       try {
         if (onUpdated != null) {
-          if (true == await onUpdated(this, passElm.value, valueElm.value)) {
+          if(true == await onUpdated(this, imageTmp.src)) {
             this.close();
           }
         }
@@ -59,6 +51,17 @@ class TextDialogWithPass {
     var closeBtn = elm.querySelector("#${this.closeBtn}");
     closeBtn.onClick.listen((_) {
       this.close();
+    });
+    var fileBtn = elm.querySelector("#${this.fileBtnId}");
+    fileBtn.onChange.listen((html.Event e) async {
+      if (fileBtn.files.length == 0) {
+        return;
+      }
+      fileBtn.style.display = "none";
+      uploadBtn.style.display = "inline";
+      imageTmp = await ImageUtil.resizeImage(await ImageUtil.loadImage(fileBtn.files[0]));
+      imageTmp.id = "currentImage";
+      elm.children.add(imageTmp);
     });
   }
 
