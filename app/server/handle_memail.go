@@ -2,7 +2,7 @@ package hello
 
 import (
 	"encoding/json"
-	"fmt"
+	//	"fmt"
 	"net/http"
 
 	"google.golang.org/appengine"
@@ -136,23 +136,17 @@ func meUpdatePasswordHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := appengine.NewContext(r)
 	isLogin, accessTokenObj, _ := loginCheckHandler(ctx, r, data)
 	if isLogin == false {
-		m := map[string]string{"ret": "ng", "stat": "not found1", "reqId": reqId}
-		b, _ := json.Marshal(m)
-		fmt.Fprintln(w, string(b))
+		Response(w, map[string]interface{}{ReqPropertyCode: ReqPropertyCodeNotFound, ReqPropertyRequestID: reqId})
 		return
 	}
 
 	userObj, err1 := GetUserManager().FindUserFromUserName(ctx, accessTokenObj.GetUserName())
 	if err1 != nil {
-		m := map[string]string{"ret": "ng", "stat": "not found2", "reqId": reqId}
-		b, _ := json.Marshal(m)
-		fmt.Fprintln(w, string(b))
+		Response(w, map[string]interface{}{ReqPropertyCode: ReqPropertyCodeNotFound, ReqPropertyRequestID: reqId})
 		return
 	}
 	if userObj.CheckPassword(pass) == false {
-		m := map[string]string{"ret": "ng", "stat": "not found3", "reqId": reqId}
-		b, _ := json.Marshal(m)
-		fmt.Fprintln(w, string(b))
+		Response(w, map[string]interface{}{ReqPropertyCode: ReqPropertyCodeWrongNamePass, ReqPropertyRequestID: reqId})
 		return
 	}
 
@@ -160,18 +154,9 @@ func meUpdatePasswordHandler(w http.ResponseWriter, r *http.Request) {
 	err2 := userObj.PushToDB(ctx)
 
 	if err2 != nil {
-		m := map[string]string{"ret": "ng", "stat": "error", "reqId": reqId}
-		b, _ := json.Marshal(m)
-		fmt.Fprintln(w, string(b))
+		Response(w, map[string]interface{}{ReqPropertyCode: ReqPropertyCodeError, ReqPropertyRequestID: reqId})
 		return
 	}
 
-	m := map[string]string{
-		"ret":   "ok",
-		"stat":  "good",
-		"reqId": reqId,
-	}
-	b, _ := json.Marshal(m)
-	fmt.Fprintln(w, string(b))
-
+	Response(w, map[string]interface{}{ReqPropertyCode: ReqPropertyCodeOK, ReqPropertyRequestID: reqId})
 }

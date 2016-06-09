@@ -61,6 +61,19 @@ class NetBoxMeManagerMail {
   }
 }
 
+
+class NetBoxMeManagerPassword {
+  int code;
+  String requestId;
+
+  NetBoxMeManagerPassword(TinyNetRequesterResponse response) {
+    String body = conv.UTF8.decode(response.response.asUint8List());
+    Map<String, Object> ret = conv.JSON.decode(body);
+    this.code = ret[NetBox.ReqPropertyCode];
+    this.requestId = ret[NetBox.ReqPropertyRequestID];
+  }
+}
+
 class NetBoxMeManager {
   String backendAddr;
   String apiKey;
@@ -137,31 +150,40 @@ class NetBoxMeManager {
     String url = "${backendAddr}/api/${version}/me_mana/update_mail";
 
     TinyNetRequesterResponse response = await requester.request(TinyNetRequester.TYPE_POST, url,
-        headers: {"apikey": apiKey,}, //
         data: conv.JSON.encode({
           NetBox.ReqPropertyMail: mail, //
           NetBox.ReqPropertyPass: conv.BASE64.encode(//
               crypto.sha256.convert(conv.UTF8.encode(//
                   "" + name + ":" + passwordKey + ":" + pass)).bytes), //
           NetBox.ReqPropertyRequestID: "AABBCC", //
-          NetBox.ReqPropertyLoginId: loginId
+          NetBox.ReqPropertyLoginId: loginId,
+          NetBox.ReqPropertyApiKey: apiKey
         })); //
     return new NetBoxMeManagerMail(response);
   }
-/*
-//
-  Future<Map<String, String>> password(String userName, String newpass, String pass, String loginId) async {
-    print("--");
+
+  Future<NetBoxMeManagerPassword > password(String userName, String newpass, String pass, String loginId) async {
     TinyNetHtml5Builder builder = new TinyNetHtml5Builder();
     TinyNetRequester requester = await builder.createRequester();
-    String url = "${targetHost}/api/v1/me/update_password";
+    String url = "${backendAddr}/api/${version}/me_mana/update_password";
 
     TinyNetRequesterResponse response = await requester.request(TinyNetRequester.TYPE_POST, url, //
-      headers: {"apikey": apiKey,}, data: conv.JSON.encode(
-      {"userName":userName,"newpass": newpass, "pass": pass, "reqId": "AABBCC", "loginId": loginId}));
-    print(">> ${conv.UTF8.decode(response.response.asUint8List())}");
-    return conv.JSON.decode(conv.UTF8.decode(response.response.asUint8List()));
+      data: conv.JSON.encode({//
+        NetBox.ReqPropertyNewPass: conv.BASE64.encode(//
+            crypto.sha256.convert(conv.UTF8.encode(//
+                "" + userName + ":" + passwordKey + ":" + newpass)).bytes), //
+        NetBox.ReqPropertyPass: conv.BASE64.encode(//
+            crypto.sha256.convert(conv.UTF8.encode(//
+                "" + userName + ":" + passwordKey + ":" + pass)).bytes), //
+        NetBox.ReqPropertyRequestID: "AABBCC", //
+        NetBox.ReqPropertyLoginId: loginId,//
+        NetBox.ReqPropertyApiKey: apiKey
+    }));
+    return new NetBoxMeManagerPassword(response);
   }
+/*
+//
+
 
 
 

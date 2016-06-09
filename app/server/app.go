@@ -97,7 +97,7 @@ func init() {
 	http.HandleFunc("/api/v1/me_mana/get_icon", userGetIconHandle)
 	http.HandleFunc("/api/v1/me_mana/get_info", meGetInfoHandler)
 	http.HandleFunc("/api/v1/me_mana/update_mail", meUpdateMailHandler)
-
+	http.HandleFunc("/api/v1/me_mana/update_password", meUpdatePasswordHandler)
 	//
 	http.HandleFunc("/api/v1/me/check", meCheckHandler)
 	http.HandleFunc("/api/v1/logout", logoutHandler)
@@ -111,8 +111,6 @@ func init() {
 	http.HandleFunc("/api/v1/file/find_from_article", fileFindFromArticleHandler)
 
 	// me
-
-	http.HandleFunc("/api/v1/me/update_password", meUpdatePasswordHandler)
 
 	// article
 	http.HandleFunc("/api/v1/article/post", articlePostHandler)

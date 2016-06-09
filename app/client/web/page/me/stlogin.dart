@@ -6,6 +6,8 @@ import '../../netbox/netboxfile.dart' as nbox;
 import '../../netbox/status.dart' as nbox;
 import '../../dialog/dialog_image.dart' as dialog;
 import '../../dialog/dialog_text_with_pass.dart' as dialog;
+import '../../dialog/dialog_password.dart' as dialog;
+
 
 class MePage {
   String rootId;
@@ -141,14 +143,25 @@ class MePage {
             //
             """<H3>Password</H3>""",
             """ <div>""", //
-            """  <div>${rt.mail}</div>""", //
-            """  <br><button id="${this.editPasswordId}" style="display:inline; padding: 12px 24px;">Edit</button>""",
+            """  <button id="${this.editPasswordId}" style="display:inline; padding: 12px 24px;">Edit</button>""",
             """ </div>""", //
             //
           ].join(),
           treeSanitizer: html.NodeTreeSanitizer.trusted);
       elm.querySelector("#${this.editPasswordId}").onClick.listen((_) {
-        print("---> pass");
+        dialog.PasswordDialog d = new dialog.PasswordDialog();
+        d.init();
+        d.show(onUpdated: (dialog.PasswordDialog dialog, String pass, String newpass1, String newpass2) async {
+          if(newpass1 != newpass2) {
+            return false;
+          }
+          var r = await netbox.newMeManager().password(status.userName, newpass1, pass, status.userObjectId);
+          if( r.code == nbox.NetBox.ReqPropertyCodeOK) {
+            return true;
+          } else {
+            return false;
+          }
+        });
       });
     }
   }
