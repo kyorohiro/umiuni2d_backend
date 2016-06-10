@@ -90,17 +90,14 @@ func Response(w http.ResponseWriter, v map[string]interface{}) {
 
 func init() {
 
-	// mem_ana
+	// me_mana
 	http.HandleFunc("/api/v1/me_mana/regist_user", registHandler)
 	http.HandleFunc("/api/v1/me_mana/login", loginHandler)
-	// user
 	http.HandleFunc("/api/v1/me_mana/get_icon", userGetIconHandle)
-	http.HandleFunc("/api/v1/me_mana/get_info", meGetInfoHandler)
+	http.HandleFunc("/api/v1/me_mana/get_info", meCheckHandler)
 	http.HandleFunc("/api/v1/me_mana/update_mail", meUpdateMailHandler)
 	http.HandleFunc("/api/v1/me_mana/update_password", meUpdatePasswordHandler)
-	//
-	http.HandleFunc("/api/v1/me/check", meCheckHandler)
-	http.HandleFunc("/api/v1/logout", logoutHandler)
+	http.HandleFunc("/api/v1/me_mana/logout", logoutHandler)
 
 	// fileshare
 	http.HandleFunc("/api/v1/file/get_request_id", fileGetRequestIdHandler)

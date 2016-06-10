@@ -76,7 +76,7 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 
 func logoutHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Access-Control-Allow-Origin", "*")
-	w.Header().Add("Access-Control-Allow-Headers", "apikey")
+	//	w.Header().Add("Access-Control-Allow-Headers", "apikey")
 	if r.Method != "POST" {
 		return
 	}
@@ -89,12 +89,10 @@ func logoutHandler(w http.ResponseWriter, r *http.Request) {
 	err1 := GetUserManager().LogoutUser(ctx, propLoginId, r.RemoteAddr, r.UserAgent())
 
 	if err1 != nil {
-		m := map[string]interface{}{"ret": "ng", "stat": "error", "reqId": propRequestId}
-		Response(w, m)
+		Response(w, map[string]interface{}{ReqPropertyCode: ReqPropertyCodeNotFound, ReqPropertyRequestID: propRequestId})
 		return
 	} else {
-		m := map[string]interface{}{"ret": "ok", "stat": "good", "reqId": propRequestId}
-		Response(w, m)
+		Response(w, map[string]interface{}{ReqPropertyCode: ReqPropertyCodeOK, ReqPropertyRequestID: propRequestId})
 	}
 }
 
@@ -131,50 +129,6 @@ func meCheckHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-}
-
-//----
-// meinfo
-//---
-func meGetInfoHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Add("Access-Control-Allow-Origin", "*")
-	//w.Header().Add("Access-Control-Allow-Headers", "apikey")
-
-	if r.Method != "POST" {
-		// you must to consider HEAD
-		return
-	}
-	ctx := appengine.NewContext(r)
-	var data map[string]interface{}
-	json.NewDecoder(r.Body).Decode(&data)
-	reqId := data[ReqPropertyRequestID].(string)
-
-	// find user
-	WriteLog(ctx, "--->>>>>"+data[ReqPropertyLoginId].(string))
-	isLogin, accessTokenObj, _ := loginCheckHandler(ctx, r, data)
-	if isLogin == false {
-		m := map[string]interface{}{"ret": "ng", "stat": "need to login", "reqId": reqId}
-		Response(w, m)
-		return
-	}
-
-	userObj, err := GetUserManager().FindUserFromUserName(ctx, accessTokenObj.GetUserName())
-	if err != nil {
-		m := map[string]interface{}{"ret": "ng", "stat": "not found user", "reqId": reqId}
-		Response(w, m)
-		return
-	}
-
-	//
-	// ok
-	m := map[string]interface{}{
-		"ret":   "ok",
-		"stat":  "good",
-		"name":  userObj.GetUserName(),
-		"mail":  userObj.GetMail(),
-		"reqId": reqId,
-	}
-	Response(w, m)
 }
 
 //

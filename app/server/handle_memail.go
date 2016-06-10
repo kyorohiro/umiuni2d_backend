@@ -117,7 +117,7 @@ func meUpdateMailHandler(w http.ResponseWriter, r *http.Request) {
 // ------
 func meUpdatePasswordHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Access-Control-Allow-Origin", "*")
-	w.Header().Add("Access-Control-Allow-Headers", "apikey")
+	//	w.Header().Add("Access-Control-Allow-Headers", "apikey")
 	//	var v string = r.Method
 	if r.Method != "POST" {
 		// you must to consider HEAD
@@ -132,6 +132,7 @@ func meUpdatePasswordHandler(w http.ResponseWriter, r *http.Request) {
 	pass := data[ReqPropertyPass].(string)
 	newpass := data[ReqPropertyNewPass].(string)
 
+	//
 	// find user
 	ctx := appengine.NewContext(r)
 	isLogin, accessTokenObj, _ := loginCheckHandler(ctx, r, data)
