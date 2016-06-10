@@ -1,9 +1,11 @@
 //
 import './page/me/stlogin.dart';
 import './page/me/stlogout.dart';
+import './toolbar/toolbar.dart';
 
 import 'netbox/netbox.dart' as netbox;
 import 'netbox/status.dart' as netbox;
+
 import 'dart:html' as aahtml;
 BaseLine baseLine = new BaseLine();
 netbox.NetBox rootBox = new netbox.NetBox("http://127.0.0.1:8080", "A91A3E1B-15F0-4DEE-8ECE-F5DD1A06230E");
@@ -34,63 +36,7 @@ void main() {
 
 }
 
-class BaseLine {
-  makeMain() {
-    aahtml.document.body.appendHtml([
-      """<div id="main">""", //
-      """</div>"""
-    ].join("\r\n"));
-  }
 
-  makeToolbar(List<String> titles, List<String> hashs) {
-    aahtml.StyleElement styleElement = new aahtml.StyleElement();
-    styleElement.type = "text/css";
-    styleElement.text = [
-      """.atoolbar body {""", //
-      """  font-family: sans-serif;""", //
-      """}""", //
-      """nav.atoolbar  {""", //
-      """	background-color: #222222;""", //
-      """	color: white;""", //
-      """}""", //
-      """nav.atoolbar  ul {""", //
-      """	display: flex;""", //
-      """	flex-flow: row;""", //
-      """	margin: 0;""", //
-      """	padding: 6px;""", //
-      """	list-style-type: none;""", //
-      """}""", //
-      """nav.atoolbar  a {""", //
-      """	display: block;""", //
-      """	border-radius: 4px;""", //
-      """	padding: 12px 24px;""", //
-      """	color: white;""", //
-      """	text-decoration: none;""", //
-      """}""", //
-      """nav.atoolbar  li a:hover {""", //
-      """	background-color: #8cae47;""", //
-      """}"""
-    ].join("\r\n"); //
-    aahtml.document.head.append(styleElement);
-    var a = [];
-    a.addAll([
-      """<nav class="atoolbar">""", //
-      """		<ul id="plain-menu">""",
-    ]); //
-
-    for (int i = 0; i < titles.length; i++) {
-      a.addAll([
-        """				<li><a href="#/${Uri.encodeComponent(hashs[i])}">${titles[i]}</a></li>""", //
-      ]);
-    }
-    a.addAll([
-      """		</ul>""", //
-      """</nav>"""
-    ]);
-
-    aahtml.document.body.appendHtml(a.join("\r\n")); //
-  }
-}
 //
 //
 //

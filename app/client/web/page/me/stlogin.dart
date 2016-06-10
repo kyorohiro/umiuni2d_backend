@@ -111,6 +111,7 @@ class MePage {
           } catch (e) {}
           status.userObjectId = "";
           status.userName = "";
+          html.window.location.assign("#/Home");
           return true;
         });
       });
