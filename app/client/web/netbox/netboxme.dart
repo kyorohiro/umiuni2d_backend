@@ -48,7 +48,6 @@ class NetBoxMeManagerGetInfo {
   }
 }
 
-
 class NetBoxMeManagerMail {
   int code;
   String requestId;
@@ -61,6 +60,17 @@ class NetBoxMeManagerMail {
   }
 }
 
+class NetBoxMeManagerLogout {
+  int code;
+  String requestId;
+
+  NetBoxMeManagerLogout(TinyNetRequesterResponse response) {
+    String body = conv.UTF8.decode(response.response.asUint8List());
+    Map<String, Object> ret = conv.JSON.decode(body);
+    this.code = ret[NetBox.ReqPropertyCode];
+    this.requestId = ret[NetBox.ReqPropertyRequestID];
+  }
+}
 
 class NetBoxMeManagerPassword {
   int code;
@@ -162,24 +172,39 @@ class NetBoxMeManager {
     return new NetBoxMeManagerMail(response);
   }
 
-  Future<NetBoxMeManagerPassword > password(String userName, String newpass, String pass, String loginId) async {
+  Future<NetBoxMeManagerPassword> password(String userName, String newpass, String pass, String loginId) async {
     TinyNetHtml5Builder builder = new TinyNetHtml5Builder();
     TinyNetRequester requester = await builder.createRequester();
     String url = "${backendAddr}/api/${version}/me_mana/update_password";
 
     TinyNetRequesterResponse response = await requester.request(TinyNetRequester.TYPE_POST, url, //
-      data: conv.JSON.encode({//
-        NetBox.ReqPropertyNewPass: conv.BASE64.encode(//
-            crypto.sha256.convert(conv.UTF8.encode(//
-                "" + userName + ":" + passwordKey + ":" + newpass)).bytes), //
-        NetBox.ReqPropertyPass: conv.BASE64.encode(//
-            crypto.sha256.convert(conv.UTF8.encode(//
-                "" + userName + ":" + passwordKey + ":" + pass)).bytes), //
-        NetBox.ReqPropertyRequestID: "AABBCC", //
-        NetBox.ReqPropertyLoginId: loginId,//
-        NetBox.ReqPropertyApiKey: apiKey
-    }));
+        data: conv.JSON.encode({
+          //
+          NetBox.ReqPropertyNewPass: conv.BASE64.encode(//
+              crypto.sha256.convert(conv.UTF8.encode(//
+                  "" + userName + ":" + passwordKey + ":" + newpass)).bytes), //
+          NetBox.ReqPropertyPass: conv.BASE64.encode(//
+              crypto.sha256.convert(conv.UTF8.encode(//
+                  "" + userName + ":" + passwordKey + ":" + pass)).bytes), //
+          NetBox.ReqPropertyRequestID: "AABBCC", //
+          NetBox.ReqPropertyLoginId: loginId, //
+          NetBox.ReqPropertyApiKey: apiKey
+        }));
     return new NetBoxMeManagerPassword(response);
+  }
+
+  Future<NetBoxMeManagerLogout> logout(String loginId) async {
+    TinyNetHtml5Builder builder = new TinyNetHtml5Builder();
+    TinyNetRequester requester = await builder.createRequester();
+    String url = "${backendAddr}/api/${version}/me_mana/logout";
+
+    TinyNetRequesterResponse response = await requester.request(TinyNetRequester.TYPE_POST, url, //
+        data: conv.JSON.encode({
+          NetBox.ReqPropertyLoginId: loginId, //
+          NetBox.ReqPropertyRequestID: "AABBCC", //
+          NetBox.ReqPropertyApiKey: apiKey
+        }));
+    return new NetBoxMeManagerLogout(response);
   }
 /*
 //
@@ -187,17 +212,7 @@ class NetBoxMeManager {
 
 
 
-  Future<Map<String, String>> check(String name, String loginId) async {
-    TinyNetHtml5Builder builder = new TinyNetHtml5Builder();
-    TinyNetRequester requester = await builder.createRequester();
-    String url = "${targetHost}/api/v1/me/check";
 
-    TinyNetRequesterResponse response = await requester.request(
-      TinyNetRequester.TYPE_POST, url, headers: {"apikey": apiKey,},//
-       data: conv.JSON.encode({"reqId": "AABBCC", "loginId": loginId, "userName": name}));
-    print(">> ${conv.UTF8.decode(response.response.asUint8List())}");
-    return conv.JSON.decode(conv.UTF8.decode(response.response.asUint8List()));
-  }
 
   Future<Map<String, String>> rescue(String mail) async {
     print("--");

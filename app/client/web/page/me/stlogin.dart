@@ -4,13 +4,14 @@ import '../../netbox/netbox.dart' as nbox;
 import '../../netbox/netboxme.dart' as nbox;
 import '../../netbox/netboxfile.dart' as nbox;
 import '../../netbox/status.dart' as nbox;
+import '../../dialog/dialog_confirm.dart' as dialog;
 import '../../dialog/dialog_image.dart' as dialog;
 import '../../dialog/dialog_text_with_pass.dart' as dialog;
 import '../../dialog/dialog_password.dart' as dialog;
 
-
 class MePage {
   String rootId;
+  String logoutId;
   String editIconId;
   String editMailId;
   String editPasswordId;
@@ -22,7 +23,8 @@ class MePage {
   static String propPassword = "password";
 
   MePage(this.status, this.netbox, this.rootId, //
-      {this.editIconId: "editIconBtn",
+      {this.logoutId: "logoutId",
+      this.editIconId: "editIconBtn",
       this.editMailId: "editMailBtn", //
       this.iconId: "iconId",
       this.editPasswordId: "editPasswordId"}) {
@@ -85,8 +87,10 @@ class MePage {
       elm.appendHtml(
           [
             """<H2>${this.status.userName}</H2>""",
+            """ <br><button id="${this.logoutId}" style="display:inline; padding: 12px 24px;">Logout</button>""",
+
+            ///
             """<H3>Icon</H3>""",
-            //
             """ <div>""", //
             """ <img id="${this.iconId}" style="display:inline; background-color:#99cc00;" src="${netbox.newMeManager().makeImgUserIconSrc(this.status.userName)}">""", //
             """ <br><button id="${this.editIconId}" style="display:inline; padding: 12px 24px;">Edit</button>""",
@@ -95,6 +99,21 @@ class MePage {
           ].join(),
           treeSanitizer: html.NodeTreeSanitizer.trusted);
       //
+      elm.querySelector("#${logoutId}").onClick.listen((_) {
+        dialog.ConfirmDialog d = new dialog.ConfirmDialog();
+        d.init();
+        d.show("Logout", "Really OK. Logout", onUpdated: (dialog.ConfirmDialog d, bool o) async {
+          if (o == false) {
+            return true;
+          }
+          try {
+            await netbox.newMeManager().logout(status.userObjectId);
+          } catch (e) {}
+          status.userObjectId = "";
+          status.userName = "";
+          return true;
+        });
+      });
       elm.querySelector("#${editIconId}").onClick.listen((_) {
         dialog.ImgageDialog imgDialog = new dialog.ImgageDialog();
         imgDialog.init();
@@ -152,11 +171,11 @@ class MePage {
         dialog.PasswordDialog d = new dialog.PasswordDialog();
         d.init();
         d.show(onUpdated: (dialog.PasswordDialog dialog, String pass, String newpass1, String newpass2) async {
-          if(newpass1 != newpass2) {
+          if (newpass1 != newpass2) {
             return false;
           }
           var r = await netbox.newMeManager().password(status.userName, newpass1, pass, status.userObjectId);
-          if( r.code == nbox.NetBox.ReqPropertyCodeOK) {
+          if (r.code == nbox.NetBox.ReqPropertyCodeOK) {
             return true;
           } else {
             return false;

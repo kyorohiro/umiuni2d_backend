@@ -25,9 +25,9 @@ void main() {
       }
     }
   });
-  MePage myPage = new MePage(new netbox.MyStatus(), rootBox, "main");
+  MePage myPage = new MePage(netbox.MyStatus.instance, rootBox, "main");
   myPage.updateFromHash();
-  MePageLogout myPageLogout = new MePageLogout(new netbox.MyStatus(), rootBox, "main");
+  MePageLogout myPageLogout = new MePageLogout(netbox.MyStatus.instance, rootBox, "main");
   myPageLogout.updateFromHash();
 
   //

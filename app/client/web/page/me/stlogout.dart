@@ -18,6 +18,7 @@ class MePageLogout {
   }
 
   Future updateFromHash() async {
+    print("##====> ${this.status.isLogin}");
     if (this.status.isLogin == true) {
       return;
     }
@@ -28,7 +29,9 @@ class MePageLogout {
       hash = hash.substring(0, hash.indexOf("?"));
     }
     if (hash.startsWith("#/Me")) {
+      print("----->(1)");
       if (hash == "#/Me") {
+        print("----->(2)");
         update();
       } else if (hash == "#/Me/register") {
         updateRegister(prop);

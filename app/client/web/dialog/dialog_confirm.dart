@@ -30,7 +30,7 @@ class ConfirmDialog {
 
     //
     bool click = false;
-    b(bool ret) {
+    b(bool vvv) {
       return (_) async {
         if (click == true) {
           return false;
@@ -38,9 +38,12 @@ class ConfirmDialog {
         bool ret = true;
         try {
           click = true;
-          ret = await onUpdated(this, ret);
+          ret = await onUpdated(this, vvv);
         } finally {
           click = false;
+        }
+        if(ret == true) {
+          this.close();
         }
         return ret;
       };
