@@ -134,7 +134,7 @@ class MePageLogout {
       """ <ul>""",
       """		<li>Login</li>""", //
       """   <li><input type="text" id="${propUserName}"/></li>""",
-      """   <li><input type="text" id="${propPassword}"/></li>""",
+      """   <li><input type="password" id="${propPassword}"/></li>""",
       """		<li><a href="#/Me/login/do">Login</a></li>""", //
       """ </ul>""",
       """</nav>""",
