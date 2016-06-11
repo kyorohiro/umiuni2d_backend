@@ -11,7 +11,7 @@ class TextDialogWithPass {
   String inputValueId;
 
   TextDialogWithPass(
-      {this.dialogName: "dialog_load_text",
+      {this.dialogName: "dialog_load_text_with_pass",
       this.uploadBtnId: "uploadBtn",
       this.closeBtn: "closeBtn", //
       this.passId: "passId",

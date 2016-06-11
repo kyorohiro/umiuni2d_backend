@@ -23,15 +23,18 @@ class ConfirmDialog {
       """<button id="${this.okBtnId}" style="display:inline; padding: 12px 24px;">${okName}</button>""",
       """<button id="${this.cancelBtnId}" style="display:inline; padding: 12px 24px;">${cancelName}</button>""",
     ];
-
+    print("---->ssa");
     html.DialogElement elm = base.show(c.join("\r\n"));
+    print("---->ssa");
     var okBtn = elm.querySelector("#${this.okBtnId}");
     var cancelBtn = elm.querySelector("#${this.cancelBtnId}");
 
     //
+          print("---->ssa");
     bool click = false;
     b(bool vvv) {
       return (_) async {
+        print("---->ss");
         if (click == true) {
           return false;
         }

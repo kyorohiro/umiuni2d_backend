@@ -18,8 +18,10 @@ class PostPage {
   nbox.NetBox netbox;
 
   PostPage(this.status, this.netbox, this.rootId) {
+
     html.window.onHashChange.listen((_) {
-      updateFromHash();
+
+        updateFromHash();
     });
   }
 
@@ -46,7 +48,6 @@ class PostPage {
     elm.children.clear();
     util.TextBuilder builder = new util.TextBuilder();
     if (this.status.isLogin) {
-
       elm.appendHtml(
           [
             """<H2>${this.status.userName}</H2>""",
@@ -55,12 +56,12 @@ class PostPage {
             ///
             """<H3>Icon</H3>""",
             """ <div>""", //
-  //          """ <img id="${this.iconId}" style="display:inline; background-color:#99cc00;" src="${netbox.newMeManager().makeImgUserIconSrc(this.status.userName)}">""", //
-  //          """ <br><button id="${this.editIconId}" style="display:inline; padding: 12px 24px;">Edit</button>""",
+            //          """ <img id="${this.iconId}" style="display:inline; background-color:#99cc00;" src="${netbox.newMeManager().makeImgUserIconSrc(this.status.userName)}">""", //
+            //          """ <br><button id="${this.editIconId}" style="display:inline; padding: 12px 24px;">Edit</button>""",
             """ </div>""", //
             //
           ].join(),
           treeSanitizer: html.NodeTreeSanitizer.trusted);
-        }
+    }
   }
 }

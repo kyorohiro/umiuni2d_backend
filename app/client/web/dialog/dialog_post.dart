@@ -3,6 +3,7 @@ import 'dialog.dart';
 import 'dart:async';
 import '../util/textbuilder.dart' as util;
 import '../dialog/dialog_text.dart' as dialog;
+import '../dialog/dialog_confirm.dart' as dialog;
 
 class PostDialog {
   Dialog base;
@@ -13,7 +14,7 @@ class PostDialog {
       { //
       this.naviId: "naviId",
       String width: "300px",
-      this.dialogName: "dialog_confirm"}) {
+      this.dialogName: "dialog_post"}) {
     base = new Dialog(this.dialogName, width: width);
   }
 
@@ -67,13 +68,30 @@ class PostDialog {
     ]);
   }
 
-  addTag(List<String> tags,String tag) {
+  addTag(List<String> tags, String tag) {
     html.Element d = base.getDialogElement().querySelector("#${this.naviId}_tag");
     html.Element b = new html.Element.html("<button>${tag}</button>");
     d.children.add(b);
-    b.onClick.listen((_){
-      tags.remove(tag);
-      d.children.remove(b);
+    b.onClick.listen((_) {
+      dialog.ConfirmDialog dd = new dialog.ConfirmDialog();
+      dd.init();
+      bool click = false;
+      if (click == true) {
+        return;
+      }
+      try {
+        click = true;
+        dd.show("Delete Tag", "", onUpdated: (dialog.ConfirmDialog dd, bool isOk) {
+          print("------->");
+          if (isOk == true) {
+            tags.remove(tag);
+            d.children.remove(b);
+          }
+          dd.close();
+        });
+      } catch (e) {} finally {
+        click = false;
+      }
     });
   }
 
@@ -94,16 +112,14 @@ class PostDialog {
       """</div></nav>"""
     ]);
 
-    builder.end(tag, [
-      """<button id="${this.naviId}_addtag">add tag</button>""",
-    ]);
+    builder.end(tag, ["""<button id="${this.naviId}_addtag">add tag</button>""",]);
 
     html.DialogElement elm = base.show(builder.toText("\r\n"));
-    elm.querySelector("#${this.naviId}_addtag").onClick.listen((_){
+    elm.querySelector("#${this.naviId}_addtag").onClick.listen((_) {
       dialog.TextDialog d = new dialog.TextDialog();
       d.init();
-      d.show("Add Tag","",onUpdated: (dialog.TextDialog d, String v){
-        if( false == tags.contains(v)){
+      d.show("Add Tag", "", onUpdated: (dialog.TextDialog d, String v) {
+        if (false == tags.contains(v)) {
           addTag(tags, v);
           tags.add(v);
         }
