@@ -22,10 +22,10 @@ class TextDialog {
     base.init();
   }
 
-  show({Future<bool> onUpdated(TextDialog dialog, String src): null, String type: "text"}) {
+  show(String title, String message, {Future<bool> onUpdated(TextDialog dialog, String src): null, String type: "text"}) {
     List<String> c = [
-      """<h3>Text Edit</h3>""", //
-      """<input placeholder="pass" type="password" id=${this.passId}><br>""",
+      """<h3>${title}</h3>""", //
+      """<div>${message}</div>""",
       """<input placeholder="value" type="${type}" id=${this.inputValueId}><br><br>""",
       """<button id="${this.uploadBtnId}" style="display:inline; padding: 12px 24px;">upload</button>""",
       """<button id="${this.closeBtn}" style="display:inline; padding: 12px 24px;">close</button>""",

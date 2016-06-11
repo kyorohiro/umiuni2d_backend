@@ -2,6 +2,7 @@ import 'dart:html' as html;
 import 'dialog.dart';
 import 'dart:async';
 import '../util/textbuilder.dart' as util;
+import '../dialog/dialog_text.dart' as dialog;
 
 class PostDialog {
   Dialog base;
@@ -66,7 +67,17 @@ class PostDialog {
     ]);
   }
 
-  show(String title, String message, {String okName: "OK", String cancelName: "Cancel", Future<bool> onUpdated(PostDialog dialog, bool okBtnIsSelected): null, String type: "text"}) {
+  addTag(List<String> tags,String tag) {
+    html.Element d = base.getDialogElement().querySelector("#${this.naviId}_tag");
+    html.Element b = new html.Element.html("<button>${tag}</button>");
+    d.children.add(b);
+    b.onClick.listen((_){
+      tags.remove(tag);
+      d.children.remove(b);
+    });
+  }
+
+  show(String title, List<String> tags, String message, {String okName: "OK", String cancelName: "Cancel", Future<bool> onUpdated(PostDialog dialog, bool okBtnIsSelected): null, String type: "text"}) {
     util.TextBuilder builder = new util.TextBuilder();
     builder.end(builder.getRootTicket(), [
       """<nav class="${this.naviId}">""", //
@@ -88,8 +99,16 @@ class PostDialog {
     ]);
 
     html.DialogElement elm = base.show(builder.toText("\r\n"));
-    elm.querySelector("#${this.naviId}_tag").onClick.listen((_){
-      print("----->");
+    elm.querySelector("#${this.naviId}_addtag").onClick.listen((_){
+      dialog.TextDialog d = new dialog.TextDialog();
+      d.init();
+      d.show("Add Tag","",onUpdated: (dialog.TextDialog d, String v){
+        if( false == tags.contains(v)){
+          addTag(tags, v);
+          tags.add(v);
+        }
+        return true;
+      });
     });
 
     //

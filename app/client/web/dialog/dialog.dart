@@ -5,6 +5,7 @@ class Dialog {
   String width;
   Dialog(this.dialogName,{this.width:"300px"}) {}
 
+
   html.DialogElement show(String cont) {
     html.DialogElement dialog = html.document.body.querySelector('#${dialogName}');
     dialog.children.clear();
@@ -12,7 +13,9 @@ class Dialog {
     dialog.showModal();
     return dialog;
   }
-
+  html.DialogElement getDialogElement() {
+    return html.document.body.querySelector('#${dialogName}');
+  }
   close() {
     html.DialogElement dialog = html.document.body.querySelector('#${dialogName}');
     dialog.close("ok");

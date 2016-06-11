@@ -34,7 +34,7 @@ class FeedPage {
         //.update();
         dialog.PostDialog d = new dialog.PostDialog(width: "100%");
         d.init();
-        d.show("title", "message<br>asdff<br>asdf<br>asasdf<br><br><br><br><br><br>asdafsdf");
+        d.show("title", [],"message<br>asdff<br>asdf<br>asasdf<br><br><br><br><br><br>asdafsdf");
       }
     }
   }
