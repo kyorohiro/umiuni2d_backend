@@ -1,7 +1,7 @@
 import 'dart:html' as html;
 
 //
-class BaseLine {
+class Toolbar {
 
   init() {
     makeToolbar([], []);
@@ -13,6 +13,18 @@ class BaseLine {
       """<div id="main">""", //
       """</div>"""
     ].join("\r\n"));
+  }
+
+  updateToolbar(List<String> titles, List<String> hashs) {
+    html.UListElement u = html.document.body.querySelector("#plain-menu");
+    u.children.clear();
+    List a = [];
+    for (int i = 0; i < titles.length; i++) {
+      a.addAll([
+        """				<li><a href="#/${Uri.encodeComponent(hashs[i])}">${titles[i]}</a></li>""", //
+      ]);
+    }
+    u.appendHtml(a.join("\r\n"));
   }
 
   makeToolbar(List<String> titles, List<String> hashs) {
@@ -50,17 +62,18 @@ class BaseLine {
       """<nav class="atoolbar">""", //
       """		<ul id="plain-menu">""",
     ]); //
-
+/*
     for (int i = 0; i < titles.length; i++) {
       a.addAll([
         """				<li><a href="#/${Uri.encodeComponent(hashs[i])}">${titles[i]}</a></li>""", //
       ]);
-    }
+    }*/
     a.addAll([
       """		</ul>""", //
       """</nav>"""
     ]);
-
     html.document.body.appendHtml(a.join("\r\n")); //
+
+    updateToolbar(titles, hashs);
   }
 }

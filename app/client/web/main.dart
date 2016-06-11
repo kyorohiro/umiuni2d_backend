@@ -1,23 +1,21 @@
 //
 import './page/me/stlogin.dart';
 import './page/me/stlogout.dart';
+import './page/feed/feed.dart';
 import './toolbar/toolbar.dart';
 
 import 'netbox/netbox.dart' as netbox;
 import 'netbox/status.dart' as netbox;
 
 import 'dart:html' as aahtml;
-BaseLine baseLine = new BaseLine();
+Toolbar baseLine = new Toolbar();
 netbox.NetBox rootBox = new netbox.NetBox("http://127.0.0.1:8080", "A91A3E1B-15F0-4DEE-8ECE-F5DD1A06230E");
 
 //
 //
 void main() {
-  //
-  baseLine.makeToolbar(//
-      ["Home", "Article", "Q/A", "Vote", "Me"], ["Home", "Article", "Q/A", "Vote", "Me"]);
-  baseLine.makeMain();
-
+  baseLine.init();
+  baseLine.updateToolbar(["Home", "Article", "Q/A", "Vote", "Me"], ["Home", "Article", "Q/A", "Vote", "Me"]);
   aahtml.window.onHashChange.listen((_) {
     var hash = Uri.decodeComponent(aahtml.window.location.hash);
     for (var v in ["Home", "Article", "Q/A", "Vote"]) {
@@ -32,6 +30,8 @@ void main() {
   MePageLogout myPageLogout = new MePageLogout(netbox.MyStatus.instance, rootBox, "main");
   myPageLogout.updateFromHash();
 
+  FeedPage feedPage = new FeedPage(netbox.MyStatus.instance, rootBox, "main");
+  feedPage.updateFromHash();
   //
 
 }
