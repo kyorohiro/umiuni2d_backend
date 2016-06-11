@@ -1,10 +1,11 @@
 import 'netboxme.dart';
 import 'netboxfile.dart';
+import 'netboxart.dart';
 
 class NetBox {
   static final String ReqPropertyName = "userName";
   static final String ReqPropertyTitle = "title";
-  static final String ReqPropertyTab = "tab";
+  static final String ReqPropertyTag = "tag";
   static final String ReqPropertyCont = "cont";
   static final ReqPropertyArticleState = "state";
   static final String ReqPropertyFileName = "fileName";
@@ -35,4 +36,9 @@ class NetBox {
   NetBoxFileShareManager newFileShareManager() {
     return new NetBoxFileShareManager(this.backendAddr, this.apiKey, version: this.version);
   }
+
+  NetBoxArtManager newArtManager() {
+    return new NetBoxArtManager(this.backendAddr, this.apiKey, version: this.version);
+  }
+
 }

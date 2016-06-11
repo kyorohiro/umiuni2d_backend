@@ -4,13 +4,17 @@ import 'dart:async';
 import '../util/textbuilder.dart' as util;
 import '../dialog/dialog_text.dart' as dialog;
 import '../dialog/dialog_confirm.dart' as dialog;
+import '../netbox/netbox.dart' as nbox;
+import '../netbox/netboxart.dart' as nbox;
+import '../netbox/status.dart' as nbox;
 
 class PostDialog {
   Dialog base;
   String dialogName;
   String naviId;
-
-  PostDialog(
+  nbox.NetBox netbox;
+  nbox.MyStatus status;
+  PostDialog(this.status, this.netbox,
       { //
       this.naviId: "naviId",
       String width: "300px",
@@ -135,7 +139,7 @@ class PostDialog {
 
     builder.end(tag, ["""<button id="${this.naviId}_addtag">add tag</button>""",]);
     builder.end(navi, [
-      """<textarea class="textarea"></textarea>""",
+      """<textarea id="${this.naviId}_cont" class="textarea"></textarea>""",
     ]);
 
     html.DialogElement elm = base.show(builder.toText("\r\n"));
@@ -152,12 +156,17 @@ class PostDialog {
     });
     //
     //
+    html.TextAreaElement contElm = elm.querySelector("#${this.naviId}_cont");
+    html.InputElement titleElm = elm.querySelector("#${this.naviId}_title");
+
     elm.querySelector("#back").onClick.listen((_) {
       this.close();
     });
 
     elm.querySelector("#save").onClick.listen((_) {
       print("--save");
+      netbox.newArtManager().post(status.userName, status.userObjectId, //
+        "", titleElm.value, tags.join(","), contElm.value, "save");
     });
 
 

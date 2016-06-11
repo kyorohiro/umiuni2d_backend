@@ -90,6 +90,7 @@ func Response(w http.ResponseWriter, v map[string]interface{}) {
 
 func init() {
 
+	//
 	// me_mana
 	http.HandleFunc("/api/v1/me_mana/regist_user", registHandler)
 	http.HandleFunc("/api/v1/me_mana/login", loginHandler)
@@ -99,6 +100,11 @@ func init() {
 	http.HandleFunc("/api/v1/me_mana/update_password", meUpdatePasswordHandler)
 	http.HandleFunc("/api/v1/me_mana/logout", logoutHandler)
 
+	//
+	// art_mana
+	http.HandleFunc("/api/v1/art_mana/post", articlePostHandler)
+
+	//
 	// fileshare
 	http.HandleFunc("/api/v1/file/get_request_id", fileGetRequestIdHandler)
 	http.HandleFunc("/api/v1/file/on_uploaded", fileOnUploadedHandler)
@@ -110,7 +116,6 @@ func init() {
 	// me
 
 	// article
-	http.HandleFunc("/api/v1/article/post", articlePostHandler)
 	http.HandleFunc("/api/v1/article/get", articleGetHandler)
 	http.HandleFunc("/api/v1/article/get_with_neworder", articleGetWithNewOrderHandler)
 	http.HandleFunc("/api/v1/article/vote", articleVoteHandler)

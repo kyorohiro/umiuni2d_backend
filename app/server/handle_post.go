@@ -50,26 +50,34 @@ func articleVoteHandler(w http.ResponseWriter, r *http.Request) {
 // ------
 func articlePostHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Access-Control-Allow-Origin", "*")
-	w.Header().Add("Access-Control-Allow-Headers", "apikey")
+	//w.Header().Add("Access-Control-Allow-Headers", "apikey")
 	//	var v string = r.Method
 	if r.Method != "POST" {
 		// you must to consider HEAD
 		return
 	}
 	ctx := appengine.NewContext(r)
-
+	WriteLog(ctx, "-----> (0)")
 	// parse
-	var data map[string]interface{}
-	json.NewDecoder(r.Body).Decode(&data)
-	cont := data[ReqPropertyArticleCont].(string)
-	title := data[ReqPropertyArticleTitle].(string)
-	tag := data[ReqPropertyArticleTag].(string)
-	articleId := data[ReqPropertyArticleId].(string)
-	reqId := data[ReqPropertyRequestID].(string)
-	state := data[ReqPropertyArticleState].(string)
-	userName := data[ReqPropertyName].(string)
+	var requestPropery map[string]interface{}
+	json.NewDecoder(r.Body).Decode(&requestPropery)
+	WriteLog(ctx, "-----> (a)")
+	cont := requestPropery[ReqPropertyArticleCont].(string)
+	title := requestPropery[ReqPropertyArticleTitle].(string)
+	WriteLog(ctx, "-----> (b)")
+	tag := requestPropery[ReqPropertyArticleTag].(string)
+	WriteLog(ctx, "-----> (b1)")
+	articleId := requestPropery[ReqPropertyArticleId].(string)
+	WriteLog(ctx, "-----> (c)")
+	reqId := requestPropery[ReqPropertyRequestID].(string)
+	state := requestPropery[ReqPropertyArticleState].(string)
+	WriteLog(ctx, "-----> (d)")
+	userName := requestPropery[ReqPropertyName].(string)
 
-	isLogin, _, _ := loginCheckHandler(ctx, r, data)
+	WriteLog(ctx, "-----> (1)")
+	isLogin, _, _ := loginCheckHandler(ctx, r, requestPropery)
+
+	WriteLog(ctx, "-----> (2)")
 	if isLogin == false {
 		m := map[string]interface{}{"ret": "ng", "stat": "not found", "reqId": reqId}
 		Response(w, m)
@@ -78,6 +86,8 @@ func articlePostHandler(w http.ResponseWriter, r *http.Request) {
 	//
 	//	w.Write()
 	//
+	WriteLog(ctx, "-----> (4)")
+
 	artMana := article.NewArticleManager("Article")
 	//	ctx := appengine.NewContext(r)
 

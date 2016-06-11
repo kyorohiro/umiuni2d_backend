@@ -32,7 +32,7 @@ class FeedPage {
       }
       if (hash == "#/Article/post") {
         //.update();
-        dialog.PostDialog d = new dialog.PostDialog(width: "100%");
+        dialog.PostDialog d = new dialog.PostDialog(status, netbox, width: "100%");
         d.init();
         d.show("title", [],"message<br>asdff<br>asdf<br>asasdf<br><br><br><br><br><br>asdafsdf");
       }

@@ -12,19 +12,16 @@ class NetBoxArtManager {
 
   NetBoxArtManager(this.backendAddr, this.apiKey, {this.version: "v1", this.passwordKey: "umiuni2d"}) {}
 
-  String makeUrlFromBlobKey(String blobKey) {
-    return "${this.backendAddr}/api/v1/file/get?blobKey=${blobKey}";
-  }
 
-  Future<Map<String, String>> post(String userName, String loginId, String articleId, String title, String tab, String cont, String state) async {
-    print("--");
+  Future<Map<String, String>> post(String userName, String loginId, String articleId,
+     String title, String tag, String cont, String state) async {
     TinyNetHtml5Builder builder = new TinyNetHtml5Builder();
     TinyNetRequester requester = await builder.createRequester();
-    String url = "${this.backendAddr}/api/v1/article/post";
+    String url = "${this.backendAddr}/api/${version}/art_mana/post";
 
     TinyNetRequesterResponse response = await requester.request(TinyNetRequester.TYPE_POST, url, //
         data: conv.JSON.encode({
-          NetBox.ReqPropertyTab: tab,//
+          NetBox.ReqPropertyTag: tag,//
           NetBox.ReqPropertyTitle: title, //
           NetBox.ReqPropertyCont: cont, //
           NetBox.ReqPropertyArticleState: state, //
