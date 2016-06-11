@@ -55,7 +55,14 @@ class PostDialog {
       """	margin: 0;""", //
       """	padding: 6px;""", //
       """	list-style-type: none;""", //
-      """}"""
+      """}""",
+      """nav.${this.naviId} button {""", //
+      """	display: block;""", //
+      """	border-radius: 4px;""", //
+      """	padding: 6px 12px;""", //
+//      """	color: white;""", //
+      """	text-decoration: none;""", //
+      """}""",
     ]);
   }
 
