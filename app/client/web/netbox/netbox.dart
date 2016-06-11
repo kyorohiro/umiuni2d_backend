@@ -3,6 +3,10 @@ import 'netboxfile.dart';
 
 class NetBox {
   static final String ReqPropertyName = "userName";
+  static final String ReqPropertyTitle = "title";
+  static final String ReqPropertyTab = "tab";
+  static final String ReqPropertyCont = "cont";
+  static final ReqPropertyArticleState = "state";
   static final String ReqPropertyFileName = "fileName";
   static final String ReqPropertyPass = "password";
   static final String ReqPropertyNewPass = "newpassword";
