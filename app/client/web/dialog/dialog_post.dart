@@ -50,7 +50,7 @@ class PostDialog {
       """	padding: 6px;""", //
       """	list-style-type: none;""", //
       """}""",
-      """nav.${this.naviId} input.textarea {""", //
+      """nav.${this.naviId} textarea.textarea {""", //
       """	display: flex;""", //
       """	flex-flow: row;""", //
       """ width:90%;""",
@@ -58,6 +58,8 @@ class PostDialog {
       """	margin: 0;""", //
       """	padding: 6px;""", //
       """	list-style-type: none;""", //
+      """ text-align: left;""",
+      """ vertical-align: top;""",
       """}""",
       """nav.${this.naviId} div {""", //
       """	display: flex;""", //
@@ -133,7 +135,7 @@ class PostDialog {
 
     builder.end(tag, ["""<button id="${this.naviId}_addtag">add tag</button>""",]);
     builder.end(navi, [
-      """<input class="textarea" type="textarea" display="height:600px;">""",
+      """<textarea class="textarea"></textarea>""",
     ]);
 
     html.DialogElement elm = base.show(builder.toText("\r\n"));
