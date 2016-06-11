@@ -111,7 +111,7 @@ class PostDialog {
     builder.end(builder.getRootTicket(), [
       """<nav class="${this.naviId}">""", //
       """		<ul id="plain-menu">""",
-      """    <li><a href="#/back">Back</a></li>""",
+      """    <li><a id="back">Back</a></li>""",
       //
       """    <li><a id="none"></a></li>""",
       """    <li><a id="save">Save</a></li>""",
@@ -150,27 +150,17 @@ class PostDialog {
         return true;
       });
     });
-
     //
-    bool click = false;
-    b(bool vvv) {
-      return (_) async {
-        if (click == true) {
-          return false;
-        }
-        bool ret = true;
-        try {
-          click = true;
-          ret = await onUpdated(this, vvv);
-        } finally {
-          click = false;
-        }
-        if (ret == true) {
-          this.close();
-        }
-        return ret;
-      };
-    }
+    //
+    elm.querySelector("#back").onClick.listen((_) {
+      this.close();
+    });
+
+    elm.querySelector("#save").onClick.listen((_) {
+      print("--save");
+    });
+
+
   }
 
   close() {
