@@ -42,10 +42,19 @@ class PostDialog {
       """nav.${this.naviId} li a:hover {""", //
       """	background-color: #8cae47;""", //
       """}""",
-      """nav.${this.naviId} input {""", //
+      """nav.${this.naviId} input.text {""", //
       """	display: flex;""", //
       """	flex-flow: row;""", //
       """ width:90%;""",
+      """	margin: 0;""", //
+      """	padding: 6px;""", //
+      """	list-style-type: none;""", //
+      """}""",
+      """nav.${this.naviId} input.textarea {""", //
+      """	display: flex;""", //
+      """	flex-flow: row;""", //
+      """ width:90%;""",
+      """ height:800px;""",
       """	margin: 0;""", //
       """	padding: 6px;""", //
       """	list-style-type: none;""", //
@@ -101,18 +110,31 @@ class PostDialog {
       """<nav class="${this.naviId}">""", //
       """		<ul id="plain-menu">""",
       """    <li><a href="#/back">Back</a></li>""",
+      //
+      """    <li><a id="none"></a></li>""",
+      """    <li><a id="save">Save</a></li>""",
+      """    <li><a id="public">Public</a></li>""",
+
+      //
       """		</ul>""", //
       """</nav>"""
     ]);
-    util.TextBuilderTicket tag = builder.pat(builder.getRootTicket(), [
+    util.TextBuilderTicket navi = builder.pat(builder.getRootTicket(), [
       """<nav class="${this.naviId}">""",
-      """<input id="${this.naviId}_title" type="text" placeholder="Title">""", //
+      """<input class="text" id="${this.naviId}_title" type="text" placeholder="Title">""", //
+    ], [
+      """</nav>"""
+    ]);
+    util.TextBuilderTicket tag = builder.pat(navi, [
       """<div id="${this.naviId}_tag">"""
     ], [
-      """</div></nav>"""
+      """</div>"""
     ]);
 
     builder.end(tag, ["""<button id="${this.naviId}_addtag">add tag</button>""",]);
+    builder.end(navi, [
+      """<input class="textarea" type="textarea" display="height:600px;">""",
+    ]);
 
     html.DialogElement elm = base.show(builder.toText("\r\n"));
     elm.querySelector("#${this.naviId}_addtag").onClick.listen((_) {
