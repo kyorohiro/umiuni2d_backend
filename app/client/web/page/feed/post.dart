@@ -4,6 +4,7 @@ import '../../netbox/netbox.dart' as nbox;
 import '../../netbox/netboxme.dart' as nbox;
 import '../../netbox/netboxfile.dart' as nbox;
 import '../../netbox/status.dart' as nbox;
+import '../../util/textbuilder.dart' as util;
 
 typedef Future<Map<String, Object>> PostCallback(PostStatus status, String title, String tag, String cont, String articleId);
 
@@ -43,7 +44,9 @@ class PostPage {
     //
     html.Element elm = html.document.body.querySelector("#${this.rootId}");
     elm.children.clear();
+    util.TextBuilder builder = new util.TextBuilder();
     if (this.status.isLogin) {
+
       elm.appendHtml(
           [
             """<H2>${this.status.userName}</H2>""",

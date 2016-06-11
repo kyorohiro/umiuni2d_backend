@@ -1,15 +1,18 @@
 import 'dart:html' as html;
 import 'dialog.dart';
 import 'dart:async';
+import '../util/textbuilder.dart' as util;
 
 class PostDialog {
   Dialog base;
   String dialogName;
   String naviId;
 
-  PostDialog({//
-    this.naviId:"naviId",
-    String width:"300px",this.dialogName: "dialog_confirm"}) {
+  PostDialog(
+      { //
+      this.naviId: "naviId",
+      String width: "300px",
+      this.dialogName: "dialog_confirm"}) {
     base = new Dialog(this.dialogName, width: width);
   }
 
@@ -53,34 +56,28 @@ class PostDialog {
       """	padding: 6px;""", //
       """	list-style-type: none;""", //
       """}"""
-
     ]);
   }
 
-  show(String title, String message, {String okName: "OK", String cancelName: "Cancel",
-   Future<bool> onUpdated(PostDialog dialog, bool okBtnIsSelected): null, String type: "text"}) {
-   List<List<String>> stack = [];
-   List<String> c = [
+  show(String title, String message, {String okName: "OK", String cancelName: "Cancel", Future<bool> onUpdated(PostDialog dialog, bool okBtnIsSelected): null, String type: "text"}) {
+    util.TextBuilder builder = new util.TextBuilder();
+    builder.end(builder.getRootTicket(), [
       """<nav class="${this.naviId}">""", //
       """		<ul id="plain-menu">""",
       """    <li><a href="#/back">Back</a></li>""",
       """		</ul>""", //
-      """</nav>"""];
-    c.addAll([
+      """</nav>"""
+    ]);
+    util.TextBuilderTicket tag = builder.pat(builder.getRootTicket(), [
       """<nav class="${this.naviId}">""",
       """<input id="${this.naviId}_title" type="text" placeholder="Title">""", //
-      """<div id="${this.naviId}_tag"><div>""",
-      """</nav>""",
+      """<div id="${this.naviId}_tag">"""
+    ], [
+      """</div></nav>"""
     ]);
 
-    c.addAll([
-      """<nav class="${this.naviId}">""",
-      """<input id="${this.naviId}_title" type="text" placeholder="Title">""", //
-      """<div id="${this.naviId}_tag"><div>""",
-      """</nav>""",
-    ]);
 
-    html.DialogElement elm = base.show(c.join("\r\n"));
+    html.DialogElement elm = base.show(builder.toText("\r\n"));
 
     //
     bool click = false;
@@ -96,13 +93,12 @@ class PostDialog {
         } finally {
           click = false;
         }
-        if(ret == true) {
+        if (ret == true) {
           this.close();
         }
         return ret;
       };
     }
-
   }
 
   close() {

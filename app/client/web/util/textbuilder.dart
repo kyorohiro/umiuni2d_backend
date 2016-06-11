@@ -33,15 +33,22 @@ class TextBuilder {
     return new TextBuilderTicket()..v = child;
   }
 
-  head(TextBuilderTicket obj, List<String> v) {
+  TextBuilderTicket head(TextBuilderTicket obj, List<String> v) {
+    var child = [];
     if (obj.v.length == 0) {
       obj.v.add(v);
+      obj.v.add(child);
     } else {
+      obj.v.insert(0, child);
       obj.v.insert(0, v);
     }
+    return new TextBuilderTicket()..v = child;
   }
 
-  end(TextBuilderTicket obj, List<String> v) {
+  TextBuilderTicket end(TextBuilderTicket obj, List<String> v) {
+    var child = [];
+    obj.v.add(child);
     obj.v.add(v);
+    return new TextBuilderTicket()..v = child;
   }
 }
