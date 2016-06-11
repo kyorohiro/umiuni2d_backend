@@ -27,14 +27,14 @@ class TextBuilder {
 
   TextBuilderTicket pat(TextBuilderTicket obj, List<String> begin, List<String> end) {
     obj.v.add(begin);
-    var child = [];
+    var child = new TextBuilderTicket()..v =[];
     obj.v.add(child);
     obj.v.add(end);
-    return new TextBuilderTicket()..v = child;
+    return child;
   }
 
   TextBuilderTicket head(TextBuilderTicket obj, List<String> v) {
-    var child = [];
+    var child = new TextBuilderTicket()..v =[];
     if (obj.v.length == 0) {
       obj.v.add(v);
       obj.v.add(child);
@@ -42,13 +42,13 @@ class TextBuilder {
       obj.v.insert(0, child);
       obj.v.insert(0, v);
     }
-    return new TextBuilderTicket()..v = child;
+    return child;
   }
 
   TextBuilderTicket end(TextBuilderTicket obj, List<String> v) {
-    var child = [];
+    var child = new TextBuilderTicket()..v =[];
     obj.v.add(child);
     obj.v.add(v);
-    return new TextBuilderTicket()..v = child;
+    return child;
   }
 }

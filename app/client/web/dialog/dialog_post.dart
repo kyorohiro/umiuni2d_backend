@@ -76,8 +76,14 @@ class PostDialog {
       """</div></nav>"""
     ]);
 
+    builder.end(tag, [
+      """<button id="${this.naviId}_addtag">add tag</button>""",
+    ]);
 
     html.DialogElement elm = base.show(builder.toText("\r\n"));
+    elm.querySelector("#${this.naviId}_tag").onClick.listen((_){
+      print("----->");
+    });
 
     //
     bool click = false;
