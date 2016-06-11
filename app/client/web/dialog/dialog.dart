@@ -2,7 +2,8 @@ import 'dart:html' as html;
 
 class Dialog {
   String dialogName;
-  Dialog(this.dialogName) {}
+  String width;
+  Dialog(this.dialogName,{this.width:"300px"}) {}
 
   html.DialogElement show(String cont) {
     html.DialogElement dialog = html.document.body.querySelector('#${dialogName}');
@@ -17,16 +18,17 @@ class Dialog {
     dialog.close("ok");
   }
 
-  init() {
+  init({List<String> optStyle:null}) {
     html.StyleElement styleElement = new html.StyleElement();
     styleElement.type = "text/css";
-    styleElement.text = [
+    var o = [
       """dialog.${dialogName} {""", //
       """  background: #FFF;""", //
-      """  width: 300px;""", //
-      """  text-align: center;""", //
+      """  width: ${this.width};""", //
+    //  """  text-align: center;""", //
       """  padding: 1.5em;""", //
       """  margin: 1em auto;""", //
+            """  top: 0px;""", //
       """  border: 0;""", //
       """  border-top: 5px solid #69c773;""", //
       """  box-shadow: 0 2px 10px rgba(0,0,0,0.8);""", //
@@ -39,7 +41,11 @@ class Dialog {
       """  bottom: 0;""", //
       """  background-color: rgba(0, 0, 0, 0.8);""", //
       """}"""
-    ].join("\r\n"); //
+    ];
+    if(optStyle != null) {
+      o.addAll(optStyle);
+    }
+    styleElement.text = o.join("\r\n"); //
     html.Element elm = html.document.body;
     html.document.head.append(styleElement);
 

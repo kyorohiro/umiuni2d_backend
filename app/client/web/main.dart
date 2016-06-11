@@ -15,10 +15,11 @@ netbox.NetBox rootBox = new netbox.NetBox("http://127.0.0.1:8080", "A91A3E1B-15F
 //
 void main() {
   baseLine.init();
-  baseLine.updateToolbar(["Home", "Article", "Q/A", "Vote", "Me"], ["Home", "Article", "Q/A", "Vote", "Me"]);
+  baseLine.updateToolbar(["Article", "Q/A", "Vote", "Me"],
+   ["Article", "Q/A", "Vote", "Me"]);
   aahtml.window.onHashChange.listen((_) {
     var hash = Uri.decodeComponent(aahtml.window.location.hash);
-    for (var v in ["Home", "Article", "Q/A", "Vote"]) {
+    for (var v in ["Article", "Q/A", "Vote"]) {
       if (hash == "#/${v}") {
         aahtml.Element elm = aahtml.document.body.querySelector("#main");
         elm.children.clear();

@@ -2,7 +2,6 @@ import 'dart:html' as html;
 
 //
 class Toolbar {
-
   init() {
     makeToolbar([], []);
     makeMain();
@@ -21,7 +20,7 @@ class Toolbar {
     List a = [];
     for (int i = 0; i < titles.length; i++) {
       a.addAll([
-        """				<li><a href="#/${Uri.encodeComponent(hashs[i])}">${titles[i]}</a></li>""", //
+        """	 <li><a href="#/${Uri.encodeComponent(hashs[i])}">${titles[i]}</a></li>""", //
       ]);
     }
     u.appendHtml(a.join("\r\n"));
@@ -37,22 +36,25 @@ class Toolbar {
       """nav.atoolbar  {""", //
       """	background-color: #222222;""", //
       """	color: white;""", //
+      """	display: flex;""", //
       """}""", //
       """nav.atoolbar  ul {""", //
       """	display: flex;""", //
-      """	flex-flow: row;""", //
+    //  """	flex-flow: row;""", //
+      """flex-wrap: wrap;""",
       """	margin: 0;""", //
       """	padding: 6px;""", //
       """	list-style-type: none;""", //
       """}""", //
       """nav.atoolbar  a {""", //
-      """	display: block;""", //
+      """	display: flex;""", //
       """	border-radius: 4px;""", //
       """	padding: 12px 24px;""", //
       """	color: white;""", //
       """	text-decoration: none;""", //
       """}""", //
       """nav.atoolbar  li a:hover {""", //
+      """	display: flex;""", //
       """	background-color: #8cae47;""", //
       """}"""
     ].join("\r\n"); //

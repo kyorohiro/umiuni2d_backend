@@ -4,7 +4,7 @@ import '../../netbox/netbox.dart' as nbox;
 import '../../netbox/netboxme.dart' as nbox;
 import '../../netbox/netboxfile.dart' as nbox;
 import '../../netbox/status.dart' as nbox;
-
+import '../../dialog/dialog_post.dart' as dialog;
 class FeedPage {
   String rootId;
   nbox.MyStatus status;
@@ -32,6 +32,9 @@ class FeedPage {
       }
       if (hash == "#/Article/post") {
         //.update();
+        dialog.PostDialog d = new dialog.PostDialog(width: "100%");
+        d.init();
+        d.show("title", "message<br>asdff<br>asdf<br>asasdf<br><br><br><br><br><br>asdafsdf");
       }
     }
   }
