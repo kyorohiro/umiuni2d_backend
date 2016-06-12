@@ -8,6 +8,7 @@ import '../netbox/netbox.dart' as nbox;
 import '../netbox/netboxart.dart' as nbox;
 import '../netbox/status.dart' as nbox;
 
+
 class PostDialog {
   Dialog base;
   String dialogName;
@@ -110,7 +111,11 @@ class PostDialog {
     });
   }
 
-  show(String title, List<String> tags, String message, {String okName: "OK", String cancelName: "Cancel", Future<bool> onUpdated(PostDialog dialog, bool okBtnIsSelected): null, String type: "text"}) {
+  show(String title, List<String> tags, String message, String state,
+      {String okName: "OK",
+      String cancelName: "Cancel", //
+      String type: "text", //
+      Future<bool> onUpdated(PostDialog dialog, bool okBtnIsSelected): null}) {
     util.TextBuilder builder = new util.TextBuilder();
     builder.end(builder.getRootTicket(), [
       """<nav class="${this.naviId}">""", //
@@ -131,16 +136,10 @@ class PostDialog {
     ], [
       """</nav>"""
     ]);
-    util.TextBuilderTicket tag = builder.pat(navi, [
-      """<div id="${this.naviId}_tag">"""
-    ], [
-      """</div>"""
-    ]);
+    util.TextBuilderTicket tag = builder.pat(navi, ["""<div id="${this.naviId}_tag">"""], ["""</div>"""]);
 
     builder.end(tag, ["""<button id="${this.naviId}_addtag">add tag</button>""",]);
-    builder.end(navi, [
-      """<textarea id="${this.naviId}_cont" class="textarea"></textarea>""",
-    ]);
+    builder.end(navi, ["""<textarea id="${this.naviId}_cont" class="textarea"></textarea>""",]);
 
     html.DialogElement elm = base.show(builder.toText("\r\n"));
     elm.querySelector("#${this.naviId}_addtag").onClick.listen((_) {
@@ -164,12 +163,32 @@ class PostDialog {
     });
 
     elm.querySelector("#save").onClick.listen((_) {
-      print("--save");
-      netbox.newArtManager().post(status.userName, status.userObjectId, //
-        "", titleElm.value, tags.join(","), contElm.value, "save");
+      netbox.newArtManager().post(
+          status.userName,
+          status.userObjectId, //
+          "",
+          titleElm.value,
+          tags.join(" "),
+          contElm.value,
+          "save");
     });
 
-
+    elm.querySelector("#public").onClick.listen((_) async {
+      nbox.NetBoxArtManagerPost ret =  await netbox.newArtManager().post(
+          status.userName,
+          status.userObjectId, //
+          "",
+          titleElm.value,
+          tags.join(" "),
+          contElm.value,
+          (state == "private" ? "public" : "private"));
+      if(ret.code == nbox.NetBox.ReqPropertyCodeOK) {
+        state = ret.articleState;
+        elm.querySelector("#public").text = (state == "private" ? "public" : "hide");
+      } else {
+        ;
+      }
+    });
   }
 
   close() {

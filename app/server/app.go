@@ -47,6 +47,7 @@ const (
 	ReqPropertyCodeAlreadyExist     = 1000
 	ReqPropertyCodeNotFound         = 1001
 	ReqPropertyCodeWrongNamePass    = 1002
+	ReqPropertyCodeWrongID          = 1003
 )
 
 const (

@@ -2,7 +2,7 @@ package hello
 
 import (
 	"encoding/json"
-	"fmt"
+	//	"fmt"
 	"net/http"
 	"time"
 
@@ -79,8 +79,7 @@ func articlePostHandler(w http.ResponseWriter, r *http.Request) {
 
 	WriteLog(ctx, "-----> (2)")
 	if isLogin == false {
-		m := map[string]interface{}{"ret": "ng", "stat": "not found", "reqId": reqId}
-		Response(w, m)
+		Response(w, map[string]interface{}{ReqPropertyCode: ReqPropertyCodeNotFound, ReqPropertyRequestID: reqId})
 		return
 	}
 	//
@@ -108,10 +107,7 @@ func articlePostHandler(w http.ResponseWriter, r *http.Request) {
 		// arcle
 		artObj, err = artMana.GetArticleFromArticleId(ctx, articleId)
 		if err != nil {
-			// error
-			m := map[string]string{"ret": "ng", "stat": "wrong articleId", "reqId": reqId} //, "dev": v}
-			b, _ := json.Marshal(m)
-			fmt.Fprintln(w, string(b))
+			Response(w, map[string]interface{}{ReqPropertyCode: ReqPropertyCodeWrongID, ReqPropertyRequestID: reqId})
 			return
 		}
 		//
@@ -127,10 +123,7 @@ func articlePostHandler(w http.ResponseWriter, r *http.Request) {
 
 	err = artObj.SaveOnDB(ctx) //datastore.Put(context, key1, &post)
 	if err != nil {
-		// error
-		m := map[string]string{"ret": "ng", "stat": "faied to put", "reqId": reqId} //, "dev": v}
-		b, _ := json.Marshal(m)
-		fmt.Fprintln(w, string(b))
+		Response(w, map[string]interface{}{ReqPropertyCode: ReqPropertyCodeError, ReqPropertyRequestID: reqId})
 		return
 	}
 	if artObj.GetState() == "private" {
@@ -138,16 +131,10 @@ func articlePostHandler(w http.ResponseWriter, r *http.Request) {
 	} else {
 		addTagsFromPostIdWithTagSrc(ctx, tag, artObj.GetArticleId(), artObj.GetGaeObjectKey(), artObj.GetGaeObjectKey())
 	}
-	m := map[string]interface{}{
-		"ret":       "ok",                  //
-		"stat":      "good",                //
-		"reqId":     reqId,                 //
-		"articleId": artObj.GetArticleId(), //
-		"state":     artObj.GetState()}
-	b, _ := json.Marshal(m)
-	fmt.Fprintln(w, string(b))
-	//
-
+	Response(w, map[string]interface{}{
+		ReqPropertyCode:         ReqPropertyCodeOK,
+		ReqPropertyRequestID:    reqId,                 //
+		ReqPropertyArticleId:    artObj.GetArticleId(), //
+		ReqPropertyArticleState: artObj.GetState()})
 	return
-
 }

@@ -4,6 +4,24 @@ import 'dart:convert' as conv;
 import 'dart:html' as html;
 import 'netbox.dart';
 
+class NetBoxArtManagerPost {
+  int code;
+  String requestId;
+  String loginId;
+  String articleId;
+  String articleState;
+
+  NetBoxArtManagerPost(TinyNetRequesterResponse response) {
+    String body = conv.UTF8.decode(response.response.asUint8List());
+    Map<String, Object> ret = conv.JSON.decode(body);
+    this.code = ret[NetBox.ReqPropertyCode];
+    this.requestId = ret[NetBox.ReqPropertyRequestID];
+    this.loginId = ret[NetBox.ReqPropertyLoginId];
+    this.articleState = ret[NetBox.ReqPropertyArticleState];
+    this.articleId = ret[NetBox.ReqPropertyArticleId];
+  }
+}
+
 class NetBoxArtManager {
   String backendAddr;
   String apiKey;
@@ -13,7 +31,7 @@ class NetBoxArtManager {
   NetBoxArtManager(this.backendAddr, this.apiKey, {this.version: "v1", this.passwordKey: "umiuni2d"}) {}
 
 
-  Future<Map<String, String>> post(String userName, String loginId, String articleId,
+  Future<NetBoxArtManagerPost> post(String userName, String loginId, String articleId,
      String title, String tag, String cont, String state) async {
     TinyNetHtml5Builder builder = new TinyNetHtml5Builder();
     TinyNetRequester requester = await builder.createRequester();
@@ -32,6 +50,6 @@ class NetBoxArtManager {
           NetBox.ReqPropertyApiKey: apiKey
         }));
     //print(">> ${conv.UTF8.decode(response.response.asUint8List())}");
-    return conv.JSON.decode(conv.UTF8.decode(response.response.asUint8List()));
+    return new NetBoxArtManagerPost(response);
   }
 }
