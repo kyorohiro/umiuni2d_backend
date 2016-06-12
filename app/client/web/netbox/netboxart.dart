@@ -51,11 +51,14 @@ class NetBoxArtManagerFind {
 
   List<NetBoxArtManagerFindArt>load(Map<String, Object> src) {
     List ret = [];
-    Object o = src["ReqPropertyArticles"];
+    Object o = src[NetBox.ReqPropertyArticles];
     if(o == null || !(o is List)) {
+      print("----> (1) ${o}");
       return ret;
     }
-    for(var v in o) {
+    for(var v in (o as List)) {
+      print("----> (2)");
+
         if(v == null || !(v is Map)) {
           continue;
         }

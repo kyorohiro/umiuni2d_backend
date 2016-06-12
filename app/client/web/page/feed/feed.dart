@@ -6,6 +6,7 @@ import '../../netbox/netboxfile.dart' as nbox;
 import '../../netbox/netboxart.dart' as nbox;
 import '../../netbox/status.dart' as nbox;
 import '../../dialog/dialog_post.dart' as dialog;
+import '../../util/textbuilder.dart' as util;
 class FeedPage {
   String rootId;
   nbox.MyStatus status;
@@ -44,17 +45,20 @@ class FeedPage {
     //
     html.Element elm = html.document.body.querySelector("#${this.rootId}");
     nbox.NetBoxArtManagerFind ret = await netbox.newArtManager().findArticleWithNewOrde("");
+    util.TextBuilder builder = new util.TextBuilder();
     elm.children.clear();
-    elm.appendHtml(
-        [
-          """<H2>${this.status.userName}</H2>""",
-
-          ///
-          """<H3>Icon</H3>""",
-          """ <div>""", //
-          """ </div>""", //
-          //
-        ].join(),
+    builder.end(builder.getRootTicket(), [
+      """<H2>Article</H2>""",
+    ]);
+    for(var v in ret.arts) {
+      builder.end(builder.getRootTicket(), [
+        """<div>""",
+        """<div>${v.title}</div>""",
+        """<div>${v.userName}</div>""",
+        """</div>""",
+      ]);
+    }
+    elm.appendHtml(builder.toText("\r\n"),
         treeSanitizer: html.NodeTreeSanitizer.trusted);
     //
     //
