@@ -3,6 +3,7 @@ import 'dart:async';
 import '../../netbox/netbox.dart' as nbox;
 import '../../netbox/netboxme.dart' as nbox;
 import '../../netbox/netboxfile.dart' as nbox;
+import '../../netbox/netboxart.dart' as nbox;
 import '../../netbox/status.dart' as nbox;
 import '../../dialog/dialog_post.dart' as dialog;
 class FeedPage {
@@ -39,9 +40,10 @@ class FeedPage {
     }
   }
 
-  update() {
+  update() async {
     //
     html.Element elm = html.document.body.querySelector("#${this.rootId}");
+    nbox.NetBoxArtManagerFind ret = await netbox.newArtManager().findArticleWithNewOrde("");
     elm.children.clear();
     elm.appendHtml(
         [

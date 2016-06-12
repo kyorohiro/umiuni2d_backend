@@ -24,23 +24,28 @@ import (
 )
 
 const (
-	ReqPropertyName                 = "userName"
-	ReqPropertyFileName             = "fileName"
-	ReqPropertyBlobKey              = "blobKey"
-	ReqPropertyPass                 = "password"
-	ReqPropertyNewPass              = "newpassword"
-	ReqPropertyRequestID            = "requestId"
-	ReqPropertyCode                 = "code"
-	ReqPropertyCursor               = "cursor"
-	ReqPropertyMail                 = "mail"
-	ReqPropertyUrl                  = "url"
-	ReqPropertyLoginId              = "loginId"
-	ReqPropertyArticleCont          = "cont"
-	ReqPropertyArticleTitle         = "title"
-	ReqPropertyArticleTag           = "tag"
-	ReqPropertyArticleId            = "articleId"
-	ReqPropertyArticleState         = "state"
-	ReqPropertyStateWrongNamePass   = "wrong name/pass"
+	ReqPropertyName               = "userName"
+	ReqPropertyFileName           = "fileName"
+	ReqPropertyBlobKey            = "blobKey"
+	ReqPropertyPass               = "password"
+	ReqPropertyNewPass            = "newpassword"
+	ReqPropertyRequestID          = "requestId"
+	ReqPropertyCode               = "code"
+	ReqPropertyCursor             = "cursor"
+	ReqPropertyCursorNext         = "cursor_next"
+	ReqPropertyArticles           = "arts"
+	ReqPropertyMail               = "mail"
+	ReqPropertyUrl                = "url"
+	ReqPropertyLoginId            = "loginId"
+	ReqPropertyArticleCont        = "cont"
+	ReqPropertyArticleTitle       = "title"
+	ReqPropertyArticleTag         = "tag"
+	ReqPropertyArticleId          = "articleId"
+	ReqPropertyArticleState       = "state"
+	ReqPropertyStateWrongNamePass = "wrong name/pass"
+	ReqPropertyUpdated            = "updated"
+	ReqPropertyCreated            = "created"
+
 	ReqPropertyStateWrongNamePassID = -1
 	ReqPropertyCodeOK               = 200
 	ReqPropertyCodeError            = 2000
@@ -104,6 +109,7 @@ func init() {
 	//
 	// art_mana
 	http.HandleFunc("/api/v1/art_mana/post", articlePostHandler)
+	http.HandleFunc("/api/v1/art_mana/find_with_neworder", articleFindWithNewOrderHandler)
 
 	//
 	// fileshare
@@ -118,7 +124,6 @@ func init() {
 
 	// article
 	http.HandleFunc("/api/v1/article/get", articleGetHandler)
-	http.HandleFunc("/api/v1/article/get_with_neworder", articleGetWithNewOrderHandler)
 	http.HandleFunc("/api/v1/article/vote", articleVoteHandler)
 	http.HandleFunc("/api/v1/article/post_comment", articlePostCommentHandler)
 	http.HandleFunc("/api/v1/article/get_comments", articleGetCommentsHandler)

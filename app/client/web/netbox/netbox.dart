@@ -16,9 +16,13 @@ class NetBox {
   static final String ReqPropertyApiKey = "apiKey";
   static final String ReqPropertyCode = "code";
   static final String ReqPropertyCursor = "cursor";
+  static final String ReqPropertyCursorNext = "cursor_next";
   static final String ReqPropertyLoginId = "loginId";
   static final String ReqPropertyArticleId = "articleId";
   static final String ReqPropertyBlobKey = "blobKey";
+  static final String ReqPropertyArticles = "arts";
+  static final String ReqPropertyUpdated = "updated";
+  static final String ReqPropertyCreated = "created";
   static final int ReqPropertyCodeOK = 200;
   static final int ReqPropertyCodeAlreadyExist = 1000;
 
@@ -40,5 +44,4 @@ class NetBox {
   NetBoxArtManager newArtManager() {
     return new NetBoxArtManager(this.backendAddr, this.apiKey, version: this.version);
   }
-
 }
