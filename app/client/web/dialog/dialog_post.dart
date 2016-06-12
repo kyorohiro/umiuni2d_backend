@@ -111,7 +111,7 @@ class PostDialog {
     });
   }
 
-  show(String title, List<String> tags, String message, String state,
+  show(String articleId, String title, List<String> tags, String message, String state,
       {String okName: "OK",
       String cancelName: "Cancel", //
       String type: "text", //
@@ -177,13 +177,14 @@ class PostDialog {
       nbox.NetBoxArtManagerPost ret =  await netbox.newArtManager().post(
           status.userName,
           status.userObjectId, //
-          "",
+          articleId,
           titleElm.value,
           tags.join(" "),
           contElm.value,
           (state == "private" ? "public" : "private"));
       if(ret.code == nbox.NetBox.ReqPropertyCodeOK) {
         state = ret.articleState;
+        articleId = ret.articleId;
         elm.querySelector("#public").text = (state == "private" ? "public" : "hide");
       } else {
         ;
