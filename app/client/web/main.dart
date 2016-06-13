@@ -2,6 +2,7 @@
 import './page/me/stlogin.dart';
 import './page/me/stlogout.dart';
 import './page/feed/feed.dart';
+import './page/art/art.dart';
 import './toolbar/toolbar.dart';
 
 import 'netbox/netbox.dart' as netbox;
@@ -34,6 +35,8 @@ void main() {
   FeedPage feedPage = new FeedPage(netbox.MyStatus.instance, rootBox, "main");
   feedPage.updateFromHash();
   //
+  ArtPage artPage = new ArtPage(netbox.MyStatus.instance, rootBox, "main");
+  artPage.updateFromHash();
 
 }
 
