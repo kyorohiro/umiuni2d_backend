@@ -123,8 +123,6 @@ class ArtDialog {
       """    <li><a id="back">Back</a></li>""",
       //
       """    <li><a id="none"></a></li>""",
-      """    <li><a id="save">Save</a></li>""",
-      """    <li><a id="public">Public</a></li>""",
 
       //
       """		</ul>""", //
@@ -162,34 +160,6 @@ class ArtDialog {
       this.close();
     });
 
-    elm.querySelector("#save").onClick.listen((_) {
-      netbox.newArtManager().post(
-          status.userName,
-          status.userObjectId, //
-          "",
-          titleElm.value,
-          tags.join(" "),
-          contElm.value,
-          "save");
-    });
-
-    elm.querySelector("#public").onClick.listen((_) async {
-      nbox.NetBoxArtManagerPost ret =  await netbox.newArtManager().post(
-          status.userName,
-          status.userObjectId, //
-          articleId,
-          titleElm.value,
-          tags.join(" "),
-          contElm.value,
-          (state == "private" ? "public" : "private"));
-      if(ret.code == nbox.NetBox.ReqPropertyCodeOK) {
-        state = ret.articleState;
-        articleId = ret.articleId;
-        elm.querySelector("#public").text = (state == "private" ? "public" : "hide");
-      } else {
-        ;
-      }
-    });
   }
 
   close() {

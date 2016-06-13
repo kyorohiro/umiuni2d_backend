@@ -47,7 +47,7 @@ class ArtPage {
 
   update(String articleId) async {
     print("=====> ${articleId}");
-    dialog.ArtDialog d = new dialog.ArtDialog(status, netbox);
+    dialog.ArtDialog d = new dialog.ArtDialog(status, netbox, width: "99%");
     d.init();
     d.show(articleId, "title", ["tags"], "message", "state");
   }
