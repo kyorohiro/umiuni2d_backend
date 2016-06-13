@@ -111,7 +111,7 @@ func init() {
 	// art_mana
 	http.HandleFunc("/api/v1/art_mana/post", articlePostHandler)
 	http.HandleFunc("/api/v1/art_mana/find_with_neworder", articleFindWithNewOrderHandler)
-
+	http.HandleFunc("/api/v1/art_mana/get", articleGetHandler)
 	//
 	// fileshare
 	http.HandleFunc("/api/v1/file/get_request_id", fileGetRequestIdHandler)
@@ -124,7 +124,7 @@ func init() {
 	// me
 
 	// article
-	http.HandleFunc("/api/v1/article/get", articleGetHandler)
+
 	http.HandleFunc("/api/v1/article/vote", articleVoteHandler)
 	http.HandleFunc("/api/v1/article/post_comment", articlePostCommentHandler)
 	http.HandleFunc("/api/v1/article/get_comments", articleGetCommentsHandler)

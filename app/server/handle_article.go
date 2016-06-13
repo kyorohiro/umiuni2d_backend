@@ -2,7 +2,7 @@ package hello
 
 import (
 	"encoding/json"
-	"fmt"
+	// "fmt"
 	"net/http"
 
 	"google.golang.org/appengine"
@@ -21,33 +21,38 @@ func articleGetHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// parse
-	var data map[string]interface{}
-	json.NewDecoder(r.Body).Decode(&data)
-	reqId := data["reqId"].(string)
-	articleId := data["articleId"].(string)
+	var requestPropery map[string]interface{}
+	json.NewDecoder(r.Body).Decode(&requestPropery)
+	propRequestId := requestPropery["reqId"].(string)
+	propArticleId := requestPropery["articleId"].(string)
 
 	// arcle
 	ctx := appengine.NewContext(r)
-	artObj, e := GetArtManager().GetArticleFromArticleId(ctx, articleId)
+	artObj, e := GetArtManager().GetArticleFromArticleId(ctx, propArticleId)
 	if e != nil {
-		// error
-		m := map[string]string{"ret": "ng", "stat": "error", "reqId": reqId} //, "dev": v}
-		b, _ := json.Marshal(m)
-		fmt.Fprintln(w, string(b))
+		Response(w, map[string]interface{}{ReqPropertyCode: ReqPropertyCodeNotFound, ReqPropertyRequestID: propRequestId})
 		return
 	}
+	//
+	//
+	cont := artObj.GetCont()
+	infoLen := 100
+	if len(cont) < infoLen {
+		infoLen = len(cont)
+	}
+	//
 	m := map[string]interface{}{
-		"ret":       "ok",
-		"stat":      "good",
-		"name":      artObj.GetUserName(),
-		"reqId":     reqId,
-		"articleId": artObj.GetArticleId(),                 // .ArticleId,
-		"title":     artObj.GetTitle(),                     //v.Title,
-		"tag":       artObj.GetTag(),                       //v.Tag,
-		"cont":      artObj.GetCont(),                      //v.Cont,
-		"updated":   artObj.GetUpdated().UnixNano() / 1000, //v.Updated.UnixNano() / 1000,
-		"created":   artObj.GetCreated().UnixNano() / 1000, //v.Created.UnixNano() / 1000,
-		"state":     artObj.GetState(),                     // v.State,
+		ReqPropertyCode:         ReqPropertyCodeOK,
+		ReqPropertyRequestID:    propRequestId,
+		ReqPropertyArticleId:    artObj.GetArticleId(),
+		ReqPropertyName:         artObj.GetUserName(),
+		ReqPropertyArticleTitle: artObj.GetTitle(),
+		ReqPropertyArticleState: artObj.GetState(),
+		ReqPropertyArticleTag:   artObj.GetTag(),
+		ReqPropertyArticleInfo:  artObj.GetCont()[0:infoLen],
+		ReqPropertyUpdated:      artObj.GetUpdated().UnixNano() / 1000,
+		ReqPropertyCreated:      artObj.GetCreated().UnixNano() / 1000,
+		ReqPropertyArticleCont:  artObj.GetCont(),
 	}
 	Response(w, m)
 }
