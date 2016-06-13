@@ -7,15 +7,18 @@ import '../../netbox/netboxart.dart' as nbox;
 import '../../netbox/status.dart' as nbox;
 import '../../dialog/dialog_post.dart' as dialog;
 import '../../util/textbuilder.dart' as util;
+
 class FeedPage {
   String rootId;
+  String naviId;
   nbox.MyStatus status;
   nbox.NetBox netbox;
 
-  FeedPage(this.status, this.netbox, this.rootId) {
+  FeedPage(this.status, this.netbox, this.rootId, {naviId: "aanaviId"}) {
     html.window.onHashChange.listen((_) {
       updateFromHash();
     });
+    init();
   }
 
   Future updateFromHash() async {
@@ -36,7 +39,7 @@ class FeedPage {
         //.update();
         dialog.PostDialog d = new dialog.PostDialog(status, netbox, width: "100%");
         d.init();
-        d.show("","title", [],"message<br>asdff<br>asdf<br>asasdf<br><br><br><br><br><br>asdafsdf", "private");
+        d.show("", "title", [], "message<br>asdff<br>asdf<br>asasdf<br><br><br><br><br><br>asdafsdf", "private");
       }
     }
   }
@@ -47,24 +50,100 @@ class FeedPage {
     nbox.NetBoxArtManagerFind ret = await netbox.newArtManager().findArticleWithNewOrde("");
     util.TextBuilder builder = new util.TextBuilder();
     elm.children.clear();
-    builder.end(builder.getRootTicket(), [
-      """<H2>Article</H2>""",
+    builder.end(builder.getRootTicket(), ["""<H2>Article</H2>""",]);
+
+    var ticket = builder.pat(builder.getRootTicket(), [
+      """<nav class="${this.naviId}">""", //
+      """		<ul id="plain-menu">""",],[
+      """		</ul>""",
+      """</nav> """,
     ]);
-    for(var v in ret.arts) {
-      builder.end(builder.getRootTicket(), [
-        """<div>""",
-        """<div>${v.title}</div>""",
-        """<div>${v.userName}</div>""",
-        """</div>""",
-      ]);
+    int w = 300;
+    if(w > html.window.innerWidth) {
+      w = html.window.innerWidth;
     }
-    elm.appendHtml(builder.toText("\r\n"),
-        treeSanitizer: html.NodeTreeSanitizer.trusted);
+    for (var v in ret.arts) {
+      builder.end(ticket, [
+        """    <li><a><div style="width:${w}px;">""",
+        """ <div style="font-size:15px"> ${v.title} """,
+        """    <div style="font-size:10px"> ${v.userName} ${v.updated}</div>""",
+        """ </div><br>""",
+        """ <div style="font-size:10px"> ${v.tag} </div>""",
+        """    </div></a></li>""",]);
+    }
+
+
+    elm.appendHtml(builder.toText("\r\n"), treeSanitizer: html.NodeTreeSanitizer.trusted);
     //
     //
     if (this.status.isLogin) {
       //target="_blank"
       elm.appendHtml(["""<a href="#/Article/post" id="view-source">""", """Post</a>"""].join("\r\n"));
     }
+  }
+
+  init() {
+    html.StyleElement styleElement = new html.StyleElement();
+    styleElement.type = "text/css";
+    var o = [
+      """nav.${this.naviId}  {""", //
+      """	background-color: #222222;""", //
+      """	color: white;""", //
+      """}""", //
+      """nav.${this.naviId}  ul {""", //
+      """	display: flex;""", //
+      //"""	flex-flow: row;""", //
+      """flex-wrap: wrap;""",
+      """	margin: 0;""", //
+      """	padding: 6px;""", //
+      """	list-style-type: none;""", //
+      """}""", //
+      """nav.${this.naviId} a {""", //
+      """	display: block;""", //
+      """	border-radius: 4px;""", //
+      """	padding: 12px 24px;""", //
+      """	color: white;""", //
+      """	text-decoration: none;""", //
+      """}""", //
+      """nav.${this.naviId} li a:hover {""", //
+      """	background-color: #8cae47;""", //
+      """}""",
+      """nav.${this.naviId} input.text {""", //
+      """	display: flex;""", //
+      """	flex-flow: row;""", //
+      """ width:90%;""",
+      """	margin: 0;""", //
+      """	padding: 6px;""", //
+      """	list-style-type: none;""", //
+      """}""",
+      """nav.${this.naviId} textarea.textarea {""", //
+      """	display: inline-flex;""", //
+      """	flex-flow: row;""", //
+      """ width:90%;""",
+      """ height:800px;""",
+      """	margin: 0;""", //
+      """	padding: 6px;""", //
+      """	list-style-type: none;""", //
+      """ text-align: left;""",
+      """ vertical-align: top;""",
+      """}""",
+      """nav.${this.naviId} div.title {""", //
+      """	display: inline-flex;""", //
+      """	flex-flow: row;""", //
+      """ width:90%;""",
+      """	margin: 0;""", //
+      """	padding: 6px;""", //
+      """	list-style-type: none;""", //
+      """}""",
+      """nav.${this.naviId} button {""", //
+      """	display: inline-flex;""", //
+      """	border-radius: 4px;""", //
+      """	padding: 6px 12px;""", //
+//      """	color: white;""", //
+      """	text-decoration: none;""", //
+      """}""",
+    ];
+    styleElement.text = o.join("\r\n"); //
+    html.document.head.append(styleElement);
   }
 }
