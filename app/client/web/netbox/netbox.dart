@@ -8,6 +8,7 @@ class NetBox {
   static final String ReqPropertyTag = "tag";
   static final String ReqPropertyCont = "cont";
   static final ReqPropertyArticleState = "state";
+  static final ReqPropertyArticleInfo = "info";
   static final String ReqPropertyFileName = "fileName";
   static final String ReqPropertyPass = "password";
   static final String ReqPropertyNewPass = "newpassword";

@@ -6,6 +6,8 @@ import (
 
 	"umiuni2d_backend/article"
 
+	//"strings"
+
 	"google.golang.org/appengine"
 )
 
@@ -55,12 +57,19 @@ func articlefindFromUserNameHandler(w http.ResponseWriter, r *http.Request) {
 func findArticleResponse(w http.ResponseWriter, requestPropery map[string]interface{}, u []*article.Article, cursorOne string, cursorNext string) {
 	var articleIdList []interface{}
 	for _, v := range u {
+		cont := v.GetCont()
+		infoLen := 100
+		if len(cont) < infoLen {
+			infoLen = len(cont)
+		}
+
 		articleIdList = append(articleIdList, map[string]interface{}{
 			ReqPropertyArticleId:    v.GetArticleId(),
 			ReqPropertyName:         v.GetUserName(),
 			ReqPropertyArticleTitle: v.GetTitle(),
 			ReqPropertyArticleState: v.GetState(),
 			ReqPropertyArticleTag:   v.GetTag(),
+			ReqPropertyArticleInfo:  v.GetCont()[0:infoLen],
 			ReqPropertyUpdated:      v.GetUpdated().UnixNano() / 1000,
 			ReqPropertyCreated:      v.GetCreated().UnixNano() / 1000})
 	}

@@ -11,6 +11,7 @@ class NetBoxArtManagerPost {
   String articleId;
   String articleState;
 
+
   NetBoxArtManagerPost(TinyNetRequesterResponse response) {
     String body = conv.UTF8.decode(response.response.asUint8List());
     Map<String, Object> ret = conv.JSON.decode(body);
@@ -19,10 +20,12 @@ class NetBoxArtManagerPost {
     this.loginId = ret[NetBox.ReqPropertyLoginId];
     this.articleState = ret[NetBox.ReqPropertyArticleState];
     this.articleId = ret[NetBox.ReqPropertyArticleId];
+
   }
 }
 
 class NetBoxArtManagerFindArt {
+    String articleInfo;
   String articleId;
   String userName;
   String title;
@@ -71,6 +74,7 @@ class NetBoxArtManagerFind {
         a.tag = v[NetBox.ReqPropertyTag];
         a.created = v[NetBox.ReqPropertyCreated];
         a.updated = v[NetBox.ReqPropertyUpdated];
+        a.articleInfo = v[NetBox.ReqPropertyArticleInfo];
         ret.add(a);
     }
     return ret;

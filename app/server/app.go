@@ -40,6 +40,7 @@ const (
 	ReqPropertyArticleCont        = "cont"
 	ReqPropertyArticleTitle       = "title"
 	ReqPropertyArticleTag         = "tag"
+	ReqPropertyArticleInfo        = "info"
 	ReqPropertyArticleId          = "articleId"
 	ReqPropertyArticleState       = "state"
 	ReqPropertyStateWrongNamePass = "wrong name/pass"
