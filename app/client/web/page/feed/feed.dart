@@ -65,7 +65,7 @@ class FeedPage {
     }
     for (var v in ret.arts) {
       builder.end(ticket, [
-        """    <li><a><div style="width:${w}px;">""",
+        """    <li><a href="#/Article/get?${nbox.NetBox.ReqPropertyArticleId}=${v.articleId}"><div style="width:${w}px;">""",
         """      <table><tr><td> """,
         """       <img id="${this.iconId}" style="width:50px;display:inline; background-color:#99cc00;" src="${netbox.newMeManager().makeImgUserIconSrc(v.userName)}">""", //
         """      </td><td>""", ////

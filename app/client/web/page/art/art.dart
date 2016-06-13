@@ -6,6 +6,7 @@ import '../../netbox/netboxfile.dart' as nbox;
 import '../../netbox/netboxart.dart' as nbox;
 import '../../netbox/status.dart' as nbox;
 import '../../dialog/dialog_post.dart' as dialog;
+import '../../dialog/dialog_art.dart' as dialog;
 import '../../util/textbuilder.dart' as util;
 
 class ArtPage {
@@ -45,5 +46,9 @@ class ArtPage {
   }
 
   update(String articleId) async {
+    print("=====> ${articleId}");
+    dialog.ArtDialog d = new dialog.ArtDialog(status, netbox);
+    d.init();
+    d.show(articleId, "title", ["tags"], "message", "state");
   }
 }

@@ -19,7 +19,7 @@ class ArtDialog {
       { //
       this.naviId: "naviId",
       String width: "300px",
-      this.dialogName: "dialog_post"}) {
+      this.dialogName: "dialog_art"}) {
     base = new Dialog(this.dialogName, width: width);
   }
 
