@@ -58,7 +58,7 @@ class FeedPage {
       """		</ul>""",
       """</nav> """,
     ]);
-    int w = 300;
+    int w = 250;
     if(w > html.window.innerWidth) {
       w = html.window.innerWidth;
     }
