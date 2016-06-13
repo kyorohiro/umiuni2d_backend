@@ -11,10 +11,11 @@ import '../../util/textbuilder.dart' as util;
 class FeedPage {
   String rootId;
   String naviId;
+  String iconId;
   nbox.MyStatus status;
   nbox.NetBox netbox;
 
-  FeedPage(this.status, this.netbox, this.rootId, {naviId: "aanaviId"}) {
+  FeedPage(this.status, this.netbox, this.rootId, {this.naviId: "aanaviId", this.iconId: "aaiconId"}) {
     html.window.onHashChange.listen((_) {
       updateFromHash();
     });
@@ -65,9 +66,13 @@ class FeedPage {
     for (var v in ret.arts) {
       builder.end(ticket, [
         """    <li><a><div style="width:${w}px;">""",
+        """ <table><tr><td> """,
+        """ <img id="${this.iconId}" style="width:50px;display:inline; background-color:#99cc00;" src="${netbox.newMeManager().makeImgUserIconSrc(v.userName)}">""", //
+        """ </td><td>""", ////
         """ <div style="font-size:15px"> ${v.title} """,
         """    <div style="font-size:10px"> ${v.userName} ${v.updated}</div>""",
         """ </div><br>""",
+        """ </td></tr></table>""",
         """ <div style="font-size:10px"> ${v.tag} </div>""",
         """    </div></a></li>""",]);
     }
