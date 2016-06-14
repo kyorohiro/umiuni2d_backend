@@ -139,7 +139,6 @@ class NetBoxArtManager {
   }
 
   Future<NetBoxArtManagerFindArt> getArticleFromArticleId(String articleId) async {
-    print("--");
     TinyNetHtml5Builder builder = new TinyNetHtml5Builder();
     TinyNetRequester requester = await builder.createRequester();
     String url = "${this.backendAddr}/api/${version}/art_mana/get";
