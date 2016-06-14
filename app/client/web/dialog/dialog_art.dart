@@ -140,6 +140,9 @@ class ArtDialog {
     //
     //
     print("---> ${message}");
+    if (message == null) {
+      message = "";
+    }
     builder.end(builder.getRootTicket(), [markdown.markdownToHtml(message)]);
 
     html.DialogElement elm = base.show(builder.toText("\r\n"));
