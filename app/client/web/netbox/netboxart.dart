@@ -124,13 +124,27 @@ class NetBoxArtManager {
   }
 
   Future<NetBoxArtManagerFind> findArticleWithNewOrde(String cursor) async {
-    print("--");
     TinyNetHtml5Builder builder = new TinyNetHtml5Builder();
     TinyNetRequester requester = await builder.createRequester();
     String url = "${this.backendAddr}/api/${version}/art_mana/find_with_neworder";
     TinyNetRequesterResponse response = await requester.request(TinyNetRequester.TYPE_POST, url, //
         data: conv.JSON.encode({
 //          NetBox.ReqPropertyLoginId: loginId, //
+          NetBox.ReqPropertyRequestID: "AABBCC", //
+          NetBox.ReqPropertyApiKey: apiKey,
+          NetBox.ReqPropertyCursor: cursor
+        }));
+    return new NetBoxArtManagerFind(response);
+  }
+
+  Future<NetBoxArtManagerFind> findArticleWithUserName(String userName, String cursor) async {
+    TinyNetHtml5Builder builder = new TinyNetHtml5Builder();
+    TinyNetRequester requester = await builder.createRequester();
+    String url = "${this.backendAddr}/api/${version}/art_mana/find_with_neworder";
+    TinyNetRequesterResponse response = await requester.request(TinyNetRequester.TYPE_POST, url, //
+        data: conv.JSON.encode({
+//          NetBox.ReqPropertyLoginId: loginId, //
+          NetBox.ReqPropertyName: userName, //
           NetBox.ReqPropertyRequestID: "AABBCC", //
           NetBox.ReqPropertyApiKey: apiKey,
           NetBox.ReqPropertyCursor: cursor
@@ -148,8 +162,8 @@ class NetBoxArtManager {
         url,
         data: conv.JSON.encode({
           NetBox.ReqPropertyRequestID: "AABBCC", //
-          NetBox.ReqPropertyApiKey: apiKey,//
-          NetBox.ReqPropertyArticleId: articleId,//
+          NetBox.ReqPropertyApiKey: apiKey, //
+          NetBox.ReqPropertyArticleId: articleId, //
         }));
     return new NetBoxArtManagerFindArt(response);
   }
