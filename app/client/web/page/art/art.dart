@@ -8,6 +8,7 @@ import '../../netbox/status.dart' as nbox;
 import '../../dialog/dialog_post.dart' as dialog;
 import '../../dialog/dialog_art.dart' as dialog;
 import '../../util/textbuilder.dart' as util;
+import '../../util/location.dart' as util;
 
 class ArtPage {
   String rootId;
@@ -27,12 +28,8 @@ class ArtPage {
     if (this.status.isLogin == false) {
       return;
     }
-    String hash = html.window.location.hash;
-    Map<String,String> prop = {};
-    if (hash.indexOf("?") > 0) {
-      prop = Uri.splitQueryString(hash.substring(hash.indexOf("?") + 1));
-      hash = hash.substring(0, hash.indexOf("?"));
-    }
+    var hash = util.Location.address(html.window.location.hash);
+    var prop = util.Location.prop(html.window.location.hash);
     if (hash.startsWith("#/Article")) {
       if (hash == "#/Article/get") {
         if (prop[nbox.NetBox.ReqPropertyArticleId] != null) {
@@ -46,7 +43,6 @@ class ArtPage {
   }
 
   update(String articleId) async {
-    print("=====> ${articleId}");
     nbox.NetBoxArtManagerFindArt art =  await netbox.newArtManager().getArticleFromArticleId(articleId);
     dialog.ArtDialog d = new dialog.ArtDialog(status, netbox, width: "90%");
     d.init();

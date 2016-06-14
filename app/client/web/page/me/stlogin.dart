@@ -84,15 +84,24 @@ class MePage {
     html.Element elm = html.document.body.querySelector("#${this.rootId}");
     elm.children.clear();
     if (this.status.isLogin) {
-
-      //
       name(elm);
       nbox.NetBoxMeManagerGetInfo rt = await this.netbox.newMeManager().getMyInfo(status.userObjectId);
       mail(rt.mail, elm);
       password(elm);
+      arts(elm);
     }
   }
-
+  arts(html.Element elm) {
+    print("-3");
+    elm.appendHtml(
+        [
+          """<H3>Arts</H3>""",
+          //""" <div>""", //
+          //""" </div>""", //
+          //
+        ].join(),
+        treeSanitizer: html.NodeTreeSanitizer.trusted);
+  }
   name(html.Element elm) {
     elm.appendHtml(
         [
@@ -141,7 +150,8 @@ class MePage {
       });
     });
   }
-  mail(String mail, html.Element elm) async {
+  mail(String mail, html.Element elm) {
+    print("-2");
     elm.appendHtml(
         [
           //
@@ -167,7 +177,7 @@ class MePage {
     });
   }
 
-  password(html.Element elm) async {
+  password(html.Element elm)  {
     elm.appendHtml(
         [
           //
