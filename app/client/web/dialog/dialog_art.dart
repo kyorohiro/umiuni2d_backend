@@ -7,6 +7,7 @@ import '../dialog/dialog_confirm.dart' as dialog;
 import '../netbox/netbox.dart' as nbox;
 import '../netbox/netboxart.dart' as nbox;
 import '../netbox/status.dart' as nbox;
+import 'package:markdown/markdown.dart' as markdown;
 
 
 class ArtDialog {
@@ -130,32 +131,17 @@ class ArtDialog {
     ]);
     util.TextBuilderTicket navi = builder.pat(builder.getRootTicket(), [
       """<nav class="${this.naviId}">""",
-      """<input class="text" id="${this.naviId}_title" type="text" placeholder="Title">""", //
+      """<H3>${title}</H3>""", //
     ], [
       """</nav>"""
     ]);
     util.TextBuilderTicket tag = builder.pat(navi, ["""<div id="${this.naviId}_tag">"""], ["""</div>"""]);
 
-    builder.end(tag, ["""<button id="${this.naviId}_addtag">add tag</button>""",]);
-    builder.end(navi, ["""<textarea id="${this.naviId}_cont" class="textarea"></textarea>""",]);
+    //
+    //
+    builder.end(builder.getRootTicket(), [markdown.markdownToHtml(message)]);
 
     html.DialogElement elm = base.show(builder.toText("\r\n"));
-    elm.querySelector("#${this.naviId}_addtag").onClick.listen((_) {
-      dialog.TextDialog d = new dialog.TextDialog();
-      d.init();
-      d.show("Add Tag", "", onUpdated: (dialog.TextDialog d, String v) {
-        if (false == tags.contains(v)) {
-          addTag(tags, v);
-          tags.add(v);
-        }
-        return true;
-      });
-    });
-    //
-    //
-    html.TextAreaElement contElm = elm.querySelector("#${this.naviId}_cont");
-    html.InputElement titleElm = elm.querySelector("#${this.naviId}_title");
-
     elm.querySelector("#back").onClick.listen((_) {
       this.close();
     });

@@ -12,6 +12,6 @@ dependencies:
   dart_to_js_script_rewriter: '^0.1.0'
   cookie: any
   crypto: any
-
+  markdown: any
 transformers:
 - dart_to_js_script_rewriter
