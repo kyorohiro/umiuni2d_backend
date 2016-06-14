@@ -23,8 +23,8 @@ func articleGetHandler(w http.ResponseWriter, r *http.Request) {
 	// parse
 	var requestPropery map[string]interface{}
 	json.NewDecoder(r.Body).Decode(&requestPropery)
-	propRequestId := requestPropery["reqId"].(string)
-	propArticleId := requestPropery["articleId"].(string)
+	propRequestId := requestPropery[ReqPropertyRequestID].(string)
+	propArticleId := requestPropery[ReqPropertyArticleId].(string)
 
 	// arcle
 	ctx := appengine.NewContext(r)

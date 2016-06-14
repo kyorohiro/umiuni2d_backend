@@ -47,8 +47,9 @@ class ArtPage {
 
   update(String articleId) async {
     print("=====> ${articleId}");
-    dialog.ArtDialog d = new dialog.ArtDialog(status, netbox, width: "99%");
+    nbox.NetBoxArtManagerFindArt art =  await netbox.newArtManager().getArticleFromArticleId(articleId);
+    dialog.ArtDialog d = new dialog.ArtDialog(status, netbox, width: "90%");
     d.init();
-    d.show(articleId, "title", ["tags"], "message", "state");
+    d.show(articleId, art.title, ["tags"], art.cont, art.state);
   }
 }
