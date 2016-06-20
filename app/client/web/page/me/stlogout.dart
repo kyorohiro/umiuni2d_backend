@@ -117,8 +117,8 @@ class MePageLogout {
       """ <ul>""",
       """		<li>Register</li>""", //
       """   <li>${prop["code"] != null ?prop["code"]:""}</li>""",
-      """   <li><input type="text" id="${propUserName}"/></li>""",
-      """   <li><input type="password" id= "${propPassword}"/></li>""",
+      """   <li><input type="text" placeholder="User Name" id="${propUserName}"/></li>""",
+      """   <li><input type="password" placeholder="Password" id="${propPassword}"/></li>""",
       """		<li><a href="#/Me/register/do">Regist</a></li>""", //
       """ </ul>""",
       """</nav>""",
@@ -133,8 +133,8 @@ class MePageLogout {
       """<nav class="mepage">""", //
       """ <ul>""",
       """		<li>Login</li>""", //
-      """   <li><input type="text" id="${propUserName}"/></li>""",
-      """   <li><input type="password" id="${propPassword}"/></li>""",
+      """   <li><input type="text"  placeholder="User Name" id="${propUserName}"/></li>""",
+      """   <li><input type="password"  placeholder="Password" id="${propPassword}"/></li>""",
       """		<li><a href="#/Me/login/do">Login</a></li>""", //
       """ </ul>""",
       """</nav>""",

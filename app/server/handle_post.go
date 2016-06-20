@@ -10,7 +10,7 @@ import (
 
 	"google.golang.org/appengine"
 
-	"gaevote"
+	"umiuni2d_backend/vote"
 )
 
 func articleVoteHandler(w http.ResponseWriter, r *http.Request) {
