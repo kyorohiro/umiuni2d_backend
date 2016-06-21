@@ -25,6 +25,7 @@ class NetBox {
   static final String ReqPropertyUpdated = "updated";
   static final String ReqPropertyCreated = "created";
   static final int ReqPropertyCodeOK = 200;
+  static final int ReqPropertyCodeLocalWrongOpPassword = 192001;
   static final int ReqPropertyCodeAlreadyExist = 1000;
 
   String backendAddr;

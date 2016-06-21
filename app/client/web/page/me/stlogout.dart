@@ -7,8 +7,9 @@ class MePageLogout {
   String rootId;
   netboxs.MyStatus status;
   netboxm.NetBox netbox;
-  static String propUserName = "userName";
-  static String propPassword = "password";
+  String propUserName = "userName";
+  String propPassword = "password";
+  String propPasswordOpt = "passwordOtp";
 
   MePageLogout(this.status, this.netbox, this.rootId) {
     init();
@@ -41,7 +42,16 @@ class MePageLogout {
         html.Element elm = html.document.body.querySelector("#${this.rootId}");
         html.InputElement userNameElm = elm.querySelector("#${propUserName}");
         html.InputElement passwordElm = elm.querySelector("#${propPassword}");
-        var r = await this.netbox.newMeManager().regist(userNameElm.value, "", passwordElm.value);
+        html.InputElement passwordOptElm = elm.querySelector("#${propPasswordOpt}");
+        if(passwordElm.value != passwordOptElm.value) {
+          html.window.location.assign("#/Me/login?code=${netboxm.NetBox.ReqPropertyCodeLocalWrongOpPassword}");
+          return;
+        }
+
+        var r = await this
+            .netbox
+            .newMeManager()
+            .regist(userNameElm.value, "", passwordElm.value);
         if (r.code == 200) {
           this.status.userName = userNameElm.value;
           this.status.userObjectId = r.loginId;
@@ -53,7 +63,10 @@ class MePageLogout {
         html.Element elm = html.document.body.querySelector("#${this.rootId}");
         html.InputElement userNameElm = elm.querySelector("#${propUserName}");
         html.InputElement passwordElm = elm.querySelector("#${propPassword}");
-        var r = await this.netbox.newMeManager().login(userNameElm.value, passwordElm.value);
+        var r = await this
+            .netbox
+            .newMeManager()
+            .login(userNameElm.value, passwordElm.value);
         if (r.code == 200) {
           this.status.userName = userNameElm.value;
           this.status.userObjectId = r.loginId;
@@ -119,6 +132,7 @@ class MePageLogout {
       """   <li>${prop["code"] != null ?prop["code"]:""}</li>""",
       """   <li><input type="text" placeholder="User Name" id="${propUserName}"/></li>""",
       """   <li><input type="password" placeholder="Password" id="${propPassword}"/></li>""",
+      """   <li><input type="password" placeholder="Password" id="${propPasswordOpt}"/></li>""",
       """		<li><a href="#/Me/register/do">Regist</a></li>""", //
       """ </ul>""",
       """</nav>""",
