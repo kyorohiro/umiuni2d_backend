@@ -68,7 +68,7 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		//		if err1 == user.ErrorNotFound || err1 == user.ErrorInvalidPass {
 		//			state = ReqPropertyStateWrongNamePass
 		//		}
-		Response(w, map[string]interface{}{ReqPropertyCode: ReqPropertyCodeNotFound, ReqPropertyRequestID: propRequestId})
+		Response(w, map[string]interface{}{ReqPropertyCode: ReqPropertyCodeWrongNamePass, ReqPropertyRequestID: propRequestId})
 	} else {
 		Response(w, map[string]interface{}{ReqPropertyCode: ReqPropertyCodeOK, ReqPropertyRequestID: propRequestId, ReqPropertyLoginId: loginId.GetLoginId()})
 	}

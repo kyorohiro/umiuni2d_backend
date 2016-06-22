@@ -4,7 +4,11 @@ import 'netboxart.dart';
 
 class NetBoxBasicUsage {
     static Map<int, String> errorMessageEn = {
-      NetBox.ReqPropertyCodeLocalWrongOpPassword: "Failed to this act, password and opt password is different."
+      NetBox.ReqPropertyCodeLocalWrongOpPassword: "Failed to this act, password and opt password is different.",
+      NetBox.ReqPropertyCodeAlreadyExist: "Failed to this act, Already Exist",
+      NetBox.ReqPropertyCodeWrongNamePass: "Failed to this act, Worng ID or Wrong Password",
+      NetBox.ReqPropertyCodeNotFound: "Failed to this act, Not Found",
+      NetBox.ReqPropertyCodeError: "Failed to this act, Server Error. Please Retry after long interval"
     };
 
     static String errorMessage(int v) {
@@ -41,6 +45,11 @@ class NetBox {
   static final int ReqPropertyCodeOK = 200;
   static final int ReqPropertyCodeLocalWrongOpPassword = 192001;
   static final int ReqPropertyCodeAlreadyExist = 1000;
+  static final int ReqPropertyStateWrongNamePassID = -1;
+  static final int ReqPropertyCodeError            = 2000;
+  static final int ReqPropertyCodeNotFound         = 1001;
+  static final int ReqPropertyCodeWrongNamePass    = 1002;
+  static final int ReqPropertyCodeWrongID          = 1003;
 
   String backendAddr;
   String apiKey;
