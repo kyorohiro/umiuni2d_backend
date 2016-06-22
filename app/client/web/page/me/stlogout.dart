@@ -34,17 +34,13 @@ class MePageLogout {
       } else if (hash == "#/Me/register") {
         updateRegister(prop);
         if (prop.containsKey("code")) {
-          dialog.ConfirmDialog d = new dialog.ConfirmDialog();
-          d.init();
-          try {
-            d.show("Error", netboxm.NetBoxBasicUsage.errorMessage(int.parse(prop["code"])), //
-                onUpdated: (dialog.ConfirmDialog dd, bool okBtnIsSelected) async {
-              return true;
-            }, useCloseButton: false);
-          } catch (e) {}
+            showErrorDialog(prop);
         }
       } else if (hash == "#/Me/login") {
         updateLogin();
+        if (prop.containsKey("code")) {
+            showErrorDialog(prop);
+        }        
       } else if (hash == "#/Me/register/do") {
         html.Element elm = html.document.body.querySelector("#${this.rootId}");
         html.InputElement userNameElm = elm.querySelector("#${propUserName}");
@@ -74,9 +70,22 @@ class MePageLogout {
           this.status.userObjectId = r.loginId;
           html.window.location.assign("#/Me");
         } else {
-          html.window.location.assign("#/Me/register?code=${r.code}");
+          html.window.location.assign("#/Me/login?code=${r.code}");
         }
       }
+    }
+  }
+
+  showErrorDialog(Map<String,String> prop) {
+    if (prop.containsKey("code")) {
+      dialog.ConfirmDialog d = new dialog.ConfirmDialog();
+      d.init();
+      try {
+        d.show("Error", netboxm.NetBoxBasicUsage.errorMessage(int.parse(prop["code"])), //
+            onUpdated: (dialog.ConfirmDialog dd, bool okBtnIsSelected) async {
+          return true;
+        }, useCloseButton: false);
+      } catch (e) {}
     }
   }
 
