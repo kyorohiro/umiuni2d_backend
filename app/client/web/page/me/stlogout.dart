@@ -2,6 +2,8 @@ import 'dart:html' as html;
 import 'dart:async';
 import '../../netbox/netbox.dart' as netboxm;
 import '../../netbox/status.dart' as netboxs;
+import '../../util/location.dart' as util;
+import '../../dialog/dialog_confirm.dart' as dialog;
 
 class MePageLogout {
   String rootId;
@@ -23,19 +25,24 @@ class MePageLogout {
     if (this.status.isLogin == true) {
       return;
     }
-    String hash = html.window.location.hash;
-    Map prop = {};
-    if (hash.indexOf("?") > 0) {
-      prop = Uri.splitQueryString(hash.substring(hash.indexOf("?") + 1));
-      hash = hash.substring(0, hash.indexOf("?"));
-    }
+    String hash = util.Location.address(html.window.location.hash);
+    Map prop = util.Location.prop(html.window.location.hash);
+    print("--->>>> ${hash}");
     if (hash.startsWith("#/Me")) {
-      print("----->(1)");
       if (hash == "#/Me") {
-        print("----->(2)");
         update();
       } else if (hash == "#/Me/register") {
         updateRegister(prop);
+        if (prop.containsKey("code")) {
+          dialog.ConfirmDialog d = new dialog.ConfirmDialog();
+          d.init();
+          try {
+            d.show("Error", netboxm.NetBoxBasicUsage.errorMessage(int.parse(prop["code"])), //
+                onUpdated: (dialog.ConfirmDialog dd, bool okBtnIsSelected) async {
+              return true;
+            }, useCloseButton: false);
+          } catch (e) {}
+        }
       } else if (hash == "#/Me/login") {
         updateLogin();
       } else if (hash == "#/Me/register/do") {
@@ -43,15 +50,13 @@ class MePageLogout {
         html.InputElement userNameElm = elm.querySelector("#${propUserName}");
         html.InputElement passwordElm = elm.querySelector("#${propPassword}");
         html.InputElement passwordOptElm = elm.querySelector("#${propPasswordOpt}");
-        if(passwordElm.value != passwordOptElm.value) {
-          html.window.location.assign("#/Me/login?code=${netboxm.NetBox.ReqPropertyCodeLocalWrongOpPassword}");
+        if (passwordElm.value != passwordOptElm.value) {
+          print(">> ${passwordElm.value} :: ${passwordOptElm.value}");
+          html.window.location.assign("#/Me/register?code=${netboxm.NetBox.ReqPropertyCodeLocalWrongOpPassword}");
           return;
         }
 
-        var r = await this
-            .netbox
-            .newMeManager()
-            .regist(userNameElm.value, "", passwordElm.value);
+        var r = await this.netbox.newMeManager().regist(userNameElm.value, "", passwordElm.value);
         if (r.code == 200) {
           this.status.userName = userNameElm.value;
           this.status.userObjectId = r.loginId;
@@ -63,16 +68,13 @@ class MePageLogout {
         html.Element elm = html.document.body.querySelector("#${this.rootId}");
         html.InputElement userNameElm = elm.querySelector("#${propUserName}");
         html.InputElement passwordElm = elm.querySelector("#${propPassword}");
-        var r = await this
-            .netbox
-            .newMeManager()
-            .login(userNameElm.value, passwordElm.value);
+        var r = await this.netbox.newMeManager().login(userNameElm.value, passwordElm.value);
         if (r.code == 200) {
           this.status.userName = userNameElm.value;
           this.status.userObjectId = r.loginId;
           html.window.location.assign("#/Me");
         } else {
-          html.window.location.assign("#/Me/login?code=${r.code}");
+          html.window.location.assign("#/Me/register?code=${r.code}");
         }
       }
     }
@@ -132,7 +134,7 @@ class MePageLogout {
       """   <li>${prop["code"] != null ?prop["code"]:""}</li>""",
       """   <li><input type="text" placeholder="User Name" id="${propUserName}"/></li>""",
       """   <li><input type="password" placeholder="Password" id="${propPassword}"/></li>""",
-      """   <li><input type="password" placeholder="Password" id="${propPasswordOpt}"/></li>""",
+      """   <li><input type="password" placeholder="Rewrite password for confirm" id="${propPasswordOpt}"/></li>""",
       """		<li><a href="#/Me/register/do">Regist</a></li>""", //
       """ </ul>""",
       """</nav>""",

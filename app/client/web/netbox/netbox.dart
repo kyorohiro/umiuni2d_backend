@@ -2,6 +2,20 @@ import 'netboxme.dart';
 import 'netboxfile.dart';
 import 'netboxart.dart';
 
+class NetBoxBasicUsage {
+    static Map<int, String> errorMessageEn = {
+      NetBox.ReqPropertyCodeLocalWrongOpPassword: "Failed to this act, password and opt password is different."
+    };
+
+    static String errorMessage(int v) {
+      if (errorMessageEn.containsKey(v))  {
+        return errorMessageEn[v];
+      } else {
+        return "";
+      }
+    }
+}
+
 class NetBox {
   static final String ReqPropertyName = "userName";
   static final String ReqPropertyTitle = "title";

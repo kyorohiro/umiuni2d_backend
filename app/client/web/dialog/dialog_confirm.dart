@@ -8,7 +8,10 @@ class ConfirmDialog {
   String okBtnId;
   String cancelBtnId;
 
-  ConfirmDialog({this.dialogName: "dialog_confirm", this.okBtnId: "uploadBtn", this.cancelBtnId: "closeBtn"}) {
+  ConfirmDialog(
+      {this.dialogName: "dialog_confirm",
+      this.okBtnId: "uploadBtn",
+      this.cancelBtnId: "closeBtn"}) {
     base = new Dialog(this.dialogName);
   }
 
@@ -16,13 +19,27 @@ class ConfirmDialog {
     base.init();
   }
 
-  show(String title, String message, {String okName: "OK", String cancelName: "Cancel", Future<bool> onUpdated(ConfirmDialog dialog, bool okBtnIsSelected): null, String type: "text"}) {
+  show(String title, String message,
+      {bool useOkZButton: true,
+      bool useCloseButton: true,
+      String okName: "OK",
+      String cancelName: "Cancel",
+      Future<bool> onUpdated(ConfirmDialog dialog, bool okBtnIsSelected): null,
+      String type: "text"}) {
     List<String> c = [
       """<h3>${title}</h3>""", //
       """<div>${message}</div>""", //
-      """<button id="${this.okBtnId}" style="display:inline; padding: 12px 24px;">${okName}</button>""",
-      """<button id="${this.cancelBtnId}" style="display:inline; padding: 12px 24px;">${cancelName}</button>""",
     ];
+    if (useOkZButton != null) {
+      c.addAll([
+        """<button id="${this.okBtnId}" style="display:inline; padding: 12px 24px;">${okName}</button>""",
+      ]);
+    }
+    if (useCloseButton) {
+      c.addAll([
+        """<button id="${this.cancelBtnId}" style="display:inline; padding: 12px 24px;">${cancelName}</button>""",
+      ]);
+    }
     print("---->ssa");
     html.DialogElement elm = base.show(c.join("\r\n"));
     print("---->ssa");
@@ -30,7 +47,7 @@ class ConfirmDialog {
     var cancelBtn = elm.querySelector("#${this.cancelBtnId}");
 
     //
-          print("---->ssa");
+    print("---->ssa");
     bool click = false;
     b(bool vvv) {
       return (_) async {
@@ -45,15 +62,19 @@ class ConfirmDialog {
         } finally {
           click = false;
         }
-        if(ret == true) {
+        if (ret == true) {
           this.close();
         }
         return ret;
       };
     }
+    if (okBtn != null) {
+      okBtn.onClick.listen(b(true));
+    }
 
-    okBtn.onClick.listen(b(true));
-    cancelBtn.onClick.listen(b(false));
+    if (cancelBtn != null) {
+      cancelBtn.onClick.listen(b(false));
+    }
   }
 
   close() {
