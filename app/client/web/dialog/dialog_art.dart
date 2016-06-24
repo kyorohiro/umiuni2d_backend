@@ -137,6 +137,7 @@ class ArtDialog {
     ]);
     util.TextBuilderTicket tag = builder.pat(navi, ["""<div id="${this.naviId}_tag">"""], ["""</div>"""]);
 
+    print("tags----> ${tags}");
     //
     //
     print("---> ${message}");
