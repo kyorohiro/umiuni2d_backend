@@ -28,9 +28,6 @@ class FeedPage {
   }
 
   Future updateFromHash() async {
-    if (this.status.isLogin == false) {
-      return;
-    }
     var hash = util.Location.address(html.window.location.hash);
     var prop = util.Location.prop(html.window.location.hash);
     if (hash.startsWith("#/Article")) {
