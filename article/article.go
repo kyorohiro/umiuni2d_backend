@@ -112,7 +112,8 @@ func (obj *Article) SetUpdated(v time.Time) {
 //
 //
 type ArticleManager struct {
-	kindArticle string
+	kindArticle    string
+	limitOfFinding int
 }
 
 func (obj *Article) SaveOnDB(ctx context.Context) error {
@@ -170,7 +171,7 @@ func (obj *ArticleManager) FindArticleFromUserName(ctx context.Context, userName
 	q := datastore.NewQuery(obj.kindArticle).
 		Filter("UserName =", userName). ////
 		Filter("ParentId =", parentId). //
-		Order("-Updated").Limit(20)
+		Order("-Updated").Limit(obj.limitOfFinding)
 	return obj.FindArticleFromQuery(ctx, q, cursorSrc)
 }
 
@@ -192,7 +193,7 @@ func (obj *ArticleManager) FindArticleFromUserName(ctx context.Context, userName
 https://cloud.google.com/appengine/docs/go/config/indexconfig#updating_indexes
 */
 func (obj *ArticleManager) FindArticleWithNewOrder(ctx context.Context, parentId string, cursorSrc string) ([]*Article, string, string) {
-	q := datastore.NewQuery(obj.kindArticle).Filter("State =", "public").Filter("ParentId =", parentId).Order("-Updated").Limit(20)
+	q := datastore.NewQuery(obj.kindArticle).Filter("State =", "public").Filter("ParentId =", parentId).Order("-Updated").Limit(obj.limitOfFinding)
 	return obj.FindArticleFromQuery(ctx, q, cursorSrc)
 }
 

@@ -47,7 +47,7 @@ func findArticleFromTag(ctx context.Context, tag string, cursor string) (*[]*art
 	tags, co, cn := GetTagManager().FindTagFromTag(ctx, tag, "", "", cursor)
 
 	//
-	artMana := article.NewArticleManager("Article")
+	artMana := GetArtManager()
 
 	for _, t := range tags {
 		a, e := artMana.GetArticleFromArticleId(ctx, t.GetTargetId())

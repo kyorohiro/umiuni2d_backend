@@ -66,7 +66,7 @@ const (
 
 var apiKey string = "A91A3E1B-15F0-4DEE-8ECE-F5DD1A06230E"
 var _manager = user.NewUserManager(KindUser, KindLoginId)
-var _artMana = article.NewArticleManager(KindArticle)
+var _artMana = article.NewArticleManager(KindArticle, 10)
 var _tagMan = tag.NewTagManager(KindArticleTag)
 var _blobMana = blob.NewBlobManager("/api/v1/file/on_uploaded", KindBlob)
 

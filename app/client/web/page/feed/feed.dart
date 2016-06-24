@@ -15,12 +15,15 @@ class FeedPage {
   String naviId;
   String iconId;
   String feedContainerId;
+  String nextBtnId;
   nbox.MyStatus status;
   nbox.NetBox netbox;
   nbox.NetBoxFeed feeder;
 
 
-  FeedPage(this.status, this.netbox, this.rootId, this.feeder, {this.naviId: "aanaviId", this.iconId: "aaiconId", this.feedContainerId:"feedContainer"}) {
+  FeedPage(this.status, this.netbox, this.rootId, this.feeder, //
+    {this.naviId: "aanaviId", this.iconId: "aaiconId", //
+    this.feedContainerId:"feedContainer", this.nextBtnId:"nextBtnId"}) {
     html.window.onHashChange.listen((_) {
       updateFromHash();
     });
@@ -89,7 +92,7 @@ class FeedPage {
       w = html.window.innerWidth;
     }
     builder.end(ticket, [
-      """    <ul><li><a><div style="width:${w}px;">""",
+      """    <ul><li><a id="${this.nextBtnId}"><div style="width:${w}px;">""",
       """      <table><tr><td> """,
 //      """       <img id="${this.iconId}" style="width:50px;display:inline; background-color:#99cc00;" src="${netbox.newMeManager().makeImgUserIconSrc(v.userName)}">""", //
       """      </td><td>""", ////
@@ -109,6 +112,9 @@ class FeedPage {
       //target="_blank"
       elm.appendHtml(["""<a href="#/Article/post" id="view-source">""", """Post</a>"""].join("\r\n"));
     }
+    elm.querySelector("#${this.nextBtnId}").onClick.listen((_){
+      nextFeed(isInit: false);
+    });
   }
 
   init() {

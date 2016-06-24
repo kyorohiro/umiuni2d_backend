@@ -14,9 +14,10 @@ import (
 	"google.golang.org/appengine/datastore"
 )
 
-func NewArticleManager(kindArticle string) *ArticleManager {
+func NewArticleManager(kindArticle string, limitOfFinding int) *ArticleManager {
 	ret := new(ArticleManager)
 	ret.kindArticle = kindArticle
+	ret.limitOfFinding = limitOfFinding
 	return ret
 }
 

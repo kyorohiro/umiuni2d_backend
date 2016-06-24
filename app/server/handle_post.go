@@ -87,7 +87,7 @@ func articlePostHandler(w http.ResponseWriter, r *http.Request) {
 	//
 	WriteLog(ctx, "-----> (4)")
 
-	artMana := article.NewArticleManager("Article")
+	artMana := GetArtManager()
 	//	ctx := appengine.NewContext(r)
 
 	var artObj *article.Article
