@@ -1,6 +1,7 @@
 import 'netboxme.dart';
 import 'netboxfile.dart';
 import 'netboxart.dart';
+import 'netboxfeed.dart';
 
 class NetBoxBasicUsage {
     static Map<int, String> errorMessageEn = {
@@ -68,5 +69,9 @@ class NetBox {
 
   NetBoxArtManager newArtManager() {
     return new NetBoxArtManager(this.backendAddr, this.apiKey, version: this.version);
+  }
+
+  NetBoxFeed newNewOrderFeed() {
+    return new NetBoxFeed(this.backendAddr, this.apiKey, version: this.version);
   }
 }

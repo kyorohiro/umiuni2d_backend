@@ -7,6 +7,7 @@ import './toolbar/toolbar.dart';
 
 import 'netbox/netbox.dart' as netbox;
 import 'netbox/status.dart' as netbox;
+import 'netbox/netboxfeed.dart' as netbox;
 
 import 'dart:html' as aahtml;
 Toolbar baseLine = new Toolbar();
@@ -32,7 +33,7 @@ void main() {
   MePageLogout myPageLogout = new MePageLogout(netbox.MyStatus.instance, rootBox, "main");
   myPageLogout.updateFromHash();
 
-  FeedPage feedPage = new FeedPage(netbox.MyStatus.instance, rootBox, "main");
+  FeedPage feedPage = new FeedPage(netbox.MyStatus.instance, rootBox, "main", rootBox.newNewOrderFeed());
   feedPage.updateFromHash();
   //
   ArtPage artPage = new ArtPage(netbox.MyStatus.instance, rootBox, "main");

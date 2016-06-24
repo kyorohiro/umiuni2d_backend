@@ -4,6 +4,7 @@ import '../../netbox/netbox.dart' as nbox;
 import '../../netbox/netboxme.dart' as nbox;
 import '../../netbox/netboxfile.dart' as nbox;
 import '../../netbox/netboxart.dart' as nbox;
+import '../../netbox/netboxfeed.dart' as nbox;
 import '../../netbox/status.dart' as nbox;
 import '../../dialog/dialog_post.dart' as dialog;
 import '../../util/textbuilder.dart' as util;
@@ -15,8 +16,9 @@ class FeedPage {
   String iconId;
   nbox.MyStatus status;
   nbox.NetBox netbox;
+  nbox.NetBoxFeed feeder;
 
-  FeedPage(this.status, this.netbox, this.rootId, {this.naviId: "aanaviId", this.iconId: "aaiconId"}) {
+  FeedPage(this.status, this.netbox, this.rootId, this.feeder, {this.naviId: "aanaviId", this.iconId: "aaiconId"}) {
     html.window.onHashChange.listen((_) {
       updateFromHash();
     });
@@ -45,7 +47,7 @@ class FeedPage {
   update() async {
     //
     html.Element elm = html.document.body.querySelector("#${this.rootId}");
-    nbox.NetBoxArtManagerFind ret = await netbox.newArtManager().findArticleWithNewOrde("");
+    List<nbox.NetBoxArtManagerFindArt> ret = await feeder.next(); //await netbox.newArtManager().findArticleWithNewOrde("");
     util.TextBuilder builder = new util.TextBuilder();
     elm.children.clear();
     builder.end(builder.getRootTicket(), ["""<H2>Article</H2>""",]);
@@ -60,7 +62,7 @@ class FeedPage {
     if(w > html.window.innerWidth) {
       w = html.window.innerWidth;
     }
-    for (var v in ret.arts) {
+    for (var v in ret) {
       builder.end(ticket, [
         """    <li><a href="#/Article/get?${nbox.NetBox.ReqPropertyArticleId}=${Uri.encodeComponent(v.articleId)}"><div style="width:${w}px;">""",
         """      <table><tr><td> """,
