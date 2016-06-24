@@ -14,11 +14,13 @@ class FeedPage {
   String rootId;
   String naviId;
   String iconId;
+  String feedContainerId;
   nbox.MyStatus status;
   nbox.NetBox netbox;
   nbox.NetBoxFeed feeder;
 
-  FeedPage(this.status, this.netbox, this.rootId, this.feeder, {this.naviId: "aanaviId", this.iconId: "aaiconId"}) {
+
+  FeedPage(this.status, this.netbox, this.rootId, this.feeder, {this.naviId: "aanaviId", this.iconId: "aaiconId", this.feedContainerId:"feedContainer"}) {
     html.window.onHashChange.listen((_) {
       updateFromHash();
     });
@@ -44,24 +46,49 @@ class FeedPage {
     }
   }
 
+  nextFeed({isInit:false}) async {
+    html.Element elm = html.document.body.querySelector("#${this.rootId}");
+    html.Element cont = elm.querySelector("#${this.feedContainerId}");
+
+    List<nbox.NetBoxArtManagerFindArt> ret = await feeder.next(); //await netbox.newArtManager().findArticleWithNewOrde("");
+
+    int w = 250;
+    if(w > html.window.innerWidth) {
+      w = html.window.innerWidth;
+    }
+
+    for (var v in (isInit == true? feeder.founded:ret)) {
+      var e = new html.Element.html( [
+        """    <li><a href="#/Article/get?${nbox.NetBox.ReqPropertyArticleId}=${Uri.encodeComponent(v.articleId)}"><div style="width:${w}px;">""",
+        """      <table><tr><td> """,
+        """       <img id="${this.iconId}" style="width:50px;display:inline; background-color:#99cc00;" src="${netbox.newMeManager().makeImgUserIconSrc(v.userName)}">""", //
+        """      </td><td>""", ////
+        """       <div style="font-size:15px"> ${v.title} """,
+        """         <div style="font-size:10px"> ${v.userName} ${v.updated}</div>""",
+        """       </div><br>""",
+        """      </td></tr></table>""",
+        """      <div style="font-size:10px"> ${v.tag} </div>""",
+        """      <div style="font-size:8px">${v.articleInfo}</div>""",
+        """      </div></a></li>""",].join(), treeSanitizer: html.NodeTreeSanitizer.trusted);
+        cont.children.add(e);
+    }
+
+  }
   update() async {
     //
     html.Element elm = html.document.body.querySelector("#${this.rootId}");
-    List<nbox.NetBoxArtManagerFindArt> ret = await feeder.next(); //await netbox.newArtManager().findArticleWithNewOrde("");
     util.TextBuilder builder = new util.TextBuilder();
     elm.children.clear();
     builder.end(builder.getRootTicket(), ["""<H2>Article</H2>""",]);
 
     var ticket = builder.pat(builder.getRootTicket(), [
       """<nav class="${this.naviId}">""", //
-      """		<ul id="plain-menu">""",],[
+      """		<ul id="${this.feedContainerId}">""",],[
       """		</ul>""",
       """</nav> """,
     ]);
-    int w = 250;
-    if(w > html.window.innerWidth) {
-      w = html.window.innerWidth;
-    }
+
+    /*
     for (var v in feeder.founded) {
       builder.end(ticket, [
         """    <li><a href="#/Article/get?${nbox.NetBox.ReqPropertyArticleId}=${Uri.encodeComponent(v.articleId)}"><div style="width:${w}px;">""",
@@ -76,9 +103,10 @@ class FeedPage {
         """      <div style="font-size:8px">${v.articleInfo}</div>""",
         """      </div></a></li>""",]);
     }
-
+*/
 
     elm.appendHtml(builder.toText("\r\n"), treeSanitizer: html.NodeTreeSanitizer.trusted);
+    nextFeed(isInit:true);
     //
     //
     if (this.status.isLogin) {
