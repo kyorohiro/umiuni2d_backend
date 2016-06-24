@@ -62,7 +62,7 @@ class FeedPage {
     if(w > html.window.innerWidth) {
       w = html.window.innerWidth;
     }
-    for (var v in ret) {
+    for (var v in feeder.founded) {
       builder.end(ticket, [
         """    <li><a href="#/Article/get?${nbox.NetBox.ReqPropertyArticleId}=${Uri.encodeComponent(v.articleId)}"><div style="width:${w}px;">""",
         """      <table><tr><td> """,
