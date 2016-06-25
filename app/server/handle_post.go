@@ -45,6 +45,14 @@ func articleVoteHandler(w http.ResponseWriter, r *http.Request) {
 	//
 }
 
+func toStringArray(srcs []interface{}) []string {
+	var ret []string
+	for _, s := range srcs {
+		ret = append(ret, s.(string))
+	}
+	return ret
+}
+
 // ------
 // postHandler
 // ------
@@ -65,7 +73,8 @@ func articlePostHandler(w http.ResponseWriter, r *http.Request) {
 	cont := requestPropery[ReqPropertyArticleCont].(string)
 	title := requestPropery[ReqPropertyArticleTitle].(string)
 	WriteLog(ctx, "-----> (b)")
-	tag := requestPropery[ReqPropertyArticleTag].([]string)
+	tags := requestPropery[ReqPropertyArticleTag].([]interface{})
+	tag := toStringArray(tags)
 	WriteLog(ctx, "-----> (b1)")
 	articleId := requestPropery[ReqPropertyArticleId].(string)
 	WriteLog(ctx, "-----> (c)")
@@ -98,7 +107,7 @@ func articlePostHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		artObj = artMana.NewArticle(ctx, userName, "")
 		artObj.SetTitle(title)
-		artObj.SetTag(tag)
+		artObj.SetTags(tag)
 
 		artObj.SetCont(cont)
 		artObj.SetState(state)
@@ -112,7 +121,7 @@ func articlePostHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		//
 		artObj.SetTitle(title)
-		artObj.SetTag(tag)
+		artObj.SetTags(tag)
 		artObj.SetCont(cont)
 		artObj.SetUpdated(time.Now())
 		if state != "save" {

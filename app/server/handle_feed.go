@@ -68,7 +68,7 @@ func findArticleResponse(w http.ResponseWriter, requestPropery map[string]interf
 			ReqPropertyName:         v.GetUserName(),
 			ReqPropertyArticleTitle: v.GetTitle(),
 			ReqPropertyArticleState: v.GetState(),
-			ReqPropertyArticleTag:   v.GetTag(),
+			ReqPropertyArticleTag:   v.GetTags(),
 			ReqPropertyArticleInfo:  v.GetCont()[0:infoLen],
 			ReqPropertyUpdated:      v.GetUpdated().UnixNano() / 1000,
 			ReqPropertyCreated:      v.GetCreated().UnixNano() / 1000})

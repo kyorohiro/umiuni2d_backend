@@ -1,10 +1,12 @@
 package article
 
 import (
+	"encoding/json"
 	"time"
 
 	"golang.org/x/net/context"
 	"google.golang.org/appengine/datastore"
+	//	"google.golang.org/appengine/log"
 )
 
 type GaeObjectArticle struct {
@@ -59,12 +61,15 @@ func (obj *Article) SetTitle(v string) {
 	obj.gaeObject.Title = v
 }
 
-func (obj *Article) GetTag() string {
-	return obj.gaeObject.Tag
+func (obj *Article) GetTags() []string {
+	var tags []string
+	json.Unmarshal([]byte(obj.gaeObject.Tag), &tags)
+	return tags
 }
 
-func (obj *Article) SetTag(v []string) {
-	obj.gaeObject.Tag = v
+func (obj *Article) SetTags(v []string) {
+	b, _ := json.Marshal(v)
+	obj.gaeObject.Tag = string(b)
 }
 
 func (obj *Article) GetCont() string {

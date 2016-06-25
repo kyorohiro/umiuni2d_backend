@@ -48,7 +48,7 @@ func articleGetHandler(w http.ResponseWriter, r *http.Request) {
 		ReqPropertyName:         artObj.GetUserName(),
 		ReqPropertyArticleTitle: artObj.GetTitle(),
 		ReqPropertyArticleState: artObj.GetState(),
-		ReqPropertyArticleTag:   artObj.GetTag(),
+		ReqPropertyArticleTag:   artObj.GetTags(),
 		ReqPropertyArticleInfo:  artObj.GetCont()[0:infoLen],
 		ReqPropertyUpdated:      artObj.GetUpdated().UnixNano() / 1000,
 		ReqPropertyCreated:      artObj.GetCreated().UnixNano() / 1000,
