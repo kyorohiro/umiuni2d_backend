@@ -168,7 +168,7 @@ class PostDialog {
           status.userObjectId, //
           "",
           titleElm.value,
-          tags.join(" "),
+          tags,
           contElm.value,
           "save");
     });
@@ -179,7 +179,7 @@ class PostDialog {
           status.userObjectId, //
           articleId,
           titleElm.value,
-          tags.join(" "),
+          tags,
           contElm.value,
           (state == "private" ? "public" : "private"));
       if(ret.code == nbox.NetBox.ReqPropertyCodeOK) {

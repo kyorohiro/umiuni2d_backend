@@ -63,7 +63,7 @@ func (obj *Article) GetTag() string {
 	return obj.gaeObject.Tag
 }
 
-func (obj *Article) SetTag(v string) {
+func (obj *Article) SetTag(v []string) {
 	obj.gaeObject.Tag = v
 }
 

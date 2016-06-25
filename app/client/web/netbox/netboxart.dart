@@ -102,7 +102,7 @@ class NetBoxArtManager {
 
   NetBoxArtManager(this.backendAddr, this.apiKey, {this.version: "v1", this.passwordKey: "umiuni2d"}) {}
 
-  Future<NetBoxArtManagerPost> post(String userName, String loginId, String articleId, String title, String tag, String cont, String state) async {
+  Future<NetBoxArtManagerPost> post(String userName, String loginId, String articleId, String title, List<String> tag, String cont, String state) async {
     TinyNetHtml5Builder builder = new TinyNetHtml5Builder();
     TinyNetRequester requester = await builder.createRequester();
     String url = "${this.backendAddr}/api/${version}/art_mana/post";

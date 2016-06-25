@@ -13,14 +13,13 @@ import (
 	"google.golang.org/appengine/datastore"
 )
 
-func addTagsFromPostIdWithTagSrc(ctx context.Context, tagSrc string, articleId string, articleKey *datastore.Key, parent *datastore.Key) error {
+func addTagsFromPostIdWithTagSrc(ctx context.Context, tagList []string, articleId string, articleKey *datastore.Key, parent *datastore.Key) error {
 	//
 	r, _, _ := GetTagManager().FindTagFromTargetId(ctx, articleId, "")
 	for _, v := range r {
 		datastore.Delete(ctx, v.GetGaeObjectKey())
 	}
 	//
-	tagList := extractTag(tagSrc)
 	for _, v := range tagList {
 		tag := GetTagManager().NewTag(ctx, v, "", "", "", articleId)
 		tag.SaveOnDB(ctx)

@@ -65,7 +65,7 @@ func articlePostHandler(w http.ResponseWriter, r *http.Request) {
 	cont := requestPropery[ReqPropertyArticleCont].(string)
 	title := requestPropery[ReqPropertyArticleTitle].(string)
 	WriteLog(ctx, "-----> (b)")
-	tag := requestPropery[ReqPropertyArticleTag].(string)
+	tag := requestPropery[ReqPropertyArticleTag].([]string)
 	WriteLog(ctx, "-----> (b1)")
 	articleId := requestPropery[ReqPropertyArticleId].(string)
 	WriteLog(ctx, "-----> (c)")
@@ -127,7 +127,7 @@ func articlePostHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if artObj.GetState() == "private" {
-		addTagsFromPostIdWithTagSrc(ctx, "", artObj.GetArticleId(), artObj.GetGaeObjectKey(), artObj.GetGaeObjectKey())
+		addTagsFromPostIdWithTagSrc(ctx, []string{}, artObj.GetArticleId(), artObj.GetGaeObjectKey(), artObj.GetGaeObjectKey())
 	} else {
 		addTagsFromPostIdWithTagSrc(ctx, tag, artObj.GetArticleId(), artObj.GetGaeObjectKey(), artObj.GetGaeObjectKey())
 	}
