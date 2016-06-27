@@ -149,6 +149,7 @@ class ArtDialog {
     html.DialogElement elm = base.show(builder.toText("\r\n"));
     elm.querySelector("#back").onClick.listen((_) {
       this.close();
+      html.window.history.back();
     });
 
   }

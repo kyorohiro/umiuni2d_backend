@@ -29,7 +29,7 @@ class NetBoxArtManagerFindArt {
   String title;
   String state;
   String cont;
-  String tag;
+  List<String> tag;
   int updated;
   int created;
   NetBoxArtManagerFindArt.empty() {}
