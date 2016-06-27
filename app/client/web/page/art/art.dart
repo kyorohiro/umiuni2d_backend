@@ -28,7 +28,7 @@ class ArtPage {
     if (this.status.isLogin == false) {
       return;
     }
-    var hash = util.Location.address(html.window.location.hash);
+/*    var hash = util.Location.address(html.window.location.hash);
     var prop = util.Location.prop(html.window.location.hash);
     if (hash.startsWith("#/Article")) {
       if (hash == "#/Article/get") {
@@ -36,16 +36,17 @@ class ArtPage {
           update(prop[nbox.NetBox.ReqPropertyArticleId]);
         }
       }
-    }
+    }*/
   }
 
   init(){
   }
 
   update(String articleId) async {
+    /*
     nbox.NetBoxArtManagerFindArt art =  await netbox.newArtManager().getArticleFromArticleId(articleId);
     dialog.ArtDialog d = new dialog.ArtDialog(status, netbox, width: "90%");
     d.init();
-    d.show(articleId, art.title, art.tag, art.cont, art.state);
+    d.show(articleId, art.title, art.tag, art.cont, art.state);*/
   }
 }
