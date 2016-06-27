@@ -82,6 +82,15 @@ class ArtDialog {
 //      """	color: white;""", //
       """	text-decoration: none;""", //
       """}""",
+      //
+      """nav.${this.naviId} a.mini {""", //
+      """	display: block;""", //
+    //  """	border-radius: 2px;""", //
+      """	padding: 3px 6px;""", //
+      """	background-color: #cccccc;""", //
+      """	color: Black;""", //
+      """	text-decoration: none;""", //
+      """}""", //
     ]);
   }
 
@@ -131,12 +140,17 @@ class ArtDialog {
     ]);
     util.TextBuilderTicket navi = builder.pat(builder.getRootTicket(), [
       """<nav class="${this.naviId}">""",
-      """<H3>${title}</H3>""", //
+      """<H2>${title}</H2>""", //
     ], [
       """</nav>"""
     ]);
     util.TextBuilderTicket tag = builder.pat(navi, ["""<div id="${this.naviId}_tag">"""], ["""</div>"""]);
 
+    for(String t in tags) {
+      builder.end(tag,
+        [""" <a class="mini" href="#/Article?tag=${Uri.encodeComponent(t)}">""",
+         """ <div class="mini">${t}</div></a>"""]);
+    }
     print("tags----> ${tags}");
     //
     //

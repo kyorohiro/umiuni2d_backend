@@ -46,6 +46,6 @@ class ArtPage {
     nbox.NetBoxArtManagerFindArt art =  await netbox.newArtManager().getArticleFromArticleId(articleId);
     dialog.ArtDialog d = new dialog.ArtDialog(status, netbox, width: "90%");
     d.init();
-    d.show(articleId, art.title, ["tags"], art.cont, art.state);
+    d.show(articleId, art.title, art.tag, art.cont, art.state);
   }
 }
