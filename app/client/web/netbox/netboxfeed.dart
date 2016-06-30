@@ -4,6 +4,36 @@ import "dart:async";
 
 typedef Future<netbox.NetBoxArtManagerFind> FuncfindArticle(String cursor);
 
+class NetBoxFeedManager {
+  String backendAddr;
+  String apiKey;
+  String version;
+  String passwordKey;
+  FuncfindArticle funcfindArticle;
+
+  NetBoxFeed _newOrderBox = null;
+  Map<String,NetBoxFeed> _tagBox = {};
+
+  NetBoxFeedManager(this.backendAddr, this.apiKey,
+      {this.version: "v1",
+      this.passwordKey: "umiuni2d", //
+      this.funcfindArticle: null}) {
+        _newOrderBox = new NetBoxFeed(backendAddr, apiKey,version:this.version,
+        passwordKey: this.passwordKey, funcfindArticle: null);
+  }
+
+  NetBoxFeed getNewOrder() {
+    return _newOrderBox;
+  }
+
+  NetBoxFeed getFromTag(String tag) {
+    var r = _tagBox[tag];
+    if(r != null) {
+      return r;
+    }
+  }
+}
+
 class NetBoxFeed {
   String headCursor = "";
   String tailCursor = "";
@@ -40,6 +70,7 @@ class NetBoxFeed {
         passwordKey: passwordKey, //
         funcfindArticle: adapter);
   }
+  
 
   Future<List<netbox.NetBoxArtManagerFindArt>> next() async {
     netbox.NetBoxArtManagerFind a = await this.funcfindArticle(this.tailCursor);
