@@ -44,9 +44,7 @@ class FeedPage {
     if (hash.startsWith("#/Article")) {
       bool usePostDialog = false;
       bool useArtDialog = false;
-      if (hash == "#/Article") {
-        update();
-      }
+
       if (hash == "#/Article/post") {
         postDialog.show("", "title", [], "post", "private");
         usePostDialog = true;
@@ -71,10 +69,11 @@ class FeedPage {
           artDialog.close();
         } catch (e) {}
       }
+      if (usePostDialog == false && usePostDialog == false ) {
+        update(prop["tag"]);
+      }
     }
   }
-
-  updateA(String articleId) async {}
 
   nextFeed({isInit: false}) async {
     html.Element elm = html.document.body.querySelector("#${this.rootId}");
@@ -107,7 +106,7 @@ class FeedPage {
     }
   }
 
-  update() async {
+  update(String tag) async {
     //
     html.Element elm = html.document.body.querySelector("#${this.rootId}");
     util.TextBuilder builder = new util.TextBuilder();
