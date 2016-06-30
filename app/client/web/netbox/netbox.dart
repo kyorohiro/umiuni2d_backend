@@ -74,4 +74,8 @@ class NetBox {
   NetBoxFeed newNewOrderFeed() {
     return new NetBoxFeed(this.backendAddr, this.apiKey, version: this.version);
   }
+
+  NetBoxFeedManager newNewOrderFeedManager() {
+    return new NetBoxFeedManager(this.backendAddr, this.apiKey, version: this.version);
+  }
 }

@@ -19,7 +19,7 @@ class FeedPage {
   String nextBtnId;
   nbox.MyStatus status;
   nbox.NetBox netbox;
-  nbox.NetBoxFeed feeder;
+  nbox.NetBoxFeedManager feeder;
   dialog.PostDialog postDialog;
   dialog.ArtDialog artDialog;
 
@@ -79,14 +79,14 @@ class FeedPage {
     html.Element elm = html.document.body.querySelector("#${this.rootId}");
     html.Element cont = elm.querySelector("#${this.feedContainerId}");
 
-    List<nbox.NetBoxArtManagerFindArt> ret = await feeder.next(); //await netbox.newArtManager().findArticleWithNewOrde("");
+    List<nbox.NetBoxArtManagerFindArt> ret = await feeder.getNewOrder().next(); //await netbox.newArtManager().findArticleWithNewOrde("");
 
     int w = 250;
     if (w > html.window.innerWidth) {
       w = html.window.innerWidth;
     }
 
-    for (var v in (isInit == true ? feeder.founded : ret)) {
+    for (var v in (isInit == true ? feeder.getNewOrder().founded : ret)) {
       var e = new html.Element.html(
           [
             """    <li><a href="#/Article/get?${nbox.NetBox.ReqPropertyArticleId}=${Uri.encodeComponent(v.articleId)}"><div style="width:${w}px;">""",

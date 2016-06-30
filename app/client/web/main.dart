@@ -33,7 +33,7 @@ void main() {
   MePageLogout myPageLogout = new MePageLogout(netbox.MyStatus.instance, rootBox, "main");
   myPageLogout.updateFromHash();
 
-  FeedPage feedPage = new FeedPage(netbox.MyStatus.instance, rootBox, "main", rootBox.newNewOrderFeed());
+  FeedPage feedPage = new FeedPage(netbox.MyStatus.instance, rootBox, "main", rootBox.newNewOrderFeedManager());
   feedPage.updateFromHash();
   //
   ArtPage artPage = new ArtPage(netbox.MyStatus.instance, rootBox, "main");
