@@ -31,6 +31,10 @@ class NetBoxFeedManager {
     if(r != null) {
       return r;
     }
+    r = new NetBoxFeed.tag(tag, backendAddr, apiKey, version:this.version,
+    passwordKey: this.passwordKey);
+    _tagBox[tag] = r;
+    return r;
   }
 }
 
@@ -70,7 +74,20 @@ class NetBoxFeed {
         passwordKey: passwordKey, //
         funcfindArticle: adapter);
   }
-  
+
+  factory NetBoxFeed.tag(String tag, String backendAddr, String apiKey, //
+      {String version: "v1",
+      String passwordKey: "umiuni2d"}) {
+    Future<netbox.NetBoxArtManagerFind> adapter(String cursor) {
+      netbox.NetBoxArtManager art = new netbox.NetBoxArtManager(backendAddr, apiKey, version: version, passwordKey: passwordKey);
+      return art.findArticleFromTag(tag, cursor);
+    }
+    ;
+    return new NetBoxFeed(backendAddr, apiKey,
+        version: version,
+        passwordKey: passwordKey, //
+        funcfindArticle: adapter);
+  }
 
   Future<List<netbox.NetBoxArtManagerFindArt>> next() async {
     netbox.NetBoxArtManagerFind a = await this.funcfindArticle(this.tailCursor);

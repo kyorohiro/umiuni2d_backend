@@ -71,7 +71,7 @@ func articleFindFromTagHandler(w http.ResponseWriter, r *http.Request) {
 	var data map[string]interface{}
 	json.NewDecoder(r.Body).Decode(&data)
 
-	tag := data["tag"].(string)
+	tag := data[ReqPropertyArticleTag].(string)
 	reqId := data["reqId"].(string)
 	cursor := data["cursor"].(string)
 

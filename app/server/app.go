@@ -113,6 +113,7 @@ func init() {
 	http.HandleFunc("/api/v1/art_mana/find_with_neworder", articleFindWithNewOrderHandler)
 	http.HandleFunc("/api/v1/art_mana/get", articleGetHandler)
 	http.HandleFunc("/api/v1/art_mana/find_from_username", articlefindFromUserNameHandler)
+	http.HandleFunc("/api/v1/art_mana/find_from_tag", articleFindFromTagHandler)
 
 	//
 	// fileshare
@@ -130,8 +131,6 @@ func init() {
 	http.HandleFunc("/api/v1/article/vote", articleVoteHandler)
 	http.HandleFunc("/api/v1/article/post_comment", articlePostCommentHandler)
 	http.HandleFunc("/api/v1/article/get_comments", articleGetCommentsHandler)
-
-	http.HandleFunc("/api/v1/article/find_from_tag", articleFindFromTagHandler)
 
 	http.HandleFunc("/api/v1/me/rescue_from_mail", meRescueFromMailHandler)
 

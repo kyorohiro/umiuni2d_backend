@@ -152,6 +152,21 @@ class NetBoxArtManager {
     return new NetBoxArtManagerFind(response);
   }
 
+  Future<NetBoxArtManagerFind> findArticleFromTag(String tag, String cursor) async {
+    TinyNetHtml5Builder builder = new TinyNetHtml5Builder();
+    TinyNetRequester requester = await builder.createRequester();
+    String url = "${this.backendAddr}/api/${version}/art_mana/find_from_tag";
+    TinyNetRequesterResponse response = await requester.request(TinyNetRequester.TYPE_POST, url, //
+        data: conv.JSON.encode({
+//          NetBox.ReqPropertyLoginId: loginId, //
+          NetBox.ReqPropertyTag: tag, //
+          NetBox.ReqPropertyRequestID: "AABBCC", //
+          NetBox.ReqPropertyApiKey: apiKey,
+          NetBox.ReqPropertyCursor: cursor
+        }));
+    return new NetBoxArtManagerFind(response);
+  }
+
   Future<NetBoxArtManagerFindArt> getArticleFromArticleId(String articleId) async {
     TinyNetHtml5Builder builder = new TinyNetHtml5Builder();
     TinyNetRequester requester = await builder.createRequester();
