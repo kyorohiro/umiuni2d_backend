@@ -72,31 +72,17 @@ func articleFindFromTagHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&data)
 
 	tag := data[ReqPropertyArticleTag].(string)
-	reqId := data["reqId"].(string)
-	cursor := data["cursor"].(string)
+	propRequestId := data[ReqPropertyRequestID].(string)
+	cursor := data[ReqPropertyCursor].(string)
 
 	arts, cO, cN, err := findArticleFromTag(ctx, tag, cursor)
 	//
 	if err != nil {
-		m := map[string]interface{}{"ret": "ng", "stat": "error", "reqId": reqId}
-		Response(w, m)
+		Response(w, map[string]interface{}{ //
+			ReqPropertyCode:      ReqPropertyCodeError, //
+			ReqPropertyRequestID: propRequestId})
 		return
 	}
-	var articleIdList []interface{}
-	for _, v := range *arts {
-		articleIdList = append(articleIdList, map[string]interface{}{
-			"id":      v.GetArticleId(),
-			"name":    v.GetUserName(),
-			"title":   v.GetTitle(),
-			"updated": v.GetUpdated().UnixNano() / 1000,
-			"created": v.GetCreated().UnixNano() / 1000})
-	}
-	//
-	// ok
-	m := map[string]interface{}{ //
-		"ret": "ok", "stat": "good", "reqId": reqId, //
-		"arts": articleIdList, "dev": len(*arts), //
-		"cursor_forward": cN,
-		"cursor_one":     cO}
-	Response(w, m)
+	// requestPropery
+	findArticleResponse(w, data, *arts, cO, cN)
 }
