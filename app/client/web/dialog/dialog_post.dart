@@ -160,6 +160,7 @@ class PostDialog {
 
     elm.querySelector("#back").onClick.listen((_) {
       this.close();
+      html.window.history.back();
     });
 
     elm.querySelector("#save").onClick.listen((_) {
