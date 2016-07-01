@@ -41,6 +41,9 @@ class NetBoxArtManagerFindArt {
     this.title = v[NetBox.ReqPropertyTitle];
     this.state = v[NetBox.ReqPropertyArticleState];
     this.tag = v[NetBox.ReqPropertyTag];
+    if(this.tag == null) {
+      this.tag = [];
+    }
     this.created = v[NetBox.ReqPropertyCreated];
     this.updated = v[NetBox.ReqPropertyUpdated];
     this.articleInfo = v[NetBox.ReqPropertyArticleInfo];
@@ -85,6 +88,9 @@ class NetBoxArtManagerFind {
       a.title = v[NetBox.ReqPropertyTitle];
       a.state = v[NetBox.ReqPropertyArticleState];
       a.tag = v[NetBox.ReqPropertyTag];
+      if(a.tag == null) {
+        a.tag = [];
+      }
       a.created = v[NetBox.ReqPropertyCreated];
       a.updated = v[NetBox.ReqPropertyUpdated];
       a.articleInfo = v[NetBox.ReqPropertyArticleInfo];
@@ -106,6 +112,9 @@ class NetBoxArtManager {
     TinyNetHtml5Builder builder = new TinyNetHtml5Builder();
     TinyNetRequester requester = await builder.createRequester();
     String url = "${this.backendAddr}/api/${version}/art_mana/post";
+    if(tag == null) {
+      tag = [];
+    }
 
     TinyNetRequesterResponse response = await requester.request(TinyNetRequester.TYPE_POST, url, //
         data: conv.JSON.encode({
@@ -128,12 +137,13 @@ class NetBoxArtManager {
     TinyNetHtml5Builder builder = new TinyNetHtml5Builder();
     TinyNetRequester requester = await builder.createRequester();
     String url = "${this.backendAddr}/api/${version}/art_mana/post_comment";
-
+    List<String> tag = [];
     TinyNetRequesterResponse response = await requester.request(TinyNetRequester.TYPE_POST, url, //
         data: conv.JSON.encode({
+          NetBox.ReqPropertyTag: tag, //
           NetBox.ReqPropertyCont: cont, //
           NetBox.ReqPropertyArticleState: state, //
-          NetBox.ReqPropertyArticleId: articleId, //
+          NetBox.ReqPropertyParentID: articleId, //
           NetBox.ReqPropertyLoginId: loginId, //
           NetBox.ReqPropertyRequestID: "AABBCC", //
           NetBox.ReqPropertyApiKey: apiKey

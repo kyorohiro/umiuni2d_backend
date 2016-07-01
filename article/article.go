@@ -68,8 +68,12 @@ func (obj *Article) GetTags() []string {
 }
 
 func (obj *Article) SetTags(v []string) {
-	b, _ := json.Marshal(v)
-	obj.gaeObject.Tag = string(b)
+	if v == nil || len(v) == 0 {
+		obj.gaeObject.Tag = ""
+	} else {
+		b, _ := json.Marshal(v)
+		obj.gaeObject.Tag = string(b)
+	}
 }
 
 func (obj *Article) GetCont() string {

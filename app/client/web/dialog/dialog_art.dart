@@ -188,6 +188,9 @@ class ArtDialog {
         return true;
       });
     });
+    //
+    //
+    // netbox.newArtManager().findArticleWithNewOrde(cursor)
   }
 
   close() {

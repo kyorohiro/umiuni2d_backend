@@ -23,14 +23,13 @@ func articleFindWithNewOrderHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// parse
 	var requestPropery map[string]interface{}
 	json.NewDecoder(r.Body).Decode(&requestPropery)
-	//	reqId := requestPropery["reqId"].(string)
-	propCursorSrc := requestPropery["cursor"].(string)
+	propCursorSrc := getStringFromProp(requestPropery, ReqPropertyCursor, "")
+	parentId := getStringFromProp(requestPropery, ReqPropertyParentID, "")
 
 	ctx := appengine.NewContext(r)
-	u, cN, cO := GetArtManager().FindArticleWithNewOrder(ctx, "", propCursorSrc)
+	u, cN, cO := GetArtManager().FindArticleWithNewOrder(ctx, parentId, propCursorSrc)
 	findArticleResponse(w, requestPropery, u, cN, cO)
 }
 

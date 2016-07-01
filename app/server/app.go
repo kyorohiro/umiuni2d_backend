@@ -32,6 +32,7 @@ const (
 	ReqPropertyRequestID          = "requestId"
 	ReqPropertyCode               = "code"
 	ReqPropertyCursor             = "cursor"
+	ReqPropertyParentID           = "parentId"
 	ReqPropertyCursorNext         = "cursor_next"
 	ReqPropertyArticles           = "arts"
 	ReqPropertyMail               = "mail"
@@ -116,7 +117,7 @@ func init() {
 	http.HandleFunc("/api/v1/art_mana/get", articleGetHandler)
 	http.HandleFunc("/api/v1/art_mana/find_from_username", articlefindFromUserNameHandler)
 	http.HandleFunc("/api/v1/art_mana/find_from_tag", articleFindFromTagHandler)
-	http.HandleFunc("/api/v1/art_mana/post_comment", articlePostCommentHandler)
+	http.HandleFunc("/api/v1/art_mana/post_comment", articlePostHandler) //articlePostCommentHandler)
 	http.HandleFunc("/api/v1/art_mana/get_comments", articleGetCommentsHandler)
 
 	//
@@ -161,4 +162,13 @@ func makeRandomId() string {
 func loginCheckHandler(ctx context.Context, r *http.Request, data map[string]interface{}) (bool, *session.AccessToken, error) {
 	loginHash := data[ReqPropertyLoginId].(string)
 	return GetUserManager().CheckLoginId(ctx, loginHash, r.RemoteAddr, r.UserAgent())
+}
+
+func getStringFromProp(requestPropery map[string]interface{}, key string, defaultValue string) string {
+	v := requestPropery[key]
+	if v == nil {
+		return defaultValue
+	} else {
+		return v.(string)
+	}
 }

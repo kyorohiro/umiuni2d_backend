@@ -65,26 +65,20 @@ func articlePostHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	ctx := appengine.NewContext(r)
-	WriteLog(ctx, "-----> (0)")
 	// parse
 	var requestPropery map[string]interface{}
 	json.NewDecoder(r.Body).Decode(&requestPropery)
-	WriteLog(ctx, "-----> (a)")
-	cont := requestPropery[ReqPropertyArticleCont].(string)
-	title := requestPropery[ReqPropertyArticleTitle].(string)
-	WriteLog(ctx, "-----> (b)")
+	cont := getStringFromProp(requestPropery, ReqPropertyArticleCont, "")
+	title := getStringFromProp(requestPropery, ReqPropertyArticleTitle, "")
 	tags := requestPropery[ReqPropertyArticleTag].([]interface{})
 	tag := toStringArray(tags)
-	WriteLog(ctx, "-----> (b1)")
-	articleId := requestPropery[ReqPropertyArticleId].(string)
-	WriteLog(ctx, "-----> (c)")
-	reqId := requestPropery[ReqPropertyRequestID].(string)
-	state := requestPropery[ReqPropertyArticleState].(string)
-	WriteLog(ctx, "-----> (d)")
-	userName := requestPropery[ReqPropertyName].(string)
+	articleId := getStringFromProp(requestPropery, ReqPropertyArticleId, "")
+	reqId := getStringFromProp(requestPropery, ReqPropertyRequestID, "")
+	state := getStringFromProp(requestPropery, ReqPropertyArticleState, "")
+	//	userName := requestPropery[ReqPropertyName].(string)
 
 	WriteLog(ctx, "-----> (1)")
-	isLogin, _, _ := loginCheckHandler(ctx, r, requestPropery)
+	isLogin, at, _ := loginCheckHandler(ctx, r, requestPropery)
 
 	WriteLog(ctx, "-----> (2)")
 	if isLogin == false {
@@ -105,7 +99,7 @@ func articlePostHandler(w http.ResponseWriter, r *http.Request) {
 		if state == "save" {
 			state = "private"
 		}
-		artObj = artMana.NewArticle(ctx, userName, "")
+		artObj = artMana.NewArticle(ctx, at.GetUserName(), "")
 		artObj.SetTitle(title)
 		artObj.SetTags(tag)
 
