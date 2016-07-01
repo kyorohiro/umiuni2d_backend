@@ -108,47 +108,46 @@ func articlePostCommentHandler(w http.ResponseWriter, r *http.Request) {
 
 	//
 	//
-	var data map[string]interface{}
-	json.NewDecoder(r.Body).Decode(&data)
-	articleId := data[ReqPropertyArticleId].(string)
-	reqId := data[ReqPropertyRequestID].(string)
-	cont := data[ReqPropertyArticleCont].(string)
-	state := data[ReqPropertyArticleState].(string)
+	var requestPropery map[string]interface{}
+	json.NewDecoder(r.Body).Decode(&requestPropery)
+	propArticleId := requestPropery[ReqPropertyArticleId].(string)
+	propRequestId := requestPropery[ReqPropertyRequestID].(string)
+	propCont := requestPropery[ReqPropertyArticleCont].(string)
+	propState := requestPropery[ReqPropertyArticleState].(string)
 
 	//
 	// login check
 	ctx := appengine.NewContext(r)
-	isLogin, accessTokenObj, _ := loginCheckHandler(ctx, r, data)
+	isLogin, accessTokenObj, _ := loginCheckHandler(ctx, r, requestPropery)
 	if isLogin == false {
-		m := map[string]interface{}{"ret": "ng", "stat": "need login", "reqId": reqId} //, "dev": v}
-		Response(w, m)
+		Response(w, map[string]interface{}{ReqPropertyCode: ReqPropertyCodeNeedLogin, ReqPropertyRequestID: propRequestId})
 		return
 	}
 
 	//
 	// get post
-	artObj, e := GetArtManager().GetArticleFromArticleId(ctx, articleId)
+	artObj, e := GetArtManager().GetArticleFromArticleId(ctx, propArticleId)
 	if e != nil {
-		m := map[string]interface{}{"ret": "ng", "stat": "wrong articleId", "reqId": reqId} //, "dev": v}
-		Response(w, m)
+		Response(w, map[string]interface{}{ReqPropertyCode: ReqPropertyCodeWrongArticleId, ReqPropertyRequestID: propRequestId})
 		return
 	}
 
-	commentObj := GetArtManager().NewArticle(ctx, accessTokenObj.GetUserName(), articleId)
-	commentObj.SetCont(cont)
-	commentObj.SetState(state)
+	commentObj := GetArtManager().NewArticle(ctx, accessTokenObj.GetUserName(), propArticleId)
+	commentObj.SetCont(propCont)
+	commentObj.SetState(propState)
 	err2 := commentObj.SaveOnDB(ctx)
 
 	if err2 != nil {
-		// error
-		m := map[string]interface{}{"ret": "ng", "stat": "faied to put", "reqId": data["reqId"].(string)} //, "dev": v}
-		Response(w, m)
+		Response(w, map[string]interface{}{ReqPropertyCode: ReqPropertyCodeError, ReqPropertyRequestID: propRequestId})
 		return
 	}
 	//
 	//
-	m := map[string]interface{}{"ret": "ok", "stat": "good", "reqId": data["reqId"].(string), "articleId": artObj.GetArticleId()}
-	Response(w, m)
+	Response(w, map[string]interface{}{
+		ReqPropertyCode:      ReqPropertyCodeOK, //
+		ReqPropertyRequestID: propRequestId,     //
+		ReqPropertyArticleId: artObj.GetArticleId(),
+	})
 	return
 
 }

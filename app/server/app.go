@@ -49,6 +49,8 @@ const (
 
 	ReqPropertyStateWrongNamePassID = -1
 	ReqPropertyCodeOK               = 200
+	ReqPropertyCodeNeedLogin        = 1004
+	ReqPropertyCodeWrongArticleId   = 1005
 	ReqPropertyCodeError            = 2000
 	ReqPropertyCodeAlreadyExist     = 1000
 	ReqPropertyCodeNotFound         = 1001
@@ -114,6 +116,8 @@ func init() {
 	http.HandleFunc("/api/v1/art_mana/get", articleGetHandler)
 	http.HandleFunc("/api/v1/art_mana/find_from_username", articlefindFromUserNameHandler)
 	http.HandleFunc("/api/v1/art_mana/find_from_tag", articleFindFromTagHandler)
+	http.HandleFunc("/api/v1/art_mana/post_comment", articlePostCommentHandler)
+	http.HandleFunc("/api/v1/art_mana/get_comments", articleGetCommentsHandler)
 
 	//
 	// fileshare
@@ -129,8 +133,6 @@ func init() {
 	// article
 
 	http.HandleFunc("/api/v1/article/vote", articleVoteHandler)
-	http.HandleFunc("/api/v1/article/post_comment", articlePostCommentHandler)
-	http.HandleFunc("/api/v1/article/get_comments", articleGetCommentsHandler)
 
 	http.HandleFunc("/api/v1/me/rescue_from_mail", meRescueFromMailHandler)
 

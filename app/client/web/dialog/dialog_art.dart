@@ -60,7 +60,7 @@ class ArtDialog {
       """	display: flex;""", //
       """	flex-flow: row;""", //
       """ width:90%;""",
-      """ height:800px;""",
+      """ height:300px;""",
       """	margin: 0;""", //
       """	padding: 6px;""", //
       """	list-style-type: none;""", //
@@ -159,13 +159,30 @@ class ArtDialog {
       message = "";
     }
     builder.end(builder.getRootTicket(), [markdown.markdownToHtml(message)]);
-
+    var comments = builder.pat(builder.getRootTicket(), ["<div>"], ["</div>"]);
+    builder.end(builder.getRootTicket(),  [
+      """<nav class="${this.naviId}">""",
+      """<H4>Comments</H4>""", //
+      """		<ul id="plain-menu">""",
+      """    <li><a id="comment">Send</a></li>""",
+      """    <li><a id="none"></a></li>""",
+      """		</ul>""", //
+      """<textarea id="${this.naviId}_cont" class="textarea"></textarea>""",
+      """</nav>"""
+    ]);
     html.DialogElement elm = base.show(builder.toText("\r\n"));
     elm.querySelector("#back").onClick.listen((_) {
       this.close();
       html.window.history.back();
     });
-
+    elm.querySelector("#comment").onClick.listen((_) {
+      dialog.ConfirmDialog d = new dialog.ConfirmDialog();
+      d.init();
+      d.show("Send Comment", "Are you ok?", onUpdated: (dialog.ConfirmDialog dialog, bool okBtnIsSelected){
+        print("== ${okBtnIsSelected}");
+        return true;
+      });
+    });
   }
 
   close() {
