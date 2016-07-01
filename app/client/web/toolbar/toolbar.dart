@@ -20,7 +20,7 @@ class Toolbar {
     List a = [];
     for (int i = 0; i < titles.length; i++) {
       a.addAll([
-        """	 <li><a href="#/${Uri.encodeComponent(hashs[i])}">${titles[i]}</a></li>""", //
+        """	 <li><a href="#/${hashs[i]}">${titles[i]}</a></li>""", //
       ]);
     }
     u.appendHtml(a.join("\r\n"));
