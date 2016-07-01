@@ -75,6 +75,7 @@ func articlePostHandler(w http.ResponseWriter, r *http.Request) {
 	articleId := getStringFromProp(requestPropery, ReqPropertyArticleId, "")
 	reqId := getStringFromProp(requestPropery, ReqPropertyRequestID, "")
 	state := getStringFromProp(requestPropery, ReqPropertyArticleState, "")
+	parentId := getStringFromProp(requestPropery, ReqPropertyParentID, "")
 	//	userName := requestPropery[ReqPropertyName].(string)
 
 	WriteLog(ctx, "-----> (1)")
@@ -99,7 +100,7 @@ func articlePostHandler(w http.ResponseWriter, r *http.Request) {
 		if state == "save" {
 			state = "private"
 		}
-		artObj = artMana.NewArticle(ctx, at.GetUserName(), "")
+		artObj = artMana.NewArticle(ctx, at.GetUserName(), parentId)
 		artObj.SetTitle(title)
 		artObj.SetTags(tag)
 
