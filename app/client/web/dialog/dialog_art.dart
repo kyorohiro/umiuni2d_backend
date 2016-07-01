@@ -183,7 +183,7 @@ class ArtDialog {
         print("== ${okBtnIsSelected}");
         if(okBtnIsSelected == true) {
           //
-          netbox.newArtManager().postComment(status.userObjectId, articleId, "","public");
+          netbox.newArtManager().postComment(status.userObjectId, articleId, vv.value,"public");
         }
         return true;
       });
