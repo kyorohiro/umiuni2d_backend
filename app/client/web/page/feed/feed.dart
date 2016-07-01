@@ -19,11 +19,12 @@ class FeedPage {
   String nextBtnId;
   nbox.MyStatus status;
   nbox.NetBox netbox;
-  nbox.NetBoxFeedManager feeder;
+  nbox.NetBoxFeedManager feederManager;
+  nbox.NetBoxFeed feeder;
   dialog.PostDialog postDialog;
   dialog.ArtDialog artDialog;
 
-  FeedPage(this.status, this.netbox, this.rootId, this.feeder, //
+  FeedPage(this.status, this.netbox, this.rootId, this.feederManager, //
       {this.naviId: "aanaviId",
       this.iconId: "aaiconId", //
       this.feedContainerId: "feedContainer",
@@ -79,14 +80,14 @@ class FeedPage {
     html.Element elm = html.document.body.querySelector("#${this.rootId}");
     html.Element cont = elm.querySelector("#${this.feedContainerId}");
 
-    List<nbox.NetBoxArtManagerFindArt> ret = await feeder.getNewOrder().next(); //await netbox.newArtManager().findArticleWithNewOrde("");
+    List<nbox.NetBoxArtManagerFindArt> ret = await feeder.next(); //await netbox.newArtManager().findArticleWithNewOrde("");
 
     int w = 250;
     if (w > html.window.innerWidth) {
       w = html.window.innerWidth;
     }
 
-    for (var v in (isInit == true ? feeder.getNewOrder().founded : ret)) {
+    for (var v in (isInit == true ? feeder.founded : ret)) {
       var e = new html.Element.html(
           [
             """    <li><a href="#/Article/get?${nbox.NetBox.ReqPropertyArticleId}=${Uri.encodeComponent(v.articleId)}"><div style="width:${w}px;">""",
@@ -107,6 +108,12 @@ class FeedPage {
   }
 
   update(String tag) async {
+    print(">>>>>>> ${tag}");
+    if(tag == null || tag == "") {
+      feeder = feederManager.getNewOrder();
+    } else {
+      feeder = feederManager.getFromTag(tag);
+    }
     //
     html.Element elm = html.document.body.querySelector("#${this.rootId}");
     util.TextBuilder builder = new util.TextBuilder();
