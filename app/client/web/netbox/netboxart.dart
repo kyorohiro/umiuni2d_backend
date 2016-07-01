@@ -123,6 +123,25 @@ class NetBoxArtManager {
     return new NetBoxArtManagerPost(response);
   }
 
+  //
+  Future<NetBoxArtManagerPost> postComment(String loginId, String articleId, String cont, String state) async {
+    TinyNetHtml5Builder builder = new TinyNetHtml5Builder();
+    TinyNetRequester requester = await builder.createRequester();
+    String url = "${this.backendAddr}/api/${version}/art_mana/post_comment";
+
+    TinyNetRequesterResponse response = await requester.request(TinyNetRequester.TYPE_POST, url, //
+        data: conv.JSON.encode({
+          NetBox.ReqPropertyCont: cont, //
+          NetBox.ReqPropertyArticleState: state, //
+          NetBox.ReqPropertyArticleId: articleId, //
+          NetBox.ReqPropertyLoginId: loginId, //
+          NetBox.ReqPropertyRequestID: "AABBCC", //
+          NetBox.ReqPropertyApiKey: apiKey
+        }));
+    //print(">> ${conv.UTF8.decode(response.response.asUint8List())}");
+    return new NetBoxArtManagerPost(response);
+  }
+
   Future<NetBoxArtManagerFind> findArticleWithNewOrde(String cursor) async {
     TinyNetHtml5Builder builder = new TinyNetHtml5Builder();
     TinyNetRequester requester = await builder.createRequester();

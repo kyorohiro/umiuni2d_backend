@@ -9,7 +9,6 @@ import '../netbox/netboxart.dart' as nbox;
 import '../netbox/status.dart' as nbox;
 import 'package:markdown/markdown.dart' as markdown;
 
-
 class ArtDialog {
   Dialog base;
   String dialogName;
@@ -85,7 +84,7 @@ class ArtDialog {
       //
       """nav.${this.naviId} a.mini {""", //
       """	display: block;""", //
-    //  """	border-radius: 2px;""", //
+      //  """	border-radius: 2px;""", //
       """	padding: 3px 6px;""", //
       """	background-color: #cccccc;""", //
       """	color: Black;""", //
@@ -146,10 +145,8 @@ class ArtDialog {
     ]);
     util.TextBuilderTicket tag = builder.pat(navi, ["""<div id="${this.naviId}_tag">"""], ["""</div>"""]);
 
-    for(String t in tags) {
-      builder.end(tag,
-        [""" <a class="mini" href="#/Article?tag=${Uri.encodeComponent(t)}">""",
-         """ <div class="mini">${t}</div></a>"""]);
+    for (String t in tags) {
+      builder.end(tag, [""" <a class="mini" href="#/Article?tag=${Uri.encodeComponent(t)}">""", """ <div class="mini">${t}</div></a>"""]);
     }
     print("tags----> ${tags}");
     //
@@ -160,16 +157,18 @@ class ArtDialog {
     }
     builder.end(builder.getRootTicket(), [markdown.markdownToHtml(message)]);
     var comments = builder.pat(builder.getRootTicket(), ["<div>"], ["</div>"]);
-    builder.end(builder.getRootTicket(),  [
-      """<nav class="${this.naviId}">""",
-      """<H4>Comments</H4>""", //
-      """		<ul id="plain-menu">""",
-      """    <li><a id="comment">Send</a></li>""",
-      """    <li><a id="none"></a></li>""",
-      """		</ul>""", //
-      """<textarea id="${this.naviId}_cont" class="textarea"></textarea>""",
-      """</nav>"""
-    ]);
+    if (status.isLogin == true) {
+      builder.end(builder.getRootTicket(), [
+        """<nav class="${this.naviId}">""",
+        """<H4>Comments</H4>""", //
+        """		<ul id="plain-menu">""",
+        """    <li><a id="comment">Send</a></li>""",
+        """    <li><a id="none"></a></li>""",
+        """		</ul>""", //
+        """<textarea id="${this.naviId}_cont" class="textarea"></textarea>""",
+        """</nav>"""
+      ]);
+    }
     html.DialogElement elm = base.show(builder.toText("\r\n"));
     elm.querySelector("#back").onClick.listen((_) {
       this.close();
@@ -178,7 +177,7 @@ class ArtDialog {
     elm.querySelector("#comment").onClick.listen((_) {
       dialog.ConfirmDialog d = new dialog.ConfirmDialog();
       d.init();
-      d.show("Send Comment", "Are you ok?", onUpdated: (dialog.ConfirmDialog dialog, bool okBtnIsSelected){
+      d.show("Send Comment", "Are you ok?", onUpdated: (dialog.ConfirmDialog dialog, bool okBtnIsSelected) {
         print("== ${okBtnIsSelected}");
         return true;
       });
