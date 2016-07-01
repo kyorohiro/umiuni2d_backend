@@ -175,10 +175,16 @@ class ArtDialog {
       html.window.history.back();
     });
     elm.querySelector("#comment").onClick.listen((_) {
+      html.TextAreaElement vv = elm.querySelector("#${this.naviId}_cont");
+      print(">>>> ${vv.value}");
       dialog.ConfirmDialog d = new dialog.ConfirmDialog();
       d.init();
-      d.show("Send Comment", "Are you ok?", onUpdated: (dialog.ConfirmDialog dialog, bool okBtnIsSelected) {
+      d.show("Send Comment", "Are you ok?", onUpdated: (dialog.ConfirmDialog dialog, bool okBtnIsSelected) async {
         print("== ${okBtnIsSelected}");
+        if(okBtnIsSelected == true) {
+          //
+          netbox.newArtManager().postComment(status.userObjectId, articleId, "","public");
+        }
         return true;
       });
     });
