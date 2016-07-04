@@ -190,7 +190,7 @@ class ArtDialog {
     });
     //
     //
-    // netbox.newArtManager().findArticleWithNewOrde(cursor)
+    //netbox.newArtManager().findArticleWithNewOrde(cursor)
   }
 
   close() {
