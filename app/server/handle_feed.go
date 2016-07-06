@@ -27,10 +27,11 @@ func articleFindWithNewOrderHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&requestPropery)
 	propCursorSrc := getStringFromProp(requestPropery, ReqPropertyCursor, "")
 	parentId := getStringFromProp(requestPropery, ReqPropertyParentID, "")
+	haveContInResponse := getBoolFromProp(requestPropery, ReqPropertyHaveContent, false)
 
 	ctx := appengine.NewContext(r)
 	u, cN, cO := GetArtManager().FindArticleWithNewOrder(ctx, parentId, propCursorSrc)
-	findArticleResponse(w, requestPropery, u, cN, cO)
+	findArticleResponse(w, requestPropery, u, cN, cO, haveContInResponse)
 }
 
 func articlefindFromUserNameHandler(w http.ResponseWriter, r *http.Request) {
@@ -50,10 +51,10 @@ func articlefindFromUserNameHandler(w http.ResponseWriter, r *http.Request) {
 	propCursorSrc := requestPropery[ReqPropertyCursor].(string)
 	u, o, cursorNext := GetArtManager().FindArticleFromUserName(ctx, propUserName, "", propCursorSrc)
 	//
-	findArticleResponse(w, requestPropery, u, o, cursorNext)
+	findArticleResponse(w, requestPropery, u, o, cursorNext, false)
 }
 
-func findArticleResponse(w http.ResponseWriter, requestPropery map[string]interface{}, u []*article.Article, cursorOne string, cursorNext string) {
+func findArticleResponse(w http.ResponseWriter, requestPropery map[string]interface{}, u []*article.Article, cursorOne string, cursorNext string, includeCont bool) {
 	var articleIdList []interface{}
 	for _, v := range u {
 		cont := v.GetCont()
@@ -62,7 +63,7 @@ func findArticleResponse(w http.ResponseWriter, requestPropery map[string]interf
 			infoLen = len(cont)
 		}
 
-		articleIdList = append(articleIdList, map[string]interface{}{
+		w := map[string]interface{}{
 			ReqPropertyArticleId:    v.GetArticleId(),
 			ReqPropertyName:         v.GetUserName(),
 			ReqPropertyArticleTitle: v.GetTitle(),
@@ -70,7 +71,12 @@ func findArticleResponse(w http.ResponseWriter, requestPropery map[string]interf
 			ReqPropertyArticleTag:   v.GetTags(),
 			ReqPropertyArticleInfo:  v.GetCont()[0:infoLen],
 			ReqPropertyUpdated:      v.GetUpdated().UnixNano() / 1000,
-			ReqPropertyCreated:      v.GetCreated().UnixNano() / 1000})
+			ReqPropertyCreated:      v.GetCreated().UnixNano() / 1000}
+		if includeCont {
+			w[ReqPropertyArticleCont] = v.GetCont()
+		}
+
+		articleIdList = append(articleIdList, w)
 	}
 
 	//

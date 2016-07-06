@@ -190,7 +190,12 @@ class ArtDialog {
     });
     //
     //
-    //netbox.newArtManager().findArticleWithNewOrde(cursor)
+    netbox.newArtManager().findCommentWithNewOrde(articleId, "").then((nbox.NetBoxArtManagerFind f){
+      print(">>");
+      for( var v in f.arts) {
+        print(">> ${v.userName}  ${v.cont}");
+      }
+    });
   }
 
   close() {

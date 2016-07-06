@@ -88,6 +88,7 @@ class NetBoxArtManagerFind {
       a.title = v[NetBox.ReqPropertyTitle];
       a.state = v[NetBox.ReqPropertyArticleState];
       a.tag = v[NetBox.ReqPropertyTag];
+      a.cont = v[NetBox.ReqPropertyCont];
       if(a.tag == null) {
         a.tag = [];
       }
@@ -169,10 +170,11 @@ class NetBoxArtManager {
   Future<NetBoxArtManagerFind> findCommentWithNewOrde(String articleId, String cursor) async {
     TinyNetHtml5Builder builder = new TinyNetHtml5Builder();
     TinyNetRequester requester = await builder.createRequester();
-    String url = "${this.backendAddr}/api/${version}/art_mana/find_with_neworder";
+    String url = "${this.backendAddr}/api/${version}/art_mana/get_comments";
     TinyNetRequesterResponse response = await requester.request(TinyNetRequester.TYPE_POST, url, //
         data: conv.JSON.encode({
 //          NetBox.ReqPropertyLoginId: loginId, //
+          NetBox.ReqPropertyHaveContent: true,
           NetBox.ReqPropertyRequestID: "AABBCC", //
           NetBox.ReqPropertyParentID: articleId,
           NetBox.ReqPropertyApiKey: apiKey,

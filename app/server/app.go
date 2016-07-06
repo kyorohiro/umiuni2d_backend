@@ -33,6 +33,7 @@ const (
 	ReqPropertyCode               = "code"
 	ReqPropertyCursor             = "cursor"
 	ReqPropertyParentID           = "parentId"
+	ReqPropertyHaveContent        = "haveContent"
 	ReqPropertyCursorNext         = "cursor_next"
 	ReqPropertyArticles           = "arts"
 	ReqPropertyMail               = "mail"
@@ -170,5 +171,14 @@ func getStringFromProp(requestPropery map[string]interface{}, key string, defaul
 		return defaultValue
 	} else {
 		return v.(string)
+	}
+}
+
+func getBoolFromProp(requestPropery map[string]interface{}, key string, defaultValue bool) bool {
+	v := requestPropery[key]
+	if v == nil {
+		return defaultValue
+	} else {
+		return v.(bool)
 	}
 }

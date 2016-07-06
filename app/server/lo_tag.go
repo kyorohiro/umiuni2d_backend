@@ -84,5 +84,5 @@ func articleFindFromTagHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// requestPropery
-	findArticleResponse(w, data, *arts, cO, cN)
+	findArticleResponse(w, data, *arts, cO, cN, false)
 }
