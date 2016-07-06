@@ -125,6 +125,9 @@ class ArtDialog {
       String cancelName: "Cancel", //
       String type: "text", //
       Future<bool> onUpdated(ArtDialog dialog, bool okBtnIsSelected): null}) {
+    try {
+      base.close();
+    } catch (e) {}
     util.TextBuilder builder = new util.TextBuilder();
     builder.end(builder.getRootTicket(), [
       """<nav class="${this.naviId}">""", //
@@ -157,7 +160,7 @@ class ArtDialog {
     }
     builder.end(builder.getRootTicket(), [markdown.markdownToHtml(message)]);
     var comments = builder.pat(builder.getRootTicket(), //
-    ["""<div id="comments">"""], ["</div>"]);
+        ["""<div id="comments">"""], ["</div>"]);
     if (status.isLogin == true) {
       builder.end(builder.getRootTicket(), [
         """<nav class="${this.naviId}">""",
@@ -174,18 +177,18 @@ class ArtDialog {
     html.DialogElement elm = base.show(builder.toText("\r\n"));
     //
     //
-    netbox.newArtManager().findCommentWithNewOrde(articleId, "").then((nbox.NetBoxArtManagerFind f){
+    netbox.newArtManager().findCommentWithNewOrde(articleId, "").then((nbox.NetBoxArtManagerFind f) {
       print(">>");
       html.DivElement comments = elm.querySelector("#comments");
-      for( var v in f.arts) {
+      for (var v in f.arts) {
         print(">> ${v.userName}  ${v.cont}");
-        comments.appendHtml(
-          [
-            """<nav class="${this.naviId}">""",
-            """${v.userName}""",//
-            """</nav>""",
-            """<div>${v.cont}""",//
-            """</div>"""].join("\r\n"));
+        comments.appendHtml([
+          """<nav class="${this.naviId}">""",
+          """${v.userName}""", //
+          """</nav>""",
+          """<div>${v.cont}""", //
+          """</div>"""
+        ].join("\r\n"));
       }
     });
     //
@@ -193,21 +196,28 @@ class ArtDialog {
       this.close();
       html.window.history.back();
     });
-    elm.querySelector("#comment").onClick.listen((_) {
+    elm.querySelector("#comment").onClick.listen((_) async {
       html.TextAreaElement vv = elm.querySelector("#${this.naviId}_cont");
       print(">>>> ${vv.value}");
       dialog.ConfirmDialog d = new dialog.ConfirmDialog();
       d.init();
       d.show("Send Comment", "Are you ok?", onUpdated: (dialog.ConfirmDialog dialog, bool okBtnIsSelected) async {
         print("== ${okBtnIsSelected}");
-        if(okBtnIsSelected == true) {
+        if (okBtnIsSelected == true) {
           //
-          netbox.newArtManager().postComment(status.userObjectId, articleId, vv.value,"public");
+          new Future.delayed(new Duration(milliseconds: 500)).then((_) {
+            netbox.newArtManager().postComment(status.userObjectId, articleId, vv.value, "public").then((_) {
+              show(articleId, title, tags, message, state,
+                  okName: okName,
+                  cancelName: cancelName, //
+                  type: type, //
+                  onUpdated: onUpdated);
+            });
+          });
         }
         return true;
       });
     });
-
   }
 
   close() {
