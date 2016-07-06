@@ -3,22 +3,30 @@ import 'netboxfile.dart';
 import 'netboxart.dart';
 import 'netboxfeed.dart';
 
-class NetBoxBasicUsage {
-    static Map<int, String> errorMessageEn = {
-      NetBox.ReqPropertyCodeLocalWrongOpPassword: "Failed to this act, password and opt password is different.",
-      NetBox.ReqPropertyCodeAlreadyExist: "Failed to this act, Already Exist",
-      NetBox.ReqPropertyCodeWrongNamePass: "Failed to this act, Worng ID or Wrong Password",
-      NetBox.ReqPropertyCodeNotFound: "Failed to this act, Not Found",
-      NetBox.ReqPropertyCodeError: "Failed to this act, Server Error. Please Retry after long interval"
-    };
+class TwitterButton {
+  String makeUrl(String comment, String address, String user) {
+    return [
+      """<a href="https://twitter.com/share" """, //
+      """class="twitter-share-button" data-url="${address}" """, //
+      """data-text="${comment}" data-via="${user}" data-size="large" data-dnt="true">Tweet</a>""", //
+      """<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],""", //
+      """p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id))""", //
+      """{js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';""", //
+      """fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>""", //
+    ].join();
+  }
+}
 
-    static String errorMessage(int v) {
-      if (errorMessageEn.containsKey(v))  {
-        return errorMessageEn[v];
-      } else {
-        return "";
-      }
+class NetBoxBasicUsage {
+  static Map<int, String> errorMessageEn = {NetBox.ReqPropertyCodeLocalWrongOpPassword: "Failed to this act, password and opt password is different.", NetBox.ReqPropertyCodeAlreadyExist: "Failed to this act, Already Exist", NetBox.ReqPropertyCodeWrongNamePass: "Failed to this act, Worng ID or Wrong Password", NetBox.ReqPropertyCodeNotFound: "Failed to this act, Not Found", NetBox.ReqPropertyCodeError: "Failed to this act, Server Error. Please Retry after long interval"};
+
+  static String errorMessage(int v) {
+    if (errorMessageEn.containsKey(v)) {
+      return errorMessageEn[v];
+    } else {
+      return "";
     }
+  }
 }
 
 class NetBox {
@@ -49,10 +57,10 @@ class NetBox {
   static final int ReqPropertyCodeLocalWrongOpPassword = 192001;
   static final int ReqPropertyCodeAlreadyExist = 1000;
   static final int ReqPropertyStateWrongNamePassID = -1;
-  static final int ReqPropertyCodeError            = 2000;
-  static final int ReqPropertyCodeNotFound         = 1001;
-  static final int ReqPropertyCodeWrongNamePass    = 1002;
-  static final int ReqPropertyCodeWrongID          = 1003;
+  static final int ReqPropertyCodeError = 2000;
+  static final int ReqPropertyCodeNotFound = 1001;
+  static final int ReqPropertyCodeWrongNamePass = 1002;
+  static final int ReqPropertyCodeWrongID = 1003;
 
   String backendAddr;
   String apiKey;
