@@ -156,7 +156,8 @@ class ArtDialog {
       message = "";
     }
     builder.end(builder.getRootTicket(), [markdown.markdownToHtml(message)]);
-    var comments = builder.pat(builder.getRootTicket(), ["<div>"], ["</div>"]);
+    var comments = builder.pat(builder.getRootTicket(), //
+    ["""<div id="comments">"""], ["</div>"]);
     if (status.isLogin == true) {
       builder.end(builder.getRootTicket(), [
         """<nav class="${this.naviId}">""",
@@ -169,7 +170,25 @@ class ArtDialog {
         """</nav>"""
       ]);
     }
+
     html.DialogElement elm = base.show(builder.toText("\r\n"));
+    //
+    //
+    netbox.newArtManager().findCommentWithNewOrde(articleId, "").then((nbox.NetBoxArtManagerFind f){
+      print(">>");
+      html.DivElement comments = elm.querySelector("#comments");
+      for( var v in f.arts) {
+        print(">> ${v.userName}  ${v.cont}");
+        comments.appendHtml(
+          [
+            """<nav class="${this.naviId}">""",
+            """${v.userName}""",//
+            """</nav>""",
+            """<div>${v.cont}""",//
+            """</div>"""].join("\r\n"));
+      }
+    });
+    //
     elm.querySelector("#back").onClick.listen((_) {
       this.close();
       html.window.history.back();
@@ -188,14 +207,7 @@ class ArtDialog {
         return true;
       });
     });
-    //
-    //
-    netbox.newArtManager().findCommentWithNewOrde(articleId, "").then((nbox.NetBoxArtManagerFind f){
-      print(">>");
-      for( var v in f.arts) {
-        print(">> ${v.userName}  ${v.cont}");
-      }
-    });
+
   }
 
   close() {
