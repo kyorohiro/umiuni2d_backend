@@ -1,8 +1,7 @@
 import 'dart:html' as html;
 import 'dart:async';
 import 'package:umiuni2d_backend_client/nbox.dart'  as nbox;
-import '../../dialog/dialog_post.dart' as dialog;
-import '../../dialog/dialog_art.dart' as dialog;
+import 'package:umiuni2d_backend_client/dialog.dart' as dialog;
 import '../../util/textbuilder.dart' as util;
 import '../../util/location.dart' as util;
 

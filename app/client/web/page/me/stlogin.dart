@@ -1,10 +1,8 @@
 import 'dart:html' as html;
 import 'dart:async';
 import 'package:umiuni2d_backend_client/nbox.dart' as nbox;
-import '../../dialog/dialog_confirm.dart' as dialog;
-import '../../dialog/dialog_image.dart' as dialog;
-import '../../dialog/dialog_text_with_pass.dart' as dialog;
-import '../../dialog/dialog_password.dart' as dialog;
+import 'package:umiuni2d_backend_client/dialog.dart' as dialog;
+
 
 class MePage {
   String rootId;
