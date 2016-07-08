@@ -14,25 +14,14 @@ netbox.NetBox rootBox = new netbox.NetBox("http://127.0.0.1:8080", "A91A3E1B-15F
 //
 void main() {
   baseLine.init();
-  baseLine.updateToolbar(["Article", "Q/A", "Vote", "Me"],
-   ["Article", "Article?tag=Q%2FA", "Article?tag=Vote", "Me"]);
-  aahtml.window.onHashChange.listen((_) {
-    var hash = Uri.decodeComponent(aahtml.window.location.hash);
-    for (var v in ["Article", "Q/A", "Vote"]) {
-      if (hash == "#/${v}") {
-        aahtml.Element elm = aahtml.document.body.querySelector("#main");
-        elm.children.clear();
-      }
-    }
-  });
+  baseLine.updateToolbar(["Article", "Me"],
+   ["Article", "Me"]);
   MePage myPage = new MePage(netbox.MyStatus.instance, rootBox, "main");
   myPage.updateFromHash();
   MePageLogout myPageLogout = new MePageLogout(netbox.MyStatus.instance, rootBox, "main");
   myPageLogout.updateFromHash();
-
   FeedPage feedPage = new FeedPage(netbox.MyStatus.instance, rootBox, "main", rootBox.newNewOrderFeedManager());
   feedPage.updateFromHash();
-
 }
 
 
