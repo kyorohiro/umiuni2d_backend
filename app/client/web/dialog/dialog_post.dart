@@ -4,9 +4,7 @@ import 'dart:async';
 import '../util/textbuilder.dart' as util;
 import '../dialog/dialog_text.dart' as dialog;
 import '../dialog/dialog_confirm.dart' as dialog;
-import '../netbox/netbox.dart' as nbox;
-import '../netbox/netboxart.dart' as nbox;
-import '../netbox/status.dart' as nbox;
+import 'package:umiuni2d_backend_client/nbox.dart' as nbox;
 
 
 class PostDialog {

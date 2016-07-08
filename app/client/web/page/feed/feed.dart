@@ -1,11 +1,6 @@
 import 'dart:html' as html;
 import 'dart:async';
-import '../../netbox/netbox.dart' as nbox;
-import '../../netbox/netboxme.dart' as nbox;
-import '../../netbox/netboxfile.dart' as nbox;
-import '../../netbox/netboxart.dart' as nbox;
-import '../../netbox/netboxfeed.dart' as nbox;
-import '../../netbox/status.dart' as nbox;
+import 'package:umiuni2d_backend_client/nbox.dart'  as nbox;
 import '../../dialog/dialog_post.dart' as dialog;
 import '../../dialog/dialog_art.dart' as dialog;
 import '../../util/textbuilder.dart' as util;

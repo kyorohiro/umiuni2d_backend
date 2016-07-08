@@ -1,13 +1,12 @@
 import 'dart:html' as html;
 import 'dart:async';
-import '../../netbox/netbox.dart' as netboxm;
-import '../../netbox/status.dart' as netboxs;
+import 'package:umiuni2d_backend_client/nbox.dart'  as netboxm;
 import '../../util/location.dart' as util;
 import '../../dialog/dialog_confirm.dart' as dialog;
 
 class MePageLogout {
   String rootId;
-  netboxs.MyStatus status;
+  netboxm.MyStatus status;
   netboxm.NetBox netbox;
   String propUserName = "userName";
   String propPassword = "password";
@@ -40,7 +39,7 @@ class MePageLogout {
         updateLogin();
         if (prop.containsKey("code")) {
             showErrorDialog(prop);
-        }        
+        }
       } else if (hash == "#/Me/register/do") {
         html.Element elm = html.document.body.querySelector("#${this.rootId}");
         html.InputElement userNameElm = elm.querySelector("#${propUserName}");

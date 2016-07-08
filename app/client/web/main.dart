@@ -4,9 +4,7 @@ import './page/me/stlogout.dart';
 import './page/feed/feed.dart';
 import './toolbar/toolbar.dart';
 
-import 'netbox/netbox.dart' as netbox;
-import 'netbox/status.dart' as netbox;
-import 'netbox/netboxfeed.dart' as netbox;
+import 'package:umiuni2d_backend_client/nbox.dart' as netbox;
 
 import 'dart:html' as aahtml;
 Toolbar baseLine = new Toolbar();
