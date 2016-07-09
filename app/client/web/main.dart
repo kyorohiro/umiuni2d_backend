@@ -5,6 +5,7 @@ import './page/feed/feed.dart';
 import 'package:umiuni2d_backend_client/toolbar.dart';
 
 import 'package:umiuni2d_backend_client/nbox.dart' as netbox;
+import 'package:umiuni2d_backend_client/util.dart' as util;
 
 //import 'dart:html' as aahtml;
 Toolbar baseLine = new Toolbar();
@@ -19,6 +20,74 @@ void main() {
   myPage.updateFromHash();
   MePageLogout myPageLogout = new MePageLogout(netbox.MyStatus.instance, rootBox, "main");
   myPageLogout.updateFromHash();
-  FeedPage feedPage = new FeedPage(netbox.MyStatus.instance, rootBox, "main", rootBox.newNewOrderFeedManager());
+
+  initFeedStyleElment("feedNaviId");
+  FeedPage feedPage = new FeedPage(netbox.MyStatus.instance, rootBox, "main", rootBox.newNewOrderFeedManager(), naviId: "feedNaviId");
   feedPage.updateFromHash();
+}
+
+initFeedStyleElment(String naviId) {
+  var o = [
+    """nav.${naviId}  {""", //
+    """	background-color: #222222;""", //
+    """	color: white;""", //
+    """}""", //
+    """nav.${naviId}  ul {""", //
+    """	display: flex;""", //
+    //"""	flex-flow: row;""", //
+    """flex-wrap: wrap;""",
+    """	margin: 2px;""", //
+    """	padding: 6px;""", //
+    """	list-style-type: none;""", //
+    """}""", //
+    """nav.${naviId} a {""", //
+    """	display: block;""", //
+    """	border-radius: 4px;""", //
+    """	padding: 12px 24px;""", //
+    """	color: white;""", //
+    """	text-decoration: none;""", //
+    """}""", //
+    """nav.${naviId} li a {""", //
+    """	margin: 2px;""", //
+    """	background-color: #444444;""", //
+    """}""",
+    """nav.${naviId} li a:hover {""", //
+    """	background-color: #8cae47;""", //
+    """}""",
+    """nav.${naviId} input.text {""", //
+    """	display: flex;""", //
+    """	flex-flow: row;""", //
+    """ width:90%;""",
+    """	margin: 0;""", //
+    """	padding: 6px;""", //
+    """	list-style-type: none;""", //
+    """}""",
+    """nav.${naviId} textarea.textarea {""", //
+    """	display: inline-flex;""", //
+    """	flex-flow: row;""", //
+    """ width:90%;""",
+    """ height:800px;""",
+    """	margin: 0;""", //
+    """	padding: 6px;""", //
+    """	list-style-type: none;""", //
+    """ text-align: left;""",
+    """ vertical-align: top;""",
+    """}""",
+    """nav.${naviId} div.title {""", //
+    """	display: inline-flex;""", //
+    """	flex-flow: row;""", //
+    """ width:90%;""",
+    """	margin: 0;""", //
+    """	padding: 6px;""", //
+    """	list-style-type: none;""", //
+    """}""",
+    """nav.${naviId} button {""", //
+    """	display: inline-flex;""", //
+    """	border-radius: 4px;""", //
+    """	padding: 6px 12px;""", //
+//      """	color: white;""", //
+    """	text-decoration: none;""", //
+    """}""",
+  ];
+  util.Config.baseInst.addStyle(naviId, o.join("\r\n"));
 }

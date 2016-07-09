@@ -19,6 +19,10 @@ type GaeUserItem struct {
 	Mail        string
 	PassHash    string `datastore:",noindex"`
 	Status      string
+	Point       int
+	Gold        int
+	Exp         int
+	Lv          int
 	//	SecretInfo  string `datastore:",noindex"`
 }
 

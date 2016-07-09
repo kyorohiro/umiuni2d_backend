@@ -18,7 +18,7 @@ class FeedPage {
   dialog.ArtDialog artDialog;
 
   FeedPage(this.status, this.netbox, this.rootId, this.feederManager, //
-      {this.naviId: "aanaviId",
+      {this.naviId: "feedNaviId",
       this.iconId: "aaiconId", //
       this.feedContainerId: "feedContainer",
       this.nextBtnId: "nextBtnId"}) {
@@ -152,71 +152,5 @@ class FeedPage {
   }
 
   init() {
-    html.StyleElement styleElement = new html.StyleElement();
-    styleElement.type = "text/css";
-    var o = [
-      """nav.${this.naviId}  {""", //
-      """	background-color: #222222;""", //
-      """	color: white;""", //
-      """}""", //
-      """nav.${this.naviId}  ul {""", //
-      """	display: flex;""", //
-      //"""	flex-flow: row;""", //
-      """flex-wrap: wrap;""",
-      """	margin: 2px;""", //
-      """	padding: 6px;""", //
-      """	list-style-type: none;""", //
-      """}""", //
-      """nav.${this.naviId} a {""", //
-      """	display: block;""", //
-      """	border-radius: 4px;""", //
-      """	padding: 12px 24px;""", //
-      """	color: white;""", //
-      """	text-decoration: none;""", //
-      """}""", //
-      """nav.${this.naviId} li a {""", //
-      """	margin: 2px;""", //
-      """	background-color: #444444;""", //
-      """}""",
-      """nav.${this.naviId} li a:hover {""", //
-      """	background-color: #8cae47;""", //
-      """}""",
-      """nav.${this.naviId} input.text {""", //
-      """	display: flex;""", //
-      """	flex-flow: row;""", //
-      """ width:90%;""",
-      """	margin: 0;""", //
-      """	padding: 6px;""", //
-      """	list-style-type: none;""", //
-      """}""",
-      """nav.${this.naviId} textarea.textarea {""", //
-      """	display: inline-flex;""", //
-      """	flex-flow: row;""", //
-      """ width:90%;""",
-      """ height:800px;""",
-      """	margin: 0;""", //
-      """	padding: 6px;""", //
-      """	list-style-type: none;""", //
-      """ text-align: left;""",
-      """ vertical-align: top;""",
-      """}""",
-      """nav.${this.naviId} div.title {""", //
-      """	display: inline-flex;""", //
-      """	flex-flow: row;""", //
-      """ width:90%;""",
-      """	margin: 0;""", //
-      """	padding: 6px;""", //
-      """	list-style-type: none;""", //
-      """}""",
-      """nav.${this.naviId} button {""", //
-      """	display: inline-flex;""", //
-      """	border-radius: 4px;""", //
-      """	padding: 6px 12px;""", //
-//      """	color: white;""", //
-      """	text-decoration: none;""", //
-      """}""",
-    ];
-    styleElement.text = o.join("\r\n"); //
-    html.document.head.append(styleElement);
   }
 }
