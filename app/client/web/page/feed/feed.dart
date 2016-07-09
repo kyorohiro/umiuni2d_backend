@@ -1,8 +1,9 @@
 import 'dart:html' as html;
 import 'dart:async';
-import 'package:umiuni2d_backend_client/nbox.dart'  as nbox;
+import 'package:umiuni2d_backend_client/nbox.dart' as nbox;
 import 'package:umiuni2d_backend_client/dialog.dart' as dialog;
 import 'package:umiuni2d_backend_client/util.dart' as util;
+import 'package:umiuni2d_backend_client/parts.dart' as parts;
 
 class FeedPage {
   String rootId;
@@ -53,69 +54,47 @@ class FeedPage {
         }
       }
 
-      if(usePostDialog == false ){
+      if (usePostDialog == false) {
         try {
           postDialog.close();
         } catch (e) {}
       }
-      if(useArtDialog == false){
+      if (useArtDialog == false) {
         try {
           artDialog.close();
         } catch (e) {}
       }
-      if (usePostDialog == false && usePostDialog == false ) {
+      if (usePostDialog == false && usePostDialog == false) {
         update(prop["tag"]);
       }
     }
   }
 
   nextFeed({isInit: false}) async {
-    html.Element elm = html.document.body.querySelector("#${this.rootId}");
-    html.Element cont = elm.querySelector("#${this.feedContainerId}");
-
-    List<nbox.NetBoxArtManagerFindArt> ret = await feeder.next(); //await netbox.newArtManager().findArticleWithNewOrde("");
-
-    int w = 250;
-    if (w > html.window.innerWidth) {
-      w = html.window.innerWidth;
-    }
-
-    for (var v in (isInit == true ? feeder.founded : ret)) {
-      var e = new html.Element.html(
-          [
-            """    <li><a href="#/Article/get?${nbox.NetBox.ReqPropertyArticleId}=${Uri.encodeComponent(v.articleId)}"><div style="width:${w}px;">""",
-            """      <table><tr><td> """,
-            """       <img id="${this.iconId}" style="width:50px;display:inline; background-color:#99cc00;" src="${netbox.newMeManager().makeImgUserIconSrc(v.userName)}">""", //
-            """      </td><td>""", ////
-            """       <div style="font-size:15px"> ${v.title} """,
-            """         <div style="font-size:10px"> ${v.userName} ${v.updated}</div>""",
-            """       </div><br>""",
-            """      </td></tr></table>""",
-            """      <div style="font-size:10px"> ${v.tag} </div>""",
-            """      <div style="font-size:8px">${v.articleInfo}</div>""",
-            """      </div></a></li>""",
-          ].join(),
-          treeSanitizer: html.NodeTreeSanitizer.trusted);
-      cont.children.add(e);
-    }
+    parts.ArticleParts artParts = new parts.ArticleParts();
+    artParts.nextFeed(this.rootId, this.feedContainerId, this.iconId, this.feeder, this.netbox,isInit: isInit);
   }
 
   update(String tag) async {
     print(">>>>>>> ${tag}");
-    if(tag == null || tag == "") {
+    if (tag == null || tag == "") {
       feeder = feederManager.getNewOrder();
     } else {
       feeder = feederManager.getFromTag(tag);
     }
     //
+    //
     html.Element elm = html.document.body.querySelector("#${this.rootId}");
     util.TextBuilder builder = new util.TextBuilder();
     elm.children.clear();
-    builder.end(builder.getRootTicket(), ["""<H2>Article</H2>""",]);
+    elm.appendHtml(["""<H2>Article</H2>""",].join());
+
+    parts.ArticleParts artParts = new parts.ArticleParts();
+    artParts.feed(this.rootId, this.naviId, this.feedContainerId);
 
     var ticket = builder.pat(builder.getRootTicket(), [
       """<nav class="${this.naviId}">""", //
-      """		<ul id="${this.feedContainerId}">""",
+      """		<ul>""",
       """		</ul>""",
     ], [
       """</nav> """,
@@ -139,6 +118,7 @@ class FeedPage {
     ]);
 
     elm.appendHtml(builder.toText("\r\n"), treeSanitizer: html.NodeTreeSanitizer.trusted);
+
     nextFeed(isInit: true);
     //
     //
@@ -151,6 +131,5 @@ class FeedPage {
     });
   }
 
-  init() {
-  }
+  init() {}
 }
