@@ -1,7 +1,7 @@
 import 'dart:html' as html;
 import 'dart:async';
 import 'package:umiuni2d_backend_client/nbox.dart'  as netboxm;
-import '../../util/location.dart' as util;
+import 'package:umiuni2d_backend_client/util.dart' as util;
 import 'package:umiuni2d_backend_client/dialog.dart' as dialog;
 
 

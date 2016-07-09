@@ -157,7 +157,8 @@ class ArtDialog {
       message = "";
     }
     builder.end(builder.getRootTicket(), [markdown.markdownToHtml(message)]);
-    var comments = builder.pat(builder.getRootTicket(), //
+    //var comments = 
+    builder.pat(builder.getRootTicket(), //
         ["""<div id="comments">"""], ["</div>"]);
     if (status.isLogin == true) {
       builder.end(builder.getRootTicket(), [

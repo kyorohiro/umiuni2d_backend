@@ -1,7 +1,7 @@
 import 'dart:async';
 import './requester.dart';
 import 'dart:convert' as conv;
-import 'dart:html' as html;
+//import 'dart:html' as html;
 import 'netbox.dart';
 
 class NetBoxArtManagerPost {

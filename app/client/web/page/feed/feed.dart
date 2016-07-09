@@ -2,8 +2,7 @@ import 'dart:html' as html;
 import 'dart:async';
 import 'package:umiuni2d_backend_client/nbox.dart'  as nbox;
 import 'package:umiuni2d_backend_client/dialog.dart' as dialog;
-import '../../util/textbuilder.dart' as util;
-import '../../util/location.dart' as util;
+import 'package:umiuni2d_backend_client/util.dart' as util;
 
 class FeedPage {
   String rootId;
