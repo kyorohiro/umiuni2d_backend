@@ -7,8 +7,11 @@ class HomePage {
   String rootId;
   nbox.MyStatus status;
   nbox.NetBox netbox;
+  String applicationName;
 
-  HomePage(this.status, this.netbox, this.rootId) {
+  HomePage(this.status, this.netbox, this.rootId,{
+    this.applicationName: "FoodFighter"
+  }) {
     html.window.onHashChange.listen((_) {
       updateFromHash();
     });
@@ -26,6 +29,6 @@ class HomePage {
   update() {
       html.Element elm = html.document.body.querySelector("#${this.rootId}");
       elm.children.clear();
-      
+      elm.appendHtml("""<H3>${applicationName}</H3>""");
   }
 }
