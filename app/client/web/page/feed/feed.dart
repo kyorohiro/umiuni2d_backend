@@ -70,11 +70,6 @@ class FeedPage {
     }
   }
 
-  nextFeed({isInit: false}) async {
-    parts.ArticleParts artParts = new parts.ArticleParts();
-    artParts.nextFeed(this.rootId, this.feedContainerId, this.iconId, this.feeder, this.netbox,isInit: isInit);
-  }
-
   update(String tag) async {
     print(">>>>>>> ${tag}");
     if (tag == null || tag == "") {
@@ -89,46 +84,25 @@ class FeedPage {
     elm.children.clear();
     elm.appendHtml(["""<H2>Article</H2>""",].join());
 
-    parts.ArticleParts artParts = new parts.ArticleParts();
-    artParts.feed(this.rootId, this.naviId, this.feedContainerId);
-
-    var ticket = builder.pat(builder.getRootTicket(), [
-      """<nav class="${this.naviId}">""", //
-      """		<ul>""",
-      """		</ul>""",
-    ], [
-      """</nav> """,
-    ]);
-    int w = 250;
-    if (w > html.window.innerWidth) {
-      w = html.window.innerWidth;
-    }
-    builder.end(ticket, [
-      """    <ul><li><a id="${this.nextBtnId}"><div style="width:${w}px;">""",
-      """      <table><tr><td> """,
-//      """       <img id="${this.iconId}" style="width:50px;display:inline; background-color:#99cc00;" src="${netbox.newMeManager().makeImgUserIconSrc(v.userName)}">""", //
-      """      </td><td>""", ////
-      """       <div style="font-size:15px"> Next """,
-      """         <div style="font-size:10px"> </div>""",
-      """       </div><br>""",
-      """      </td></tr></table>""",
-      """      <div style="font-size:10px">  </div>""",
-      """      <div style="font-size:8px"></div>""",
-      """      </div></a></li></ul>""",
-    ]);
-
-    elm.appendHtml(builder.toText("\r\n"), treeSanitizer: html.NodeTreeSanitizer.trusted);
-
-    nextFeed(isInit: true);
+    parts.ArticleParts artParts = new parts.ArticleParts(
+        //
+        this.rootId,
+        this.feedContainerId,
+        this.iconId,
+        this.feeder,
+        this.netbox,
+        //
+        this.naviId,
+        nextBtnId: this.nextBtnId);
+    artParts.feed(this.naviId);
+    artParts.next();
+    artParts.nextFeed(isInit: true);
     //
     //
     if (this.status.isLogin) {
       //target="_blank"
       elm.appendHtml(["""<a href="#/Article/post" id="view-source">""", """Post</a>"""].join("\r\n"));
     }
-    elm.querySelector("#${this.nextBtnId}").onClick.listen((_) {
-      nextFeed(isInit: false);
-    });
   }
 
   init() {}

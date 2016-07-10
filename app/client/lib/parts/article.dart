@@ -3,7 +3,16 @@ import 'package:umiuni2d_backend_client/nbox.dart' as nbox;
 import 'package:umiuni2d_backend_client/util.dart' as util;
 
 class ArticleParts {
-  feed(String rootId, String naviId, String subId) {
+  String rootId;
+  String subId;
+  String iconId;
+  nbox.NetBoxFeed feeder;
+  nbox.NetBox netbox;
+  String naviClassName;
+  String nextBtnId;
+  ArticleParts(this.rootId, this.subId, this.iconId, this.feeder, this.netbox, this.naviClassName,{String nextBtnId:"xxx"}) {}
+
+  feed(String naviId) {
     html.Element elm = html.document.body.querySelector("#${rootId}");
     util.TextBuilder builder = new util.TextBuilder();
 
@@ -19,7 +28,42 @@ class ArticleParts {
     elm.appendHtml(builder.toText("\r\n"), treeSanitizer: html.NodeTreeSanitizer.trusted);
   }
 
-  nextFeed(String rootId, String subId, String iconId, nbox.NetBoxFeed feeder, nbox.NetBox netbox, {isInit: false}) async {
+  next() {
+    html.Element elm = html.document.body.querySelector("#${rootId}");
+    html.Element cont = elm.querySelector("#${subId}");
+    util.TextBuilder builder = new util.TextBuilder();
+    var ticket = builder.pat(builder.getRootTicket(), [
+      """<nav class="${naviClassName}">""", //
+      """		<ul>""",
+      """		</ul>""",
+    ], [
+      """</nav> """,
+    ]);
+    int w = 250;
+    if (w > html.window.innerWidth) {
+      w = html.window.innerWidth;
+    }
+    builder.end(ticket, [
+      """    <ul><li><a id="${nextBtnId}"><div style="width:${w}px;">""",
+      """      <table><tr><td> """,
+//      """       <img id="${this.iconId}" style="width:50px;display:inline; background-color:#99cc00;" src="${netbox.newMeManager().makeImgUserIconSrc(v.userName)}">""", //
+      """      </td><td>""", ////
+      """       <div style="font-size:15px"> Next """,
+      """         <div style="font-size:10px"> </div>""",
+      """       </div><br>""",
+      """      </td></tr></table>""",
+      """      <div style="font-size:10px">  </div>""",
+      """      <div style="font-size:8px"></div>""",
+      """      </div></a></li></ul>""",
+    ]);
+
+    elm.appendHtml(builder.toText("\r\n"), treeSanitizer: html.NodeTreeSanitizer.trusted);
+    elm.querySelector("#${nextBtnId}").onClick.listen((_) {
+      nextFeed(isInit: false);
+    });
+  }
+
+  nextFeed({isInit: false}) async {
     html.Element elm = html.document.body.querySelector("#${rootId}");
     html.Element cont = elm.querySelector("#${subId}");
 
