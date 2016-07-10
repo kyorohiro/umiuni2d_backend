@@ -10,7 +10,7 @@ class ArticleParts {
   nbox.NetBox netbox;
   String naviClassName;
   String nextBtnId;
-  ArticleParts(this.rootId, this.subId, this.iconId, this.feeder, this.netbox, this.naviClassName,{String nextBtnId:"xxx"}) {}
+  ArticleParts(this.rootId, this.subId, this.iconId, this.feeder, this.netbox, this.naviClassName, {String nextBtnId: "xxx"}) {}
 
   feed(String naviId) {
     html.Element elm = html.document.body.querySelector("#${rootId}");

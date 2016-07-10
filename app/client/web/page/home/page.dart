@@ -24,9 +24,8 @@ class HomePage {
   }
 
   update() {
-      //
-      //
       html.Element elm = html.document.body.querySelector("#${this.rootId}");
       elm.children.clear();
+      
   }
 }
