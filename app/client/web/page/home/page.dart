@@ -19,11 +19,14 @@ class HomePage {
     var prop = util.Location.prop(html.window.location.hash);
     if (hash.startsWith("#/Home")) {
       print("--> HOME <--");
+      update();
     }
   }
 
   update() {
-    //
-
+      //
+      //
+      html.Element elm = html.document.body.querySelector("#${this.rootId}");
+      elm.children.clear();
   }
 }

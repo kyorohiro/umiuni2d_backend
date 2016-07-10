@@ -2,10 +2,12 @@
 import './page/me/stlogin.dart';
 import './page/me/stlogout.dart';
 import './page/feed/feed.dart';
+import './page/home/page.dart';
 import 'package:umiuni2d_backend_client/toolbar.dart';
 
 import 'package:umiuni2d_backend_client/nbox.dart' as netbox;
 import 'package:umiuni2d_backend_client/util.dart' as util;
+
 
 //import 'dart:html' as aahtml;
 Toolbar baseLine = new Toolbar();
@@ -24,6 +26,9 @@ void main() {
   initFeedStyleElment("feedNaviId");
   FeedPage feedPage = new FeedPage(netbox.MyStatus.instance, rootBox, "main", rootBox.newNewOrderFeedManager(), naviId: "feedNaviId");
   feedPage.updateFromHash();
+
+  HomePage homePage = new HomePage(netbox.MyStatus.instance, rootBox, "main");
+  homePage.updateFromHash();
 }
 
 initFeedStyleElment(String naviId) {
