@@ -61,12 +61,42 @@ class HomePage {
         """      </div></a></li></ul>""",
       ]);
       elm.appendHtml(builder.toText("\r\n"), treeSanitizer: html.NodeTreeSanitizer.trusted);
+      a();
+  }
+  a() {
+    html.Element elm = html.document.body.querySelector("#${this.rootId}");
+    util.TextBuilder builder = new util.TextBuilder();
+    var ticket = builder.pat(builder.getRootTicket(), [
+      """<nav class="${naviId}">""", //
+      """		<ul>""",
+      """		</ul>""",
+    ], [
+      """</nav> """,
+    ]);
 
-      netbox.newMeManager().findUserWithNewOrder("").then((nbox.NetBoxMeFindUser f){
-        print("### ---> ");
-        for(nbox.NetBoxMeFindUserItem i in f.users) {
-          print(">> ${i.userName}");
-        }
-      });
+
+    netbox.newMeManager().findUserWithNewOrder("").then((nbox.NetBoxMeFindUser f){
+      print("### ---> ");
+      for(nbox.NetBoxMeFindUserItem i in f.users) {
+        print(">> ${i.userName}");
+        //
+        //
+        builder.end(ticket, [
+          """    <ul><li><a><div style="width:${100}px;">""",
+          """      <table><tr><td> """,
+    //      """       <img id="${this.iconId}" style="width:50px;display:inline; background-color:#99cc00;" src="${netbox.newMeManager().makeImgUserIconSrc(v.userName)}">""", //
+          """      </td><td>""", ////
+          """       <div style="font-size:15px"> ${i.userName} """,
+          """         <div style="font-size:10px"> </div>""",
+          """       </div><br>""",
+          """      </td></tr></table>""",
+          """      <div style="font-size:10px">  </div>""",
+          """      <div style="font-size:8px"></div>""",
+          """      </div></a></li></ul>""",
+        ]);
+      }
+      elm.appendHtml(builder.toText("\r\n"));
+    });
+
   }
 }
