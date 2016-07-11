@@ -17,7 +17,7 @@ netbox.NetBox rootBox = new netbox.NetBox("http://127.0.0.1:8080", "A91A3E1B-15F
 //
 void main() {
   baseLine.init();
-  baseLine.updateToolbar(["Home", "Article", "Me"], ["Home", "Article", "Me"]);
+  baseLine.updateToolbar(["Home", "Com", "Art", "Me"], ["Home", "Article?tag=comment","Article", "Me"]);
   MePage myPage = new MePage(netbox.MyStatus.instance, rootBox, "main");
   myPage.updateFromHash();
   MePageLogout myPageLogout = new MePageLogout(netbox.MyStatus.instance, rootBox, "main");
