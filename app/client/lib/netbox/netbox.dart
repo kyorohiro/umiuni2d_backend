@@ -51,6 +51,7 @@ class NetBox {
   static final String ReqPropertyArticleId = "articleId";
   static final String ReqPropertyBlobKey = "blobKey";
   static final String ReqPropertyArticles = "arts";
+  static final String ReqPropertyUsers = "users";
   static final String ReqPropertyUpdated = "updated";
   static final String ReqPropertyCreated = "created";
   static final int ReqPropertyCodeOK = 200;

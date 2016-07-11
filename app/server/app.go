@@ -36,6 +36,7 @@ const (
 	ReqPropertyHaveContent        = "haveContent"
 	ReqPropertyCursorNext         = "cursor_next"
 	ReqPropertyArticles           = "arts"
+	ReqPropertyUsers              = "users"
 	ReqPropertyMail               = "mail"
 	ReqPropertyUrl                = "url"
 	ReqPropertyLoginId            = "loginId"
@@ -110,6 +111,7 @@ func init() {
 	http.HandleFunc("/api/v1/me_mana/update_mail", meUpdateMailHandler)
 	http.HandleFunc("/api/v1/me_mana/update_password", meUpdatePasswordHandler)
 	http.HandleFunc("/api/v1/me_mana/logout", logoutHandler)
+	http.HandleFunc("/api/v1/me_mana/find_with_neworder", userFindWithNewOrderHandler)
 
 	//
 	// art_mana

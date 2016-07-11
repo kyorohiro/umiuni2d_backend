@@ -48,6 +48,50 @@ class NetBoxMeManagerGetInfo {
   }
 }
 
+class NetBoxMeFindUserItem {
+  String userName;
+  NetBoxMeFindUserItem.empty() {
+  }
+}
+
+class NetBoxMeFindUser {
+  int code;
+  String requestId;
+  String loginId;
+  String cursorNext;
+  List<NetBoxMeFindUserItem> users = [];
+  NetBoxMeFindUser(TinyNetRequesterResponse response) {
+    String body = conv.UTF8.decode(response.response.asUint8List());
+    Map<String, Object> ret = conv.JSON.decode(body);
+    this.code = ret[NetBox.ReqPropertyCode];
+    this.requestId = ret[NetBox.ReqPropertyRequestID];
+    this.loginId = ret[NetBox.ReqPropertyLoginId];
+    this.cursorNext = ret[NetBox.ReqPropertyCursorNext];
+    this.users = load(ret);
+  }
+
+  List<NetBoxMeFindUserItem> load(Map<String, Object> src) {
+    List ret = [];
+    Object o = src[NetBox.ReqPropertyUsers];
+    if (o == null || !(o is List)) {
+      print("----> (1) ${o}");
+      return ret;
+    }
+    for (var v in (o as List)) {
+      print("----> (2)");
+
+      if (v == null || !(v is Map)) {
+        continue;
+      }
+      //
+      NetBoxMeFindUserItem a = new NetBoxMeFindUserItem.empty();
+      a.userName = v[NetBox.ReqPropertyName];
+      ret.add(a);
+    }
+    return ret;
+  }
+}
+
 class NetBoxMeManagerMail {
   int code;
   String requestId;
@@ -206,25 +250,17 @@ class NetBoxMeManager {
         }));
     return new NetBoxMeManagerLogout(response);
   }
-/*
-//
 
-
-
-
-
-
-  Future<Map<String, String>> rescue(String mail) async {
-    print("--");
+  Future<NetBoxMeFindUser> findUserWithNewOrder(String cursor) async {
     TinyNetHtml5Builder builder = new TinyNetHtml5Builder();
     TinyNetRequester requester = await builder.createRequester();
-    String url = "${targetHost}/api/v1/me/rescue_from_mail";
-    TinyNetRequesterResponse response = await requester.request(TinyNetRequester.TYPE_POST, url,
-      headers: {"apikey": apiKey,}, data: conv.JSON.encode({"mail": mail, "reqId": "AABBCC"}));
-    print(">> ${conv.UTF8.decode(response.response.asUint8List())}");
-    return conv.JSON.decode(conv.UTF8.decode(response.response.asUint8List()));
+    String url = "${this.backendAddr}/api/${version}/me_mana/find_with_neworder";
+    TinyNetRequesterResponse response = await requester.request(TinyNetRequester.TYPE_POST, url, //
+        data: conv.JSON.encode({
+          NetBox.ReqPropertyRequestID: "AABBCC", //
+          NetBox.ReqPropertyApiKey: apiKey,
+          NetBox.ReqPropertyCursor: cursor
+        }));
+    return new NetBoxMeFindUser(response);
   }
-
-
-  */
 }

@@ -134,8 +134,9 @@ func (obj *UserManager) makeCursorSrc(founds *datastore.Iterator) string {
 
 //
 //
-func (obj *UserManager) FindArticleWithNewOrder(ctx context.Context, parentId string, cursorSrc string) ([]*User, string, string) {
-	q := datastore.NewQuery(obj.userKind).Order("-Updated").Limit(obj.limitOfFinding)
+func (obj *UserManager) FindUserWithNewOrder(ctx context.Context, cursorSrc string) ([]*User, string, string) {
+	q := datastore.NewQuery(obj.userKind).Limit(obj.limitOfFinding)
+	//	q := datastore.NewQuery(obj.userKind).Order("-Updated").Limit(obj.limitOfFinding)
 	return obj.FindUserFromQuery(ctx, q, cursorSrc)
 }
 

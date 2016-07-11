@@ -61,5 +61,12 @@ class HomePage {
         """      </div></a></li></ul>""",
       ]);
       elm.appendHtml(builder.toText("\r\n"), treeSanitizer: html.NodeTreeSanitizer.trusted);
+
+      netbox.newMeManager().findUserWithNewOrder("").then((nbox.NetBoxMeFindUser f){
+        print("### ---> ");
+        for(nbox.NetBoxMeFindUserItem i in f.users) {
+          print(">> ${i.userName}");
+        }
+      });
   }
 }

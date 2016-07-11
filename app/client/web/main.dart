@@ -2,7 +2,7 @@
 import './page/me/stlogin.dart';
 import './page/me/stlogout.dart';
 import './page/feed/feed.dart';
-import './page/home/page.dart';
+import './page/home/home.dart';
 import 'config.dart';
 import 'package:umiuni2d_backend_client/toolbar.dart';
 import 'package:umiuni2d_backend_client/nbox.dart' as netbox;

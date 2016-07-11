@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	//	"umiuni2d_backend/user"
+	"umiuni2d_backend/user"
 
 	"google.golang.org/appengine"
 	"google.golang.org/appengine/blobstore"
@@ -142,4 +142,50 @@ func userGetIconHandle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	blobstore.Send(w, appengine.BlobKey(b.GetBlobKey()))
+}
+
+//
+//
+func userFindWithNewOrderHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Add("Access-Control-Allow-Origin", "*")
+	//w.Header().Add("Access-Control-Allow-Headers", "apikey")
+
+	if r.Method != "POST" {
+		// you must to consider HEAD
+		return
+	}
+
+	var requestPropery map[string]interface{}
+	json.NewDecoder(r.Body).Decode(&requestPropery)
+	propCursorSrc := getStringFromProp(requestPropery, ReqPropertyCursor, "")
+
+	ctx := appengine.NewContext(r)
+	u, cN, cO := GetUserManager().FindUserWithNewOrder(ctx, propCursorSrc)
+	findUserResponse(w, requestPropery, u, cN, cO)
+}
+
+//
+//
+func findUserResponse(w http.ResponseWriter, requestPropery map[string]interface{}, u []*user.User, cursorOne string, cursorNext string) {
+	var userList []interface{}
+	for _, v := range u {
+
+		w := map[string]interface{}{
+			ReqPropertyName: v.GetUserName(),
+			//ReqPropertyUpdated: v.GetUpdated().UnixNano() / 1000,
+			//ReqPropertyCreated: v.GetCreated().UnixNano() / 1000
+		}
+
+		userList = append(userList, w)
+	}
+
+	//
+	// ok
+	m := map[string]interface{}{
+		ReqPropertyCode:       ReqPropertyCodeOK,
+		ReqPropertyRequestID:  requestPropery[ReqPropertyRequestID].(string),
+		ReqPropertyUsers:      userList,
+		ReqPropertyCursorNext: cursorNext,
+	}
+	Response(w, m)
 }
