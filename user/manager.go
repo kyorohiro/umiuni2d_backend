@@ -26,6 +26,7 @@ type UserManager struct {
 	userKind       string
 	loginIdKind    string
 	sessionManager *acm.SessionManager
+	limitOfFinding int
 }
 
 func NewUserManager(userKind string, loginIdKind string) *UserManager {
@@ -33,6 +34,7 @@ func NewUserManager(userKind string, loginIdKind string) *UserManager {
 	obj.sessionManager = acm.NewSessionManager(loginIdKind, 60*60*(1000*1000*1000))
 	obj.userKind = userKind
 	obj.loginIdKind = loginIdKind
+	obj.limitOfFinding = 10
 	return obj
 }
 
@@ -107,4 +109,62 @@ func (obj *UserManager) DeleteUser(ctx context.Context, userName string, passIdF
 	user.gaeObject.Status = UserStatusDelete
 	err = user.PushToDB(ctx)
 	return err
+}
+
+//
+//
+//
+func (obj *UserManager) newCursorFromSrc(cursorSrc string) *datastore.Cursor {
+	c1, e := datastore.DecodeCursor(cursorSrc)
+	if e != nil {
+		return nil
+	} else {
+		return &c1
+	}
+}
+
+func (obj *UserManager) makeCursorSrc(founds *datastore.Iterator) string {
+	c, e := founds.Cursor()
+	if e == nil {
+		return c.String()
+	} else {
+		return ""
+	}
+}
+
+//
+//
+func (obj *UserManager) FindArticleWithNewOrder(ctx context.Context, parentId string, cursorSrc string) ([]*User, string, string) {
+	q := datastore.NewQuery(obj.userKind).Order("-Updated").Limit(obj.limitOfFinding)
+	return obj.FindUserFromQuery(ctx, q, cursorSrc)
+}
+
+//
+//
+func (obj *UserManager) FindUserFromQuery(ctx context.Context, q *datastore.Query, cursorSrc string) ([]*User, string, string) {
+	cursor := obj.newCursorFromSrc(cursorSrc)
+	if cursor != nil {
+		q = q.Start(*cursor)
+	}
+	founds := q.Run(ctx)
+
+	var retUser []*User
+
+	var cursorNext string = ""
+	var cursorOne string = ""
+
+	for i := 0; ; i++ {
+		var d GaeUserItem
+		key, err := founds.Next(&d)
+		if err != nil || err == datastore.Done {
+			break
+		} else {
+			retUser = append(retUser, obj.NewUserFromsGaeObject(key, &d))
+		}
+		if i == 0 {
+			cursorOne = obj.makeCursorSrc(founds)
+		}
+	}
+	cursorNext = obj.makeCursorSrc(founds)
+	return retUser, cursorOne, cursorNext
 }
