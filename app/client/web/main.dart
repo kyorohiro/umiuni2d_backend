@@ -28,7 +28,7 @@ void main() {
   feedPage.updateFromHash();
 
   HomePage homePage = new HomePage(netbox.MyStatus.instance, rootBox, "main",
-  applicationName: CONFIG_APPLICATION_NAME);
+  applicationName: CONFIG_APPLICATION_NAME,naviId: "feedNaviId");
   homePage.updateFromHash();
 }
 

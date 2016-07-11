@@ -8,9 +8,13 @@ class HomePage {
   nbox.MyStatus status;
   nbox.NetBox netbox;
   String applicationName;
+  String naviId;
+  String aboutArticleId;
 
   HomePage(this.status, this.netbox, this.rootId,{
-    this.applicationName: "FoodFighter"
+    this.applicationName: "FoodFighter",
+    this.aboutArticleId:"AboutThisSite",
+    this.naviId: "HomeContainer"
   }) {
     html.window.onHashChange.listen((_) {
       updateFromHash();
@@ -30,5 +34,32 @@ class HomePage {
       html.Element elm = html.document.body.querySelector("#${this.rootId}");
       elm.children.clear();
       elm.appendHtml("""<H3>${applicationName}</H3>""");
+//      html.Element cont = elm.querySelector("#${subId}");
+      util.TextBuilder builder = new util.TextBuilder();
+      var ticket = builder.pat(builder.getRootTicket(), [
+        """<nav class="${naviId}">""", //
+        """		<ul>""",
+        """		</ul>""",
+      ], [
+        """</nav> """,
+      ]);
+      int w = 250;
+      if (w > html.window.innerWidth) {
+        w = html.window.innerWidth;
+      }
+      builder.end(ticket, [
+        """    <ul><li><a href="#/Article/get?${nbox.NetBox.ReqPropertyArticleId}=${Uri.encodeComponent(this.aboutArticleId)}"><div style="width:${w}px;">""",
+        """      <table><tr><td> """,
+  //      """       <img id="${this.iconId}" style="width:50px;display:inline; background-color:#99cc00;" src="${netbox.newMeManager().makeImgUserIconSrc(v.userName)}">""", //
+        """      </td><td>""", ////
+        """       <div style="font-size:15px"> About """,
+        """         <div style="font-size:10px"> </div>""",
+        """       </div><br>""",
+        """      </td></tr></table>""",
+        """      <div style="font-size:10px">  </div>""",
+        """      <div style="font-size:8px"></div>""",
+        """      </div></a></li></ul>""",
+      ]);
+      elm.appendHtml(builder.toText("\r\n"), treeSanitizer: html.NodeTreeSanitizer.trusted);
   }
 }
