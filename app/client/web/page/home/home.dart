@@ -83,19 +83,19 @@ class HomePage {
         //
         builder.end(ticket, [
           """    <ul><li><a><div style="width:${100}px;">""",
-          """      <table><tr><td> """,
-    //      """       <img id="${this.iconId}" style="width:50px;display:inline; background-color:#99cc00;" src="${netbox.newMeManager().makeImgUserIconSrc(v.userName)}">""", //
-          """      </td><td>""", ////
+          """       <p style="text-align:center">""",
+          """       <img style="width:80px;width:80px;display:inline; background-color:#99cc00;" src="${netbox.newMeManager().makeImgUserIconSrc(i.userName)}">""", //
+          """       </p>""",
+          //"""       <br>""",
           """       <div style="font-size:15px"> ${i.userName} """,
-          """         <div style="font-size:10px"> </div>""",
+        //  """         <div style="font-size:10px"> </div>""",
           """       </div><br>""",
-          """      </td></tr></table>""",
           """      <div style="font-size:10px">  </div>""",
           """      <div style="font-size:8px"></div>""",
           """      </div></a></li></ul>""",
         ]);
       }
-      elm.appendHtml(builder.toText("\r\n"));
+      elm.appendHtml(builder.toText("\r\n"), treeSanitizer: html.NodeTreeSanitizer.trusted);
     });
 
   }
