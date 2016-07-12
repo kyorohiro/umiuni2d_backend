@@ -34,10 +34,11 @@ class NetBox {
   static final String ReqPropertyTitle = "title";
   static final String ReqPropertyTag = "tag";
   static final String ReqPropertyCont = "cont";
-  static final ReqPropertyArticleState = "state";
-  static final ReqPropertyArticleInfo = "info";
-  static final ReqPropertyParentID = "parentId";
-  static final ReqPropertyHaveContent = "haveContent";
+  static final String ReqPropertyComments = "comment";
+  static final String ReqPropertyArticleState = "state";
+  static final String ReqPropertyArticleInfo = "info";
+  static final String ReqPropertyParentID = "parentId";
+  static final String ReqPropertyHaveContent = "haveContent";
   static final String ReqPropertyFileName = "fileName";
   static final String ReqPropertyPass = "password";
   static final String ReqPropertyNewPass = "newpassword";

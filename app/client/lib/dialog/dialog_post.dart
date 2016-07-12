@@ -137,6 +137,7 @@ class PostDialog {
     util.TextBuilderTicket tag = builder.pat(navi, ["""<div id="${this.naviId}_tag">"""], ["""</div>"""]);
 
     builder.end(tag, ["""<button id="${this.naviId}_addtag">add tag</button>""",]);
+
     builder.end(navi, ["""<textarea id="${this.naviId}_cont" class="textarea"></textarea>""",]);
 
     html.DialogElement elm = base.show(builder.toText("\r\n"));
@@ -189,6 +190,11 @@ class PostDialog {
         ;
       }
     });
+    //
+    //
+    for(String t in tags) {
+      addTag(tags, t);
+    }
   }
 
   close() {

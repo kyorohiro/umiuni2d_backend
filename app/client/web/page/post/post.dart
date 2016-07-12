@@ -36,7 +36,11 @@ class PostPage {
     var hash = util.Location.address(html.window.location.hash);
     var prop = util.Location.prop(html.window.location.hash);
     if (hash.startsWith("#/Post")) {
-      postDialog.show("", "title", [], "post", "private");
+      if(prop[nbox.NetBox.ReqPropertyArticleState] == nbox.NetBox.ReqPropertyArticles) {
+        postDialog.show("", "title", [], "post", "private");
+      } else if(prop[nbox.NetBox.ReqPropertyArticleState] == nbox.NetBox.ReqPropertyComments){
+        postDialog.show("", "title", ["comment"], "post", "private");
+      }
     } else {
       try {
         postDialog.close();

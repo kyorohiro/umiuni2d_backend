@@ -37,13 +37,8 @@ class FeedPage {
     var hash = util.Location.address(html.window.location.hash);
     var prop = util.Location.prop(html.window.location.hash);
     if (hash.startsWith("#/Article")) {
-      bool usePostDialog = false;
       bool useArtDialog = false;
 
-      if (hash == "#/Article/post") {
-      //  postDialog.show("", "title", [], "post", "private");
-        usePostDialog = true;
-      }
 
       if (hash == "#/Article/get") {
         if (prop[nbox.NetBox.ReqPropertyArticleId] != null) {
@@ -54,17 +49,12 @@ class FeedPage {
         }
       }
 
-      if (usePostDialog == false) {
-        try {
-          //postDialog.close();
-        } catch (e) {}
-      }
       if (useArtDialog == false) {
         try {
           artDialog.close();
         } catch (e) {}
       }
-      if (usePostDialog == false && usePostDialog == false) {
+      if (useArtDialog == false) {
         update(tag:prop[nbox.NetBox.ReqPropertyTag],userName: prop[nbox.NetBox.ReqPropertyName]);
       }
     }
@@ -103,7 +93,7 @@ class FeedPage {
     //
     if (this.status.isLogin) {
       //target="_blank"
-      elm.appendHtml(["""<a href="#/Post/post" id="view-source">""", """Post</a>"""].join("\r\n"));
+      elm.appendHtml(["""<a href="#/Post/post?${nbox.NetBox.ReqPropertyArticleState}=${nbox.NetBox.ReqPropertyArticles}" id="view-source">""", """Post</a>"""].join("\r\n"));
     }
   }
 
