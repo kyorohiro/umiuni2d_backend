@@ -11,11 +11,7 @@ class HomePage {
   String naviId;
   String aboutArticleId;
 
-  HomePage(this.status, this.netbox, this.rootId,{
-    this.applicationName: "FoodFighter",
-    this.aboutArticleId:"AboutThisSite",
-    this.naviId: "HomeContainer"
-  }) {
+  HomePage(this.status, this.netbox, this.rootId, {this.applicationName: "FoodFighter", this.aboutArticleId: "AboutThisSite", this.naviId: "HomeContainer"}) {
     html.window.onHashChange.listen((_) {
       updateFromHash();
     });
@@ -31,47 +27,47 @@ class HomePage {
   }
 
   update() {
-      html.Element elm = html.document.body.querySelector("#${this.rootId}");
-      elm.children.clear();
-      elm.appendHtml("""<H3>${applicationName}</H3>""");
+    html.Element elm = html.document.body.querySelector("#${this.rootId}");
+    elm.children.clear();
+    elm.appendHtml("""<H3>${applicationName}</H3>""");
 //      html.Element cont = elm.querySelector("#${subId}");
-      util.TextBuilder builder = new util.TextBuilder();
-      var ticket = builder.pat(builder.getRootTicket(), [
-        """<nav class="${naviId}">""", //
-        """		<ul>""",
-        """		</ul>""",
-      ], [
-        """</nav> """,
-      ]);
-      int w = 250;
-      if (w > html.window.innerWidth) {
-        w = html.window.innerWidth;
-      }
-      builder.end(ticket, [
-        """    <ul><li><a href="#/Article/get?${nbox.NetBox.ReqPropertyArticleId}=${Uri.encodeComponent(this.aboutArticleId)}"><div style="width:${w}px;">""",
-        """      <table><tr><td> """,
-  //      """       <img id="${this.iconId}" style="width:50px;display:inline; background-color:#99cc00;" src="${netbox.newMeManager().makeImgUserIconSrc(v.userName)}">""", //
-        """      </td><td>""", ////
-        """       <div style="font-size:15px"> About """,
-        """         <div style="font-size:10px"> </div>""",
-        """       </div><br>""",
-        """      </td></tr></table>""",
-        """      <div style="font-size:10px">  </div>""",
-        """      <div style="font-size:8px"></div>""",
-        """      </div></a></li></ul>""",
-      ]);
-      elm.appendHtml(builder.toText("\r\n"), treeSanitizer: html.NodeTreeSanitizer.trusted);
-      a();
-      if (this.status.isLogin) {
-        html.Element button = new html.Element.html(["""<button id="view-source">""", """Post</button>"""].join("\r\n"));
-        elm.children.add(button);
-        button.onClick.listen((ev){
-          print("---> btn");
-          html.window.location.assign("#/Post/comment?tag=comment&${nbox.NetBox.ReqPropertyArticleState}=${nbox.NetBox.ReqPropertyComments}");
-
-        });
-      }
+    util.TextBuilder builder = new util.TextBuilder();
+    var ticket = builder.pat(builder.getRootTicket(), [
+      """<nav class="${naviId}">""", //
+      """		<ul>""",
+      """		</ul>""",
+    ], [
+      """</nav> """,
+    ]);
+    int w = 250;
+    if (w > html.window.innerWidth) {
+      w = html.window.innerWidth;
+    }
+    builder.end(ticket, [
+      """    <ul><li><a href="#/Article/get?${nbox.NetBox.ReqPropertyArticleId}=${Uri.encodeComponent(this.aboutArticleId)}"><div style="width:${w}px;">""",
+      """      <table><tr><td> """,
+      //      """       <img id="${this.iconId}" style="width:50px;display:inline; background-color:#99cc00;" src="${netbox.newMeManager().makeImgUserIconSrc(v.userName)}">""", //
+      """      </td><td>""", ////
+      """       <div style="font-size:15px"> About """,
+      """         <div style="font-size:10px"> </div>""",
+      """       </div><br>""",
+      """      </td></tr></table>""",
+      """      <div style="font-size:10px">  </div>""",
+      """      <div style="font-size:8px"></div>""",
+      """      </div></a></li></ul>""",
+    ]);
+    elm.appendHtml(builder.toText("\r\n"), treeSanitizer: html.NodeTreeSanitizer.trusted);
+    a();
+    if (this.status.isLogin) {
+      html.Element button = new html.Element.html(["""<button id="view-source">""", """Post</button>"""].join("\r\n"));
+      elm.children.add(button);
+      button.onClick.listen((ev) {
+        print("---> btn");
+        html.window.location.assign("#/Post/comment?tag=comment&${nbox.NetBox.ReqPropertyArticleState}=${nbox.NetBox.ReqPropertyComments}");
+      });
+    }
   }
+
   a() {
     html.Element elm = html.document.body.querySelector("#${this.rootId}");
     util.TextBuilder builder = new util.TextBuilder();
@@ -83,10 +79,9 @@ class HomePage {
       """</nav> """,
     ]);
 
-
-    netbox.newMeManager().findUserWithNewOrder("").then((nbox.NetBoxMeFindUser f){
+    netbox.newMeManager().findUserWithNewOrder("").then((nbox.NetBoxMeFindUser f) {
       print("### ---> ");
-      for(nbox.NetBoxMeFindUserItem i in f.users) {
+      for (nbox.NetBoxMeFindUserItem i in f.users) {
         print(">> ${i.userName}");
         //
         //nbox.NetBox.ReqPropertyName
@@ -96,16 +91,17 @@ class HomePage {
           """       <img style="width:80px;width:80px;display:inline; background-color:#99cc00;" src="${netbox.newMeManager().makeImgUserIconSrc(i.userName)}">""", //
           """       </p>""",
           //"""       <br>""",
-          """       <div style="font-size:15px"> ${i.userName} """,
-        //  """         <div style="font-size:10px"> </div>""",
-          """       </div><br>""",
-          """      <div style="font-size:10px">  </div>""",
-          """      <div style="font-size:8px"></div>""",
+//          """       <p style="text-align:center">""",
+          """       <div style="text-align:center; font-size:15px"> ${i.userName} """,
+          //  """         <div style="font-size:10px"> </div>""",
+          """       </div>""",
+  //        """ </p>""",
+          //  """      <div style="font-size:10px">  </div>""",
+          //"""      <div style="font-size:8px"></div>""",
           """      </div></a></li></ul>""",
         ]);
       }
       elm.appendHtml(builder.toText("\r\n"), treeSanitizer: html.NodeTreeSanitizer.trusted);
     });
-
   }
 }
