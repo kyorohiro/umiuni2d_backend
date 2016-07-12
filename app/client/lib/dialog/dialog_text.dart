@@ -46,6 +46,7 @@ class TextDialog {
         if (onUpdated != null) {
           if (true == await onUpdated(this, valueElm.value)) {
             this.close();
+            html.window.history.back();
           }
         }
       } finally {
@@ -55,7 +56,12 @@ class TextDialog {
     });
     var closeBtn = elm.querySelector("#${this.closeBtn}");
     closeBtn.onClick.listen((_) {
+      if (click == true) {
+        return;
+      }
+      click = true;
       this.close();
+      html.window.history.back();
     });
   }
 

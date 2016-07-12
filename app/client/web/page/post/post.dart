@@ -16,7 +16,7 @@ class PostPage {
   nbox.NetBoxFeedManager feederManager;
   nbox.NetBoxFeed feeder;
   dialog.PostDialog postDialog;
-  dialog.ArtDialog artDialog;
+  dialog.TextDialog targetDialog;
 
   PostPage(this.status, this.netbox, this.rootId, this.feederManager, //
       {this.naviId: "feedNaviId",
@@ -26,10 +26,12 @@ class PostPage {
     html.window.onHashChange.listen((_) {
       updateFromHash();
     });
+    //
     postDialog = new dialog.PostDialog(status, netbox, width: "100%");
     postDialog.init();
-    artDialog = new dialog.ArtDialog(status, netbox, width: "90%");
-    artDialog.init();
+    //
+    targetDialog = new dialog.TextDialog();
+    targetDialog.init();
   }
 
   Future updateFromHash() async {
@@ -39,7 +41,9 @@ class PostPage {
       if(prop[nbox.NetBox.ReqPropertyArticleState] == nbox.NetBox.ReqPropertyArticles) {
         postDialog.show("", "title", [], "post", "private");
       } else if(prop[nbox.NetBox.ReqPropertyArticleState] == nbox.NetBox.ReqPropertyComments){
-        postDialog.show("", "title", ["comment"], "post", "private");
+        targetDialog.show("Target Name", "Your comment target",onUpdated: (dialog.TextDialog d, String src){
+          postDialog.show("", "title", ["comment"], "post", "private");
+        });
       }
     } else {
       try {

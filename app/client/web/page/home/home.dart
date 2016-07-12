@@ -67,7 +67,7 @@ class HomePage {
         elm.children.add(button);
         button.onClick.listen((ev){
           print("---> btn");
-          html.window.location.replace("#/Post/comment?tag=comment&${nbox.NetBox.ReqPropertyArticleState}=${nbox.NetBox.ReqPropertyComments}");
+          html.window.location.assign("#/Post/comment?tag=comment&${nbox.NetBox.ReqPropertyArticleState}=${nbox.NetBox.ReqPropertyComments}");
 
         });
       }
