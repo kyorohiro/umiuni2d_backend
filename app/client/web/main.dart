@@ -3,6 +3,7 @@ import './page/me/stlogin.dart';
 import './page/me/stlogout.dart';
 import './page/feed/feed.dart';
 import './page/home/home.dart';
+import './page/post/post.dart';
 import 'config.dart';
 import 'package:umiuni2d_backend_client/toolbar.dart';
 import 'package:umiuni2d_backend_client/nbox.dart' as netbox;
@@ -30,6 +31,10 @@ void main() {
   HomePage homePage = new HomePage(netbox.MyStatus.instance, rootBox, "main",
   applicationName: CONFIG_APPLICATION_NAME,naviId: "feedNaviId");
   homePage.updateFromHash();
+
+
+  PostPage postPage = new PostPage(netbox.MyStatus.instance, rootBox, "main", rootBox.newNewOrderFeedManager(), naviId: "feedNaviId");
+  postPage.updateFromHash();
 }
 
 initFeedStyleElment(String naviId) {

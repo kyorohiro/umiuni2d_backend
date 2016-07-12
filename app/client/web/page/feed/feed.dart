@@ -41,7 +41,7 @@ class FeedPage {
       bool useArtDialog = false;
 
       if (hash == "#/Article/post") {
-        postDialog.show("", "title", [], "post", "private");
+      //  postDialog.show("", "title", [], "post", "private");
         usePostDialog = true;
       }
 
@@ -56,7 +56,7 @@ class FeedPage {
 
       if (usePostDialog == false) {
         try {
-          postDialog.close();
+          //postDialog.close();
         } catch (e) {}
       }
       if (useArtDialog == false) {
@@ -103,7 +103,7 @@ class FeedPage {
     //
     if (this.status.isLogin) {
       //target="_blank"
-      elm.appendHtml(["""<a href="#/Article/post" id="view-source">""", """Post</a>"""].join("\r\n"));
+      elm.appendHtml(["""<a href="#/Post/post" id="view-source">""", """Post</a>"""].join("\r\n"));
     }
   }
 
