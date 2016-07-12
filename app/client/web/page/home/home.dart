@@ -62,6 +62,13 @@ class HomePage {
       ]);
       elm.appendHtml(builder.toText("\r\n"), treeSanitizer: html.NodeTreeSanitizer.trusted);
       a();
+      if (this.status.isLogin) {
+        html.Element button = new html.Element.html(["""<button id="view-source">""", """Post</button>"""].join("\r\n"));
+        elm.children.add(button);
+        button.onClick.listen((ev){
+          print("---> btn");
+        });
+      }
   }
   a() {
     html.Element elm = html.document.body.querySelector("#${this.rootId}");
