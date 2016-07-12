@@ -12,27 +12,36 @@ class NetBoxFeedManager {
   FuncfindArticle funcfindArticle;
 
   NetBoxFeed _newOrderBox = null;
-  Map<String,NetBoxFeed> _tagBox = {};
+  Map<String, NetBoxFeed> _tagBox = {};
+  Map<String, NetBoxFeed> _userBox = {};
 
   NetBoxFeedManager(this.backendAddr, this.apiKey,
       {this.version: "v1",
       this.passwordKey: "umiuni2d", //
       this.funcfindArticle: null}) {
-        _newOrderBox = new NetBoxFeed(backendAddr, apiKey,version:this.version,
-        passwordKey: this.passwordKey, funcfindArticle: null);
+    _newOrderBox = new NetBoxFeed(backendAddr, apiKey, version: this.version, passwordKey: this.passwordKey, funcfindArticle: null);
   }
 
-  NetBoxFeed getNewOrder() {
-    return _newOrderBox;
+  NetBoxFeed getNewOrder({String userName: ""}) {
+    if (userName == "") {
+      return _newOrderBox;
+    } else {
+      var r = _userBox[userName];
+      if (r != null) {
+        return r;
+      }
+      r = new NetBoxFeed.username(userName, backendAddr, apiKey, version: this.version, passwordKey: this.passwordKey);
+      _userBox[userName] = r;
+      return r;
+    }
   }
 
   NetBoxFeed getFromTag(String tag) {
     var r = _tagBox[tag];
-    if(r != null) {
+    if (r != null) {
       return r;
     }
-    r = new NetBoxFeed.tag(tag, backendAddr, apiKey, version:this.version,
-    passwordKey: this.passwordKey);
+    r = new NetBoxFeed.tag(tag, backendAddr, apiKey, version: this.version, passwordKey: this.passwordKey);
     _tagBox[tag] = r;
     return r;
   }

@@ -80,9 +80,9 @@ class HomePage {
       for(nbox.NetBoxMeFindUserItem i in f.users) {
         print(">> ${i.userName}");
         //
-        //
+        //nbox.NetBox.ReqPropertyName
         builder.end(ticket, [
-          """    <ul><li><a><div style="width:${100}px;">""",
+          """    <ul><li><a href="#/Article?${nbox.NetBox.ReqPropertyName}=${Uri.encodeComponent(i.userName)}"><div style="width:${100}px;">""",
           """       <p style="text-align:center">""",
           """       <img style="width:80px;width:80px;display:inline; background-color:#99cc00;" src="${netbox.newMeManager().makeImgUserIconSrc(i.userName)}">""", //
           """       </p>""",

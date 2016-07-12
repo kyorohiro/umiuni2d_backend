@@ -65,17 +65,19 @@ class FeedPage {
         } catch (e) {}
       }
       if (usePostDialog == false && usePostDialog == false) {
-        update(prop["tag"]);
+        update(tag:prop[nbox.NetBox.ReqPropertyTag],userName: prop[nbox.NetBox.ReqPropertyName]);
       }
     }
   }
 
-  update(String tag) async {
+  update({String tag:"",String userName:""}) async {
     print(">>>>>>> ${tag}");
-    if (tag == null || tag == "") {
-      feeder = feederManager.getNewOrder();
-    } else {
+    if (userName == null || userName == "") {
+      feeder = feederManager.getNewOrder(userName:userName);
+    } else if (tag != null && tag == "") {
       feeder = feederManager.getFromTag(tag);
+    } else {
+      feeder = feederManager.getNewOrder();
     }
     //
     //
