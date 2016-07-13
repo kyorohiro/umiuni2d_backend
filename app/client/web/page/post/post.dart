@@ -17,6 +17,7 @@ class PostPage {
   nbox.NetBoxFeed feeder;
   dialog.PostDialog postDialog;
   dialog.TextDialog targetDialog;
+  dialog.ChoiceDialog choiceDialog;
 
   PostPage(this.status, this.netbox, this.rootId, this.feederManager, //
       {this.naviId: "feedNaviId",
@@ -32,6 +33,9 @@ class PostPage {
     //
     targetDialog = new dialog.TextDialog();
     targetDialog.init();
+
+    choiceDialog = new dialog.ChoiceDialog(status, netbox);
+    choiceDialog.init();
   }
 
   Future updateFromHash() async {
@@ -42,7 +46,14 @@ class PostPage {
         postDialog.show("", "title", [], "post", "private");
       } else if(prop[nbox.NetBox.ReqPropertyArticleState] == nbox.NetBox.ReqPropertyComments){
         targetDialog.show("Target Name", "Your comment target",onUpdated: (dialog.TextDialog d, String src){
-          postDialog.show("", "title", ["comment"], "post", "private");
+          choiceDialog.show("Choice", "message", ["Greate", "Good", "Normal", "Bad", "SoBad"],onUpdated: (dialog.ChoiceDialog dialog, String choice){
+            choiceDialog.close();
+            postDialog.show("", "title", ["comment","${choice}","${src}"], "post", "private");
+            return false;
+          });
+          targetDialog.close();
+          return false;
+//          postDialog.show("", "title", ["comment"], "post", "private");
         });
       }
     } else {
