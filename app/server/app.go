@@ -30,6 +30,7 @@ const (
 	ReqPropertyPass               = "password"
 	ReqPropertyNewPass            = "newpassword"
 	ReqPropertyRequestID          = "requestId"
+	ReqPropertyPermission         = "permission"
 	ReqPropertyCode               = "code"
 	ReqPropertyCursor             = "cursor"
 	ReqPropertyParentID           = "parentId"
@@ -101,6 +102,9 @@ func Response(w http.ResponseWriter, v map[string]interface{}) {
 }
 
 func init() {
+	//
+	//
+	http.HandleFunc("/api/v1/stuff_mana/login", stuffloginHandler)
 
 	//
 	// me_mana

@@ -23,6 +23,7 @@ type GaeUserItem struct {
 	Gold        int
 	Exp         int
 	Lv          int
+	Permission  int
 	//	SecretInfo  string `datastore:",noindex"`
 }
 
@@ -58,6 +59,14 @@ func (obj *User) GetStatus() string {
 
 func (obj *User) GetPassHash() string {
 	return obj.gaeObject.PassHash
+}
+
+func (obj *User) GatPermission() int {
+	return obj.gaeObject.Permission
+}
+
+func (obj *User) SetPermission(v int) {
+	obj.gaeObject.Permission = v
 }
 
 func (obj *User) UpdatePassword(v string) {

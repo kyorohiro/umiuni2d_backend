@@ -1,5 +1,6 @@
 import 'dart:html' as html;
 import 'dart:async';
+import 'dart:math' as math;
 import 'package:umiuni2d_backend_client/nbox.dart'  as netboxm;
 import 'package:umiuni2d_backend_client/util.dart' as util;
 import 'package:umiuni2d_backend_client/dialog.dart' as dialog;
@@ -41,7 +42,8 @@ class MePageLogout {
         if (prop.containsKey("code")) {
             showErrorDialog(prop);
         }
-      } else if (hash == "#/Me/register/do") {
+      }
+      else if (hash == "#/Me/register/do") {
         html.Element elm = html.document.body.querySelector("#${this.rootId}");
         html.InputElement userNameElm = elm.querySelector("#${propUserName}");
         html.InputElement passwordElm = elm.querySelector("#${propPassword}");
@@ -127,6 +129,7 @@ class MePageLogout {
       """ <ul>""",
       """		<li><a href="#/Me/login">Login</a></li>""", //
       """		<li><a href="#/Me/register">Register</a></li>""", //
+      //"""		<li><a href="#/Me/staffonly">StaffOnly</a></li>""", //
       """ </ul>""",
       """</nav>""",
     ].join());
@@ -165,4 +168,5 @@ class MePageLogout {
       """</nav>""",
     ].join());
   }
+
 }
