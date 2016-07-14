@@ -75,10 +75,14 @@ func (obj *OAuth1Client) Post(ctx context.Context,
 	}
 	for k, v := range headers {
 		request.Header.Add(k, v)
+		log.Infof(ctx, "----H> %s : %s", k, v)
 	}
 	v := obj.MakeAuthorizationHeader()
 	request.Header.Add(OAthAuthorizationHeader, v)
-	//request.Header.Add(OAuth1Callback, url.QueryEscape(obj.Callback))
+
+	//if len(obj.Callback) != 0 {
+	//	request.Header.Add(OAuth1Callback, url.QueryEscape(obj.Callback))
+	//}
 	log.Infof(ctx, "----B> %s", v)
 
 	client := urlfetch.Client(ctx)
@@ -115,7 +119,8 @@ func (obj *OAuth1Client) MakeTimestamp() string {
 func (obj *OAuth1Client) Clear(targetAddr string) {
 	obj.AuthParam = make(map[string]string, 0)
 	if obj.Callback != "" {
-		obj.AuthParam[OAuth1Callback] = url.QueryEscape(obj.Callback)
+		//obj.AuthParam[OAuth1Callback] = url.QueryEscape(obj.Callback)
+		obj.AuthParam[OAuth1Callback] = obj.Callback
 	}
 	obj.AuthParam[OAuth1ConsumerKey] = obj.ConsumerKey
 	obj.AuthParam[OAuth1SignatureMethod] = obj.Method
@@ -125,6 +130,7 @@ func (obj *OAuth1Client) Clear(targetAddr string) {
 	if obj.AccessToken != "" {
 		obj.AuthParam[OAuth1Token] = obj.AccessToken
 	}
+
 	obj.AuthParam[OAuth1TIme] = obj.MakeTimestamp()
 }
 
@@ -166,7 +172,11 @@ func (obj *OAuth1Client) MakeAuthorizationHeader() string {
 
 	params := make([]string, 0)
 	for k, v := range obj.AuthParam {
-		params = append(params, fmt.Sprintf(`%s="%s"`, k, v))
+		if k == OAuth1Callback {
+			params = append(params, fmt.Sprintf(`%s="%s"`, k, url.QueryEscape(v)))
+		} else {
+			params = append(params, fmt.Sprintf(`%s="%s"`, k, v))
+		}
 	}
 	return fmt.Sprintf("OAuth %s", strings.Join(params, ","))
 }

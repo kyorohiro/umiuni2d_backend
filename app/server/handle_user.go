@@ -74,6 +74,32 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func twitterloginHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Add("Access-Control-Allow-Origin", "*")
+	//	w.Header().Add("Access-Control-Allow-Headers", "apikey")
+	if r.Method != "POST" {
+		return
+	}
+	var requestPropery map[string]interface{}
+	json.NewDecoder(r.Body).Decode(&requestPropery)
+	propUserName := requestPropery[ReqPropertyName].(string)
+	propPassword := requestPropery[ReqPropertyPass].(string)
+	propRequestId := requestPropery[ReqPropertyRequestID].(string)
+	//
+	ctx := appengine.NewContext(r)
+	loginId, _, err1 := GetUserManager().LoginUser(ctx, propUserName, propPassword, r.RemoteAddr, r.UserAgent())
+
+	if err1 != nil {
+		//		state := err1.Error()
+		//		if err1 == user.ErrorNotFound || err1 == user.ErrorInvalidPass {
+		//			state = ReqPropertyStateWrongNamePass
+		//		}
+		Response(w, map[string]interface{}{ReqPropertyCode: ReqPropertyCodeWrongNamePass, ReqPropertyRequestID: propRequestId})
+	} else {
+		Response(w, map[string]interface{}{ReqPropertyCode: ReqPropertyCodeOK, ReqPropertyRequestID: propRequestId, ReqPropertyLoginId: loginId.GetLoginId()})
+	}
+}
+
 func logoutHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Access-Control-Allow-Origin", "*")
 	//	w.Header().Add("Access-Control-Allow-Headers", "apikey")

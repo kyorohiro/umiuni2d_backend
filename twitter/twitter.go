@@ -41,6 +41,7 @@ func NewTwitter(consumerKey string, consumerSecret string, accessToken string, a
 	ret.AccessTokenSecret = accessTokenSecret
 	ret.CallbackUrl = callbackUrl
 	ret.oauthObj = NewOAuthClient(consumerKey, consumerSecret, accessToken, accessTokenSecret)
+
 	return ret
 }
 
@@ -49,15 +50,20 @@ func NewTwitter(consumerKey string, consumerSecret string, accessToken string, a
 // OAuthTokenSecret
 // OAuthCallbackConfirmed
 func (obj *Twitter) SendRequestToken(ctx context.Context) (string, map[string]string, error) {
+	obj.oauthObj.Callback = obj.CallbackUrl
+	log.Infof(ctx, obj.CallbackUrl)
 	result, err := obj.oauthObj.Post(ctx, RequestTokenURl, make(map[string]string, 0), "")
+	obj.oauthObj.Callback = ""
 	if err != nil {
 		return "", nil, err
 	}
+	log.Infof(ctx, "<<%s>>", result)
 	keyvalue := obj.ExtractParamsFromBody(result)
 	oauth_token := keyvalue[OAuthToken]
 	if oauth_token == "" {
 		return "", nil, err
 	}
+
 	return "https://api.twitter.com/oauth/authenticate?oauth_token=" + oauth_token, keyvalue, nil
 }
 
@@ -67,6 +73,7 @@ func (obj *Twitter) SendRequestToken(ctx context.Context) (string, map[string]st
 // UserID
 // ScreenName
 func (obj *Twitter) OnCallbackSendRequestToken(ctx context.Context, url *url.URL) (map[string]string, map[string]string, error) {
+	log.Infof(ctx, "<<ONCALL>>")
 	q := url.Query()
 	verifiers := q[OAuthVerifier]
 	tokens := q[OAuthToken]

@@ -7,6 +7,9 @@ handlers:
 - url: /api.*
   script: _go_app
 
+- url: /twitter/oauth.*
+  script: _go_app
+
 - url: /images/meicon.gif
   static_files: images/meicon.gif
   upload: images/meicon.gif

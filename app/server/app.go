@@ -10,6 +10,7 @@ import (
 	"umiuni2d_backend/blob"
 	"umiuni2d_backend/session"
 	"umiuni2d_backend/tag"
+	"umiuni2d_backend/twitter"
 	"umiuni2d_backend/user"
 
 	"golang.org/x/net/context"
@@ -20,6 +21,7 @@ import (
 	"encoding/binary"
 	"strconv"
 
+	"google.golang.org/appengine"
 	"google.golang.org/appengine/log"
 )
 
@@ -75,6 +77,7 @@ var _manager = user.NewUserManager(KindUser, KindLoginId)
 var _artMana = article.NewArticleManager(KindArticle, 10)
 var _tagMan = tag.NewTagManager(KindArticleTag)
 var _blobMana = blob.NewBlobManager("/api/v1/file/on_uploaded", KindBlob)
+var _twitterMana = twitter.NewTwitter(consumerKey, consumerSecret, accessToken, accessTokenSecret, twitterCallback)
 
 func GetUserManager() *user.UserManager {
 	return _manager
@@ -90,6 +93,10 @@ func GetTagManager() *tag.TagManager {
 
 func GetBlobManager() *blob.BlobManager {
 	return _blobMana
+}
+
+func GetTwitterManager() *twitter.Twitter {
+	return _twitterMana
 }
 
 func WriteLog(ctx context.Context, message string) {
@@ -110,6 +117,43 @@ func init() {
 	// me_mana
 	http.HandleFunc("/api/v1/me_mana/regist_user", registHandler)
 	http.HandleFunc("/api/v1/me_mana/login", loginHandler)
+	http.HandleFunc("/api/v1/me_mana/login_from_twitter", func(w http.ResponseWriter, r *http.Request) {
+		ctx := appengine.NewContext(r)
+		///		data := GetParam(r)
+
+		twitterObj := GetTwitterManager()
+		url, _, err := twitterObj.SendRequestToken(ctx)
+		if err != nil {
+			Response(w, map[string]interface{}{ //
+				"r": "ng", "s": "good", "dev": err.Error(), //
+			})
+			return
+		}
+		http.Redirect(w, r, url, http.StatusFound)
+
+	})
+
+	http.HandleFunc("/twitter/oauth", func(w http.ResponseWriter, r *http.Request) {
+		ctx := appengine.NewContext(r)
+		log.Infof(ctx, "=======OKK-Z----->")
+		twitterObj := GetTwitterManager()
+		_, rt, err := twitterObj.OnCallbackSendRequestToken(ctx, r.URL)
+		if err != nil {
+			Response(w, map[string]interface{}{ //
+				"r": "ng", "s": "good", "dev": err.Error(), //
+			})
+			return
+		}
+		userMana := GetUserManager()
+		userMana.RegistUserFromTwitter(ctx, rt[twitter.ScreenName], rt[twitter.UserID], rt[twitter.OAuthToken], rt[twitter.OAuthTokenSecret])
+		userMana.LoginUserFromTwitter(ctx, rt[twitter.ScreenName], rt[twitter.UserID], rt[twitter.OAuthToken], rt[twitter.OAuthTokenSecret],
+			r.RemoteAddr, r.UserAgent())
+
+		Response(w, map[string]interface{}{ //
+			"r": "ok", "s": "good",
+		})
+	})
+	//
 	http.HandleFunc("/api/v1/me_mana/get_icon", userGetIconHandle)
 	http.HandleFunc("/api/v1/me_mana/get_info", meCheckHandler)
 	http.HandleFunc("/api/v1/me_mana/update_mail", meUpdateMailHandler)
