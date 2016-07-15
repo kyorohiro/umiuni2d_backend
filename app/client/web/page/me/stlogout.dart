@@ -1,15 +1,15 @@
 import 'dart:html' as html;
 import 'dart:async';
 import 'dart:math' as math;
-import 'package:umiuni2d_backend_client/nbox.dart'  as netboxm;
+import 'package:umiuni2d_backend_client/nbox.dart'  as nbox;
 import 'package:umiuni2d_backend_client/util.dart' as util;
 import 'package:umiuni2d_backend_client/dialog.dart' as dialog;
 
 
 class MePageLogout {
   String rootId;
-  netboxm.MyStatus status;
-  netboxm.NetBox netbox;
+  nbox.MyStatus status;
+  nbox.NetBox netbox;
   String propUserName = "userName";
   String propPassword = "password";
   String propPasswordOpt = "passwordOtp";
@@ -46,7 +46,8 @@ class MePageLogout {
         print(">>> ");
         netbox.newMeManager()
         .loginWithTwitter("${html.window.location.protocol}//${html.window.location.host}")
-        .then((netboxm.NetBoxMeManagerLoginTwitter v){
+        .then((nbox.NetBoxMeManagerLoginTwitter v){
+  //        if( v.code == netb)
           print(">>>> ${v.code} ${v.url}");
         });
 //        html.window.location.assign("${netbox.backendAddr}/api/v1/me_mana/login_from_twitter");
@@ -92,7 +93,7 @@ class MePageLogout {
       dialog.ConfirmDialog d = new dialog.ConfirmDialog();
       d.init();
       try {
-        d.show("Error", netboxm.NetBoxBasicUsage.errorMessage(int.parse(prop["code"])), //
+        d.show("Error", nbox.NetBoxBasicUsage.errorMessage(int.parse(prop["code"])), //
             onUpdated: (dialog.ConfirmDialog dd, bool okBtnIsSelected) async {
           return true;
         }, useCloseButton: false);
