@@ -23,7 +23,7 @@ func stuffloginHandler(w http.ResponseWriter, r *http.Request) {
 	//
 	ctx := appengine.NewContext(r)
 	loginId, user, err1 := GetUserManager().LoginUser(ctx, propUserName, propPassword, r.RemoteAddr, r.UserAgent())
-	if err1 != nil || user.GatPermission() != 777 || user.GetUserName() != ConfigMasterUser {
+	if err1 != nil || user.GetUserName() != ConfigMasterUser {
 		Response(w, map[string]interface{}{ReqPropertyCode: ReqPropertyCodeWrongNamePass, ReqPropertyRequestID: propRequestId})
 	} else {
 		Response(w, map[string]interface{}{ReqPropertyCode: ReqPropertyCodeOK, ReqPropertyRequestID: propRequestId, ReqPropertyLoginId: loginId.GetLoginId()})

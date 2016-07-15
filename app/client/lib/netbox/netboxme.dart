@@ -32,6 +32,22 @@ class NetBoxMeManagerLogin {
   }
 }
 
+class NetBoxMeManagerLoginTwitter {
+  int code;
+  String requestId;
+  String loginId;
+  String url;
+
+  NetBoxMeManagerLoginTwitter(TinyNetRequesterResponse response) {
+    String body = conv.UTF8.decode(response.response.asUint8List());
+    Map<String, Object> ret = conv.JSON.decode(body);
+    this.code = ret[NetBox.ReqPropertyCode];
+    this.requestId = ret[NetBox.ReqPropertyRequestID];
+    this.loginId = ret[NetBox.ReqPropertyLoginId];
+    this.url = ret[NetBox.ReqPropertyUrl];
+  }
+}
+
 class NetBoxMeManagerGetInfo {
   int code;
   String requestId;
@@ -160,6 +176,24 @@ class NetBoxMeManager {
         }));
     return new NetBoxMeManagerRegist(response);
   }
+
+// "${netbox.backendAddr}/api/v1/me_mana/login_from_twitter"
+Future<NetBoxMeManagerLoginTwitter> loginWithTwitter(String callbackUrl) async {
+  TinyNetHtml5Builder builder = new TinyNetHtml5Builder();
+  TinyNetRequester requester = await builder.createRequester();
+  String url = "${backendAddr}/api/${version}/me_mana/login_from_twitter";
+
+  TinyNetRequesterResponse response = await requester.request(
+      //
+      TinyNetRequester.TYPE_POST,
+      url, //
+      data: conv.JSON.encode({
+        NetBox.ReqPropertyRequestID: "AABBCC", //
+        NetBox.ReqPropertyApiKey: apiKey,
+        NetBox.ReqPropertyUrl: callbackUrl,
+      }));
+  return new NetBoxMeManagerLoginTwitter(response);
+}
 
   Future<NetBoxMeManagerLogin> login(String name, String pass) async {
     TinyNetHtml5Builder builder = new TinyNetHtml5Builder();

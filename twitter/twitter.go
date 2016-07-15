@@ -18,7 +18,6 @@ type Twitter struct {
 	ConsumerSecret    string
 	AccessToken       string
 	AccessTokenSecret string
-	CallbackUrl       string
 	oauthObj          *OAuth1Client
 }
 
@@ -33,13 +32,12 @@ const (
 	ScreenName             = "screen_name"
 )
 
-func NewTwitter(consumerKey string, consumerSecret string, accessToken string, accessTokenSecret string, callbackUrl string) *Twitter {
+func NewTwitter(consumerKey string, consumerSecret string, accessToken string, accessTokenSecret string) *Twitter {
 	ret := new(Twitter)
 	ret.ConsumerKey = consumerKey
 	ret.ConsumerSecret = consumerSecret
 	ret.AccessToken = accessToken
 	ret.AccessTokenSecret = accessTokenSecret
-	ret.CallbackUrl = callbackUrl
 	ret.oauthObj = NewOAuthClient(consumerKey, consumerSecret, accessToken, accessTokenSecret)
 
 	return ret
@@ -49,9 +47,8 @@ func NewTwitter(consumerKey string, consumerSecret string, accessToken string, a
 // OAuthToken
 // OAuthTokenSecret
 // OAuthCallbackConfirmed
-func (obj *Twitter) SendRequestToken(ctx context.Context) (string, map[string]string, error) {
-	obj.oauthObj.Callback = obj.CallbackUrl
-	log.Infof(ctx, obj.CallbackUrl)
+func (obj *Twitter) SendRequestToken(ctx context.Context, callbackUrl string) (string, map[string]string, error) {
+	obj.oauthObj.Callback = callbackUrl
 	result, err := obj.oauthObj.Post(ctx, RequestTokenURl, make(map[string]string, 0), "")
 	obj.oauthObj.Callback = ""
 	if err != nil {

@@ -42,7 +42,16 @@ class MePageLogout {
         if (prop.containsKey("code")) {
             showErrorDialog(prop);
         }
+      } else if(hash == "#/Me/twitter") {
+        print(">>> ");
+        netbox.newMeManager()
+        .loginWithTwitter("${html.window.location.protocol}//${html.window.location.host}")
+        .then((netboxm.NetBoxMeManagerLoginTwitter v){
+          print(">>>> ${v.code} ${v.url}");
+        });
+//        html.window.location.assign("${netbox.backendAddr}/api/v1/me_mana/login_from_twitter");
       }
+      /*
       else if (hash == "#/Me/register/do") {
         html.Element elm = html.document.body.querySelector("#${this.rootId}");
         html.InputElement userNameElm = elm.querySelector("#${propUserName}");
@@ -74,7 +83,7 @@ class MePageLogout {
         } else {
           html.window.location.assign("#/Me/login?code=${r.code}");
         }
-      }
+      }*/
     }
   }
 
@@ -129,10 +138,11 @@ class MePageLogout {
       """ <ul>""",
       """		<li><a href="#/Me/login">Login</a></li>""", //
       """		<li><a href="#/Me/register">Register</a></li>""", //
-      //"""		<li><a href="#/Me/staffonly">StaffOnly</a></li>""", //
+      """		<li><a href="#/Me/twitter" id="twitter_loginid">Twitter</a></li>""", //
       """ </ul>""",
       """</nav>""",
     ].join());
+
   }
 
   updateRegister(Map prop) {

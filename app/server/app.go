@@ -21,7 +21,7 @@ import (
 	"encoding/binary"
 	"strconv"
 
-	"google.golang.org/appengine"
+	//	"google.golang.org/appengine"
 	"google.golang.org/appengine/log"
 )
 
@@ -41,7 +41,6 @@ const (
 	ReqPropertyArticles           = "arts"
 	ReqPropertyUsers              = "users"
 	ReqPropertyMail               = "mail"
-	ReqPropertyUrl                = "url"
 	ReqPropertyLoginId            = "loginId"
 	ReqPropertyArticleCont        = "cont"
 	ReqPropertyArticleTitle       = "title"
@@ -52,6 +51,7 @@ const (
 	ReqPropertyStateWrongNamePass = "wrong name/pass"
 	ReqPropertyUpdated            = "updated"
 	ReqPropertyCreated            = "created"
+	ReqPropertyUrl                = "url"
 
 	ReqPropertyStateWrongNamePassID = -1
 	ReqPropertyCodeOK               = 200
@@ -77,7 +77,7 @@ var _manager = user.NewUserManager(KindUser, KindLoginId)
 var _artMana = article.NewArticleManager(KindArticle, 10)
 var _tagMan = tag.NewTagManager(KindArticleTag)
 var _blobMana = blob.NewBlobManager("/api/v1/file/on_uploaded", KindBlob)
-var _twitterMana = twitter.NewTwitter(consumerKey, consumerSecret, accessToken, accessTokenSecret, twitterCallback)
+var _twitterMana = twitter.NewTwitter(consumerKey, consumerSecret, accessToken, accessTokenSecret)
 
 func GetUserManager() *user.UserManager {
 	return _manager
@@ -117,23 +117,10 @@ func init() {
 	// me_mana
 	http.HandleFunc("/api/v1/me_mana/regist_user", registHandler)
 	http.HandleFunc("/api/v1/me_mana/login", loginHandler)
-	http.HandleFunc("/api/v1/me_mana/login_from_twitter", func(w http.ResponseWriter, r *http.Request) {
-		ctx := appengine.NewContext(r)
-		///		data := GetParam(r)
+	http.HandleFunc("/api/v1/me_mana/login_from_twitter", twitterLoginEntry)
 
-		twitterObj := GetTwitterManager()
-		url, _, err := twitterObj.SendRequestToken(ctx)
-		if err != nil {
-			Response(w, map[string]interface{}{ //
-				"r": "ng", "s": "good", "dev": err.Error(), //
-			})
-			return
-		}
-		http.Redirect(w, r, url, http.StatusFound)
-
-	})
-
-	http.HandleFunc("/twitter/oauth", func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/api/v1/me_mana/twitter/oauth", twitterLoginEntry)
+	/*func(w http.ResponseWriter, r *http.Request) {
 		ctx := appengine.NewContext(r)
 		log.Infof(ctx, "=======OKK-Z----->")
 		twitterObj := GetTwitterManager()
@@ -152,7 +139,7 @@ func init() {
 		Response(w, map[string]interface{}{ //
 			"r": "ok", "s": "good",
 		})
-	})
+	})*/
 	//
 	http.HandleFunc("/api/v1/me_mana/get_icon", userGetIconHandle)
 	http.HandleFunc("/api/v1/me_mana/get_info", meCheckHandler)
