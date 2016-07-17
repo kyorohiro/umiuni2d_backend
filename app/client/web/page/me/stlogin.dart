@@ -16,13 +16,17 @@ class MePage {
   nbox.NetBox netbox;
   static String propUserName = "userName";
   static String propPassword = "password";
+  bool useMeLogin = false;
+  bool useTwitterLogin = false;
 
   MePage(this.status, this.netbox, this.rootId, //
       {this.logoutId: "logoutId",
       this.editIconId: "editIconBtn",
       this.editMailId: "editMailBtn", //
       this.iconId: "iconId",
-      this.editPasswordId: "editPasswordId"}) {
+      this.editPasswordId: "editPasswordId",
+      this.useMeLogin: false,
+      this.useTwitterLogin: true}) {
     init();
     html.window.onHashChange.listen((_) {
       updateFromHash();
@@ -83,11 +87,14 @@ class MePage {
     if (this.status.isLogin) {
       name(elm);
       nbox.NetBoxMeManagerGetInfo rt = await this.netbox.newMeManager().getMyInfo(status.userObjectId);
-      mail(rt.mail, elm);
-      password(elm);
+      if (this.useMeLogin == true) {
+        mail(rt.mail, elm);
+        password(elm);
+      }
       arts(elm);
     }
   }
+
   arts(html.Element elm) {
     print("-3");
     elm.appendHtml(
@@ -99,6 +106,7 @@ class MePage {
         ].join(),
         treeSanitizer: html.NodeTreeSanitizer.trusted);
   }
+
   name(html.Element elm) {
     elm.appendHtml(
         [
@@ -147,6 +155,7 @@ class MePage {
       });
     });
   }
+
   mail(String mail, html.Element elm) {
     print("-2");
     elm.appendHtml(
@@ -174,7 +183,7 @@ class MePage {
     });
   }
 
-  password(html.Element elm)  {
+  password(html.Element elm) {
     elm.appendHtml(
         [
           //
