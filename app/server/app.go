@@ -119,27 +119,7 @@ func init() {
 	http.HandleFunc("/api/v1/me_mana/login", loginHandler)
 	http.HandleFunc("/api/v1/me_mana/login_from_twitter", twitterLoginEntry)
 
-	http.HandleFunc("/api/v1/me_mana/twitter/oauth", twitterLoginEntry)
-	/*func(w http.ResponseWriter, r *http.Request) {
-		ctx := appengine.NewContext(r)
-		log.Infof(ctx, "=======OKK-Z----->")
-		twitterObj := GetTwitterManager()
-		_, rt, err := twitterObj.OnCallbackSendRequestToken(ctx, r.URL)
-		if err != nil {
-			Response(w, map[string]interface{}{ //
-				"r": "ng", "s": "good", "dev": err.Error(), //
-			})
-			return
-		}
-		userMana := GetUserManager()
-		userMana.RegistUserFromTwitter(ctx, rt[twitter.ScreenName], rt[twitter.UserID], rt[twitter.OAuthToken], rt[twitter.OAuthTokenSecret])
-		userMana.LoginUserFromTwitter(ctx, rt[twitter.ScreenName], rt[twitter.UserID], rt[twitter.OAuthToken], rt[twitter.OAuthTokenSecret],
-			r.RemoteAddr, r.UserAgent())
-
-		Response(w, map[string]interface{}{ //
-			"r": "ok", "s": "good",
-		})
-	})*/
+	http.HandleFunc("/api/v1/me_mana/twitter/oauth", twitterLoginExit)
 	//
 	http.HandleFunc("/api/v1/me_mana/get_icon", userGetIconHandle)
 	http.HandleFunc("/api/v1/me_mana/get_info", meCheckHandler)

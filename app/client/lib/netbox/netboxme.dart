@@ -39,6 +39,7 @@ class NetBoxMeManagerLoginTwitter {
   String url;
 
   NetBoxMeManagerLoginTwitter(TinyNetRequesterResponse response) {
+    print("## ${response.response}");
     String body = conv.UTF8.decode(response.response.asUint8List());
     Map<String, Object> ret = conv.JSON.decode(body);
     this.code = ret[NetBox.ReqPropertyCode];

@@ -22,13 +22,15 @@ class MePageLogout {
   }
 
   Future updateFromHash() async {
-    print("##====> ${this.status.isLogin}");
     if (this.status.isLogin == true) {
       return;
     }
     String hash = util.Location.address(html.window.location.hash);
     Map prop = util.Location.prop(html.window.location.hash);
     print("--->>>> ${hash}");
+    if (hash.startsWith("#/Twitter")) {
+      return;
+     }
     if (hash.startsWith("#/Me")) {
       if (hash == "#/Me") {
         update();
@@ -45,10 +47,10 @@ class MePageLogout {
       } else if(hash == "#/Me/twitter") {
         print(">>> ");
         netbox.newMeManager()
-        .loginWithTwitter("${html.window.location.protocol}//${html.window.location.host}")
+        .loginWithTwitter("${html.window.location.protocol}//${html.window.location.host}/#/Twitter")
         .then((nbox.NetBoxMeManagerLoginTwitter v){
-  //        if( v.code == netb)
           print(">>>> ${v.code} ${v.url}");
+          html.window.location.assign(v.url);
         });
 //        html.window.location.assign("${netbox.backendAddr}/api/v1/me_mana/login_from_twitter");
       }

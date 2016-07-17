@@ -2,7 +2,7 @@ import 'dart:html' as html;
 import 'dart:async';
 import 'package:umiuni2d_backend_client/nbox.dart' as nbox;
 import 'package:umiuni2d_backend_client/dialog.dart' as dialog;
-
+import 'package:umiuni2d_backend_client/util.dart' as util;
 
 class MePage {
   String rootId;
@@ -30,15 +30,17 @@ class MePage {
   }
 
   Future updateFromHash() async {
+    String hash = util.Location.address(html.window.location.hash);
+    Map prop = util.Location.prop(html.window.location.hash);
+    if (hash.startsWith("#/Twitter")) {
+      print("----> twitter");
+      this.status.userObjectId = prop["id"];
+      this.status.userName = prop["name"];
+    }
     if (this.status.isLogin == false) {
       return;
     }
-    String hash = html.window.location.hash;
-// prop = {};
-    if (hash.indexOf("?") > 0) {
-//      prop = Uri.splitQueryString(hash.substring(hash.indexOf("?") + 1));
-      hash = hash.substring(0, hash.indexOf("?"));
-    }
+
     if (hash.startsWith("#/Me")) {
       if (hash == "#/Me") {
         update();

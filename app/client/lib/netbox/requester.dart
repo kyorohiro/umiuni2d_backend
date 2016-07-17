@@ -27,10 +27,12 @@ class TinyNetHtml5HttpRequester extends TinyNetRequester {
 
       req.onReadyStateChange.listen((html.ProgressEvent e) {
         if (req.readyState == html.HttpRequest.DONE) {
+          print("----> asdfasdf A ${req.response} :: ${req.statusText}");
           c.complete(new TinyNetRequesterResponse(req.status, req.responseHeaders, req.response));
         }
       });
       req.onError.listen((html.ProgressEvent e) {
+                  print("----> asdfasdf B ${e} :: ${req.statusText}");
         c.completeError(e);
       });
       if (data == null) {
