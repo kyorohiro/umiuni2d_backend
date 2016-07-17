@@ -1,10 +1,9 @@
 import 'dart:html' as html;
 import 'dart:async';
 import 'dart:math' as math;
-import 'package:umiuni2d_backend_client/nbox.dart'  as nbox;
+import 'package:umiuni2d_backend_client/nbox.dart' as nbox;
 import 'package:umiuni2d_backend_client/util.dart' as util;
 import 'package:umiuni2d_backend_client/dialog.dart' as dialog;
-
 
 class MePageLogout {
   String rootId;
@@ -13,8 +12,10 @@ class MePageLogout {
   String propUserName = "userName";
   String propPassword = "password";
   String propPasswordOpt = "passwordOtp";
+  bool useMeLogin = false;
+  bool useTwitterLogin = false;
 
-  MePageLogout(this.status, this.netbox, this.rootId) {
+  MePageLogout(this.status, this.netbox, this.rootId, {this.useMeLogin: false, this.useTwitterLogin: true}) {
     init();
     html.window.onHashChange.listen((_) {
       updateFromHash();
@@ -30,67 +31,31 @@ class MePageLogout {
     print("--->>>> ${hash}");
     if (hash.startsWith("#/Twitter")) {
       return;
-     }
+    }
     if (hash.startsWith("#/Me")) {
       if (hash == "#/Me") {
         update();
       } else if (hash == "#/Me/register") {
         updateRegister(prop);
         if (prop.containsKey("code")) {
-            showErrorDialog(prop);
+          showErrorDialog(prop);
         }
       } else if (hash == "#/Me/login") {
         updateLogin();
         if (prop.containsKey("code")) {
-            showErrorDialog(prop);
+          showErrorDialog(prop);
         }
-      } else if(hash == "#/Me/twitter") {
+      } else if (hash == "#/Me/twitter") {
         print(">>> ");
-        netbox.newMeManager()
-        .loginWithTwitter("${html.window.location.protocol}//${html.window.location.host}/#/Twitter")
-        .then((nbox.NetBoxMeManagerLoginTwitter v){
+        netbox.newMeManager().loginWithTwitter("${html.window.location.protocol}//${html.window.location.host}/#/Twitter").then((nbox.NetBoxMeManagerLoginTwitter v) {
           print(">>>> ${v.code} ${v.url}");
           html.window.location.assign(v.url);
         });
-//        html.window.location.assign("${netbox.backendAddr}/api/v1/me_mana/login_from_twitter");
       }
-      /*
-      else if (hash == "#/Me/register/do") {
-        html.Element elm = html.document.body.querySelector("#${this.rootId}");
-        html.InputElement userNameElm = elm.querySelector("#${propUserName}");
-        html.InputElement passwordElm = elm.querySelector("#${propPassword}");
-        html.InputElement passwordOptElm = elm.querySelector("#${propPasswordOpt}");
-        if (passwordElm.value != passwordOptElm.value) {
-          print(">> ${passwordElm.value} :: ${passwordOptElm.value}");
-          html.window.location.assign("#/Me/register?code=${netboxm.NetBox.ReqPropertyCodeLocalWrongOpPassword}");
-          return;
-        }
-
-        var r = await this.netbox.newMeManager().regist(userNameElm.value, "", passwordElm.value);
-        if (r.code == 200) {
-          this.status.userName = userNameElm.value;
-          this.status.userObjectId = r.loginId;
-          html.window.location.assign("#/Me");
-        } else {
-          html.window.location.assign("#/Me/register?code=${r.code}");
-        }
-      } else if (hash == "#/Me/login/do") {
-        html.Element elm = html.document.body.querySelector("#${this.rootId}");
-        html.InputElement userNameElm = elm.querySelector("#${propUserName}");
-        html.InputElement passwordElm = elm.querySelector("#${propPassword}");
-        var r = await this.netbox.newMeManager().login(userNameElm.value, passwordElm.value);
-        if (r.code == 200) {
-          this.status.userName = userNameElm.value;
-          this.status.userObjectId = r.loginId;
-          html.window.location.assign("#/Me");
-        } else {
-          html.window.location.assign("#/Me/login?code=${r.code}");
-        }
-      }*/
     }
   }
 
-  showErrorDialog(Map<String,String> prop) {
+  showErrorDialog(Map<String, String> prop) {
     if (prop.containsKey("code")) {
       dialog.ConfirmDialog d = new dialog.ConfirmDialog();
       d.init();
@@ -133,19 +98,29 @@ class MePageLogout {
   }
 
   update() {
-    html.Element elm = html.document.body.querySelector("#${this.rootId}");
-    elm.children.clear();
-    elm.appendHtml([
+    util.TextBuilder builder = new util.TextBuilder();
+    var item = builder.pat(builder.getRootTicket(), [
       """<H3>User</H3>""",
       """<nav class="mepage">""", //
       """ <ul>""",
-      """		<li><a href="#/Me/login">Login</a></li>""", //
-      """		<li><a href="#/Me/register">Register</a></li>""", //
-      """		<li><a href="#/Me/twitter" id="twitter_loginid">Twitter</a></li>""", //
+    ], [
       """ </ul>""",
       """</nav>""",
-    ].join());
-
+    ]);
+    if (this.useMeLogin == true) {
+      builder.end(item, [
+        """		<li><a href="#/Me/login">Login</a></li>""", //
+        """		<li><a href="#/Me/register">Register</a></li>""", //
+      ]);
+    }
+    if (this.useTwitterLogin == true) {
+      builder.end(item, [
+        """		<li><a href="#/Me/twitter" id="twitter_loginid">Twitter</a></li>""", //
+      ]);
+    }
+    html.Element elm = html.document.body.querySelector("#${this.rootId}");
+    elm.children.clear();
+    elm.appendHtml(builder.toText("\r\n"));
   }
 
   updateRegister(Map prop) {
@@ -181,5 +156,4 @@ class MePageLogout {
       """</nav>""",
     ].join());
   }
-
 }
