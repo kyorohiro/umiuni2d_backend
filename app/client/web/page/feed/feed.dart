@@ -91,9 +91,13 @@ class FeedPage {
     artParts.nextFeed(isInit: true);
     //
     //
-    if (this.status.isLogin) {
-      //target="_blank"
+    print("<><><><><>< isMaster : ${this.status.isMaster}");
+    if (this.status.isMaster) {
       elm.appendHtml(["""<a href="#/Post/post?${nbox.NetBox.ReqPropertyArticleState}=${nbox.NetBox.ReqPropertyArticles}" id="view-source">""", """Post</a>"""].join("\r\n"));
+    } else if (this.status.isLogin) {
+      //target="_blank"
+     var v = "#/Post/comment?tag=comment&${nbox.NetBox.ReqPropertyArticleState}=${nbox.NetBox.ReqPropertyComments}";
+     elm.appendHtml(["""<a href="${v}" id="view-source">""", """Post</a>"""].join("\r\n"));
     }
   }
 

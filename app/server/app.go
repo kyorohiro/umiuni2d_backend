@@ -26,33 +26,35 @@ import (
 )
 
 const (
-	ReqPropertyName               = "userName"
-	ReqPropertyFileName           = "fileName"
-	ReqPropertyBlobKey            = "blobKey"
-	ReqPropertyPass               = "password"
-	ReqPropertyNewPass            = "newpassword"
-	ReqPropertyRequestID          = "requestId"
-	ReqPropertyPermission         = "permission"
-	ReqPropertyCode               = "code"
-	ReqPropertyCursor             = "cursor"
-	ReqPropertyParentID           = "parentId"
-	ReqPropertyHaveContent        = "haveContent"
-	ReqPropertyCursorNext         = "cursor_next"
-	ReqPropertyArticles           = "arts"
-	ReqPropertyUsers              = "users"
-	ReqPropertyMail               = "mail"
-	ReqPropertyLoginId            = "loginId"
-	ReqPropertyArticleCont        = "cont"
-	ReqPropertyArticleTitle       = "title"
-	ReqPropertyArticleTag         = "tag"
-	ReqPropertyArticleInfo        = "info"
-	ReqPropertyArticleId          = "articleId"
-	ReqPropertyArticleState       = "state"
-	ReqPropertyStateWrongNamePass = "wrong name/pass"
-	ReqPropertyUpdated            = "updated"
-	ReqPropertyCreated            = "created"
-	ReqPropertyUrl                = "url"
-
+	ReqPropertyName                 = "userName"
+	ReqPropertyFileName             = "fileName"
+	ReqPropertyBlobKey              = "blobKey"
+	ReqPropertyPass                 = "password"
+	ReqPropertyNewPass              = "newpassword"
+	ReqPropertyRequestID            = "requestId"
+	ReqPropertyPermission           = "permission"
+	ReqPropertyCode                 = "code"
+	ReqPropertyCursor               = "cursor"
+	ReqPropertyParentID             = "parentId"
+	ReqPropertyHaveContent          = "haveContent"
+	ReqPropertyCursorNext           = "cursor_next"
+	ReqPropertyArticles             = "arts"
+	ReqPropertyUsers                = "users"
+	ReqPropertyMail                 = "mail"
+	ReqPropertyLoginId              = "loginId"
+	ReqPropertyArticleCont          = "cont"
+	ReqPropertyArticleTitle         = "title"
+	ReqPropertyArticleTag           = "tag"
+	ReqPropertyArticleInfo          = "info"
+	ReqPropertyArticleId            = "articleId"
+	ReqPropertyArticleState         = "state"
+	ReqPropertyStateWrongNamePass   = "wrong name/pass"
+	ReqPropertyUpdated              = "updated"
+	ReqPropertyCreated              = "created"
+	ReqPropertyUrl                  = "url"
+	ReqPropertyIsMaster             = "isMaster"
+	ReqPropertyArticleSubTag        = "subtag"
+	ReqPropertyArticleOptTag        = "opttag"
 	ReqPropertyStateWrongNamePassID = -1
 	ReqPropertyCodeOK               = 200
 	ReqPropertyCodeNeedLogin        = 1004
@@ -118,10 +120,12 @@ func init() {
 	http.HandleFunc("/api/v1/me_mana/regist_user", registHandler)
 	http.HandleFunc("/api/v1/me_mana/login", loginHandler)
 	http.HandleFunc("/api/v1/me_mana/login_from_twitter", twitterLoginEntry)
-
 	http.HandleFunc("/api/v1/me_mana/twitter/oauth", twitterLoginExit)
+
 	//
 	http.HandleFunc("/api/v1/me_mana/get_icon", userGetIconHandle)
+
+	//
 	http.HandleFunc("/api/v1/me_mana/get_info", meCheckHandler)
 	http.HandleFunc("/api/v1/me_mana/update_mail", meUpdateMailHandler)
 	http.HandleFunc("/api/v1/me_mana/update_password", meUpdatePasswordHandler)

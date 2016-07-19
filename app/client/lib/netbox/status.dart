@@ -13,8 +13,8 @@ class MyStatus {
 
   String get userObjectId => getFromKey(keyObjectId);
   String get userName => getFromKey(keyName);
-
   bool get isLogin => (userObjectId != null && userObjectId.length != 0);
+  bool isMaster = false;
 
   void init() {
 

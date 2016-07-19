@@ -9,7 +9,6 @@ import 'package:umiuni2d_backend_client/toolbar.dart';
 import 'package:umiuni2d_backend_client/nbox.dart' as netbox;
 import 'package:umiuni2d_backend_client/util.dart' as util;
 
-
 //import 'dart:html' as aahtml;
 Toolbar baseLine = new Toolbar();
 //netbox.NetBox rootBox = new netbox.NetBox("http://127.0.0.1:8080", "A91A3E1B-15F0-4DEE-8ECE-F5DD1A06230E");
@@ -19,7 +18,7 @@ netbox.NetBox rootBox = new netbox.NetBox("http://liquid-champion-127202.appspot
 //
 void main() {
   baseLine.init();
-  baseLine.updateToolbar(["Home", "Com", "Art", "Me"], ["Home", "Article?tag=comment","Article", "Me"]);
+  baseLine.updateToolbar(["Home", "Com", "Art", "Me"], ["Home", "Article?tag=comment", "Article", "Me"]);
   MePage myPage = new MePage(netbox.MyStatus.instance, rootBox, "main");
   myPage.updateFromHash();
   MePageLogout myPageLogout = new MePageLogout(netbox.MyStatus.instance, rootBox, "main");
@@ -29,13 +28,24 @@ void main() {
   FeedPage feedPage = new FeedPage(netbox.MyStatus.instance, rootBox, "main", rootBox.newNewOrderFeedManager(), naviId: "feedNaviId");
   feedPage.updateFromHash();
 
-  HomePage homePage = new HomePage(netbox.MyStatus.instance, rootBox, "main",
-  applicationName: CONFIG_APPLICATION_NAME,naviId: "feedNaviId");
+  HomePage homePage = new HomePage(netbox.MyStatus.instance, rootBox, "main", applicationName: CONFIG_APPLICATION_NAME, naviId: "feedNaviId");
   homePage.updateFromHash();
-
 
   PostPage postPage = new PostPage(netbox.MyStatus.instance, rootBox, "main", rootBox.newNewOrderFeedManager(), naviId: "feedNaviId");
   postPage.updateFromHash();
+
+  if (netbox.MyStatus.instance.isLogin) {
+    rootBox.newMeManager().getMyInfo(netbox.MyStatus.instance.userObjectId).then((netbox.NetBoxMeManagerGetInfo v) {
+      if (v.code != netbox.NetBox.ReqPropertyCodeOK) {
+        netbox.MyStatus.instance.userObjectId = "";
+        netbox.MyStatus.instance.userName = "";
+        netbox.MyStatus.instance.isMaster = false;
+      } else {
+        print(">>>>>>>>>>>>>>>getinfo ${v.isMaster}");
+        netbox.MyStatus.instance.isMaster = v.isMaster;
+      }
+    });
+  }
 }
 
 initFeedStyleElment(String naviId) {

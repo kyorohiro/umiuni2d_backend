@@ -76,6 +76,9 @@ func articlePostHandler(w http.ResponseWriter, r *http.Request) {
 	reqId := getStringFromProp(requestPropery, ReqPropertyRequestID, "")
 	state := getStringFromProp(requestPropery, ReqPropertyArticleState, "")
 	parentId := getStringFromProp(requestPropery, ReqPropertyParentID, "")
+	optTag := getStringFromProp(requestPropery, ReqPropertyArticleOptTag, "")
+	subTag := getStringFromProp(requestPropery, ReqPropertyArticleSubTag, "")
+
 	//	userName := requestPropery[ReqPropertyName].(string)
 
 	WriteLog(ctx, "-----> (1)")
@@ -131,9 +134,9 @@ func articlePostHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if artObj.GetState() == "private" {
-		addTagsFromPostIdWithTagSrc(ctx, []string{}, artObj.GetArticleId(), artObj.GetGaeObjectKey(), artObj.GetGaeObjectKey())
+		addTagsFromPostIdWithTagSrc(ctx, []string{}, "", "", artObj.GetArticleId(), artObj.GetGaeObjectKey(), artObj.GetGaeObjectKey())
 	} else {
-		addTagsFromPostIdWithTagSrc(ctx, tag, artObj.GetArticleId(), artObj.GetGaeObjectKey(), artObj.GetGaeObjectKey())
+		addTagsFromPostIdWithTagSrc(ctx, tag, artObj.GetArticleId(), subTag, optTag, artObj.GetGaeObjectKey(), artObj.GetGaeObjectKey())
 	}
 	Response(w, map[string]interface{}{
 		ReqPropertyCode:         ReqPropertyCodeOK,

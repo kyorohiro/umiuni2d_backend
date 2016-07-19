@@ -28,7 +28,7 @@ class MePageLogout {
     }
     String hash = util.Location.address(html.window.location.hash);
     Map prop = util.Location.prop(html.window.location.hash);
-    print("--->>>> ${hash}");
+    print("--ME LOGOUT->>>> ${hash}");
     if (hash.startsWith("#/Twitter")) {
       return;
     }

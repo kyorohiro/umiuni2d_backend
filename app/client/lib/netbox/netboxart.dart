@@ -109,7 +109,8 @@ class NetBoxArtManager {
 
   NetBoxArtManager(this.backendAddr, this.apiKey, {this.version: "v1", this.passwordKey: "umiuni2d"}) {}
 
-  Future<NetBoxArtManagerPost> post(String userName, String loginId, String articleId, String title, List<String> tag, String cont, String state) async {
+  Future<NetBoxArtManagerPost> post(String userName, String loginId, String articleId, String title,
+    List<String> tag, String cont, String state, {String optTag:"",String subTag:""}) async {
     TinyNetHtml5Builder builder = new TinyNetHtml5Builder();
     TinyNetRequester requester = await builder.createRequester();
     String url = "${this.backendAddr}/api/${version}/art_mana/post";
@@ -120,6 +121,8 @@ class NetBoxArtManager {
     TinyNetRequesterResponse response = await requester.request(TinyNetRequester.TYPE_POST, url, //
         data: conv.JSON.encode({
           NetBox.ReqPropertyTag: tag, //
+          NetBox.ReqPropertyArticleSubTag: subTag, //
+          NetBox.ReqPropertyArticleOptTag: optTag, //
           NetBox.ReqPropertyTitle: title, //
           NetBox.ReqPropertyCont: cont, //
           NetBox.ReqPropertyArticleState: state, //

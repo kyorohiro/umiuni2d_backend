@@ -13,7 +13,7 @@ import (
 	"google.golang.org/appengine/datastore"
 )
 
-func addTagsFromPostIdWithTagSrc(ctx context.Context, tagList []string, articleId string, articleKey *datastore.Key, parent *datastore.Key) error {
+func addTagsFromPostIdWithTagSrc(ctx context.Context, tagList []string, subTag string, optTag string, articleId string, articleKey *datastore.Key, parent *datastore.Key) error {
 	//
 	r, _, _ := GetTagManager().FindTagFromTargetId(ctx, articleId, "")
 	for _, v := range r {
@@ -21,7 +21,7 @@ func addTagsFromPostIdWithTagSrc(ctx context.Context, tagList []string, articleI
 	}
 	//
 	for _, v := range tagList {
-		tag := GetTagManager().NewTag(ctx, v, "", "", "", articleId)
+		tag := GetTagManager().NewTag(ctx, v, subTag, optTag, "", articleId)
 		tag.SaveOnDB(ctx)
 	}
 	return nil

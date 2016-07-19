@@ -54,6 +54,7 @@ class NetBoxMeManagerGetInfo {
   String requestId;
   String name;
   String mail;
+  bool isMaster;
 
   NetBoxMeManagerGetInfo(TinyNetRequesterResponse response) {
     String body = conv.UTF8.decode(response.response.asUint8List());
@@ -62,6 +63,7 @@ class NetBoxMeManagerGetInfo {
     this.requestId = ret[NetBox.ReqPropertyRequestID];
     this.name = ret[NetBox.ReqPropertyName];
     this.mail = ret[NetBox.ReqPropertyMail];
+    this.isMaster = ret[NetBox.ReqPropertyIsMaster];
   }
 }
 

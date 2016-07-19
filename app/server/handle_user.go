@@ -120,11 +120,16 @@ func meCheckHandler(w http.ResponseWriter, r *http.Request) {
 		Response(w, map[string]interface{}{ReqPropertyCode: ReqPropertyCodeNotFound, ReqPropertyRequestID: propRequestId})
 		return
 	} else {
+		isMasterManager := false
+		if userObj.GetUserName() == ConfigMasterUser {
+			isMasterManager = true
+		}
 		Response(w, map[string]interface{}{
 			ReqPropertyCode:      ReqPropertyCodeOK,
 			ReqPropertyRequestID: propRequestId,
 			ReqPropertyName:      userObj.GetUserName(),
 			ReqPropertyMail:      userObj.GetMail(),
+			ReqPropertyIsMaster:  isMasterManager,
 		})
 		return
 	}

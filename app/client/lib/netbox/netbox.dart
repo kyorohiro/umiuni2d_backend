@@ -57,6 +57,10 @@ class NetBox {
   static final String ReqPropertyCreated = "created";
   static final String ReqPropertyPermission = "permission";
   static final String ReqPropertyUrl = "url";
+  static final String ReqPropertyIsMaster = "isMaster";
+  //
+  static final String ReqPropertyArticleSubTag = "subtag";
+  static final String ReqPropertyArticleOptTag = "opttag";
   static final int ReqPropertyCodeOK = 200;
   static final int ReqPropertyCodeLocalWrongOpPassword = 192001;
   static final int ReqPropertyCodeAlreadyExist = 1000;
