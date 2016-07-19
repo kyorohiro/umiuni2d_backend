@@ -61,7 +61,7 @@ class FeedPage {
   }
 
   update({String tag:"",String userName:""}) async {
-    print(">>>>>>> ${tag}");
+    print(">>>>>>> ${tag} ${userName}");
     if (userName != null && userName != "") {
       feeder = feederManager.getNewOrder(userName:userName);
     } else if (tag != null && tag != "") {
