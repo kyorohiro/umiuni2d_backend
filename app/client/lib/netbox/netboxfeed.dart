@@ -37,7 +37,10 @@ class NetBoxFeedManager {
   }
 
   NetBoxFeed getFromTag(String tag, String subTag, String optTag) {
-    var r = _tagBox[tag];
+    subTag = (subTag==null?"":subTag);
+    optTag = (optTag==null?"":optTag);
+    tag =(tag==null?"":tag);
+    var r = _tagBox[tag+"::"+subTag+"::"];
     if (r != null) {
       return r;
     }

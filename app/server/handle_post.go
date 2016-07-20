@@ -80,7 +80,9 @@ func articlePostHandler(w http.ResponseWriter, r *http.Request) {
 	subTag := getStringFromProp(requestPropery, ReqPropertyArticleSubTag, "")
 
 	//	userName := requestPropery[ReqPropertyName].(string)
-
+	if len(tag) == 0 {
+		tag = append(tag, "none")
+	}
 	WriteLog(ctx, "-----> (1)")
 	isLogin, at, _ := loginCheckHandler(ctx, r, requestPropery)
 

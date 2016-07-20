@@ -207,6 +207,7 @@ class NetBoxArtManager {
     TinyNetRequester requester = await builder.createRequester();
     subTag = (subTag==null?"":subTag);
     optTag = (optTag==null?"":optTag);
+    tag =(tag==null?"":tag);
     String url = "${this.backendAddr}/api/${version}/art_mana/find_from_tag";
     TinyNetRequesterResponse response = await requester.request(TinyNetRequester.TYPE_POST, url, //
         data: conv.JSON.encode({

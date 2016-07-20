@@ -43,6 +43,7 @@ class PostPage {
     var prop = util.Location.prop(html.window.location.hash);
     if (hash.startsWith("#/Post")) {
       if(prop[nbox.NetBox.ReqPropertyArticleState] == nbox.NetBox.ReqPropertyArticles) {
+        print("---##=--#---art");
         postDialog.show("", "title", [], "art", "","post", "private");
       } else if(prop[nbox.NetBox.ReqPropertyArticleState] == nbox.NetBox.ReqPropertyComments){
         targetDialog.show("Target Name", "Your comment target",onUpdated: (dialog.TextDialog d, String src){
