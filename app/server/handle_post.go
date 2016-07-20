@@ -136,7 +136,7 @@ func articlePostHandler(w http.ResponseWriter, r *http.Request) {
 	if artObj.GetState() == "private" {
 		addTagsFromPostIdWithTagSrc(ctx, []string{}, "", "", artObj.GetArticleId(), artObj.GetGaeObjectKey(), artObj.GetGaeObjectKey())
 	} else {
-		addTagsFromPostIdWithTagSrc(ctx, tag, artObj.GetArticleId(), subTag, optTag, artObj.GetGaeObjectKey(), artObj.GetGaeObjectKey())
+		addTagsFromPostIdWithTagSrc(ctx, tag, subTag, optTag, artObj.GetArticleId(), artObj.GetGaeObjectKey(), artObj.GetGaeObjectKey())
 	}
 	Response(w, map[string]interface{}{
 		ReqPropertyCode:         ReqPropertyCodeOK,
