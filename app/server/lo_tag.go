@@ -43,7 +43,7 @@ func findArticleFromTag(ctx context.Context, tag string, subTag string, optTag s
 	//datastore.Query *
 	var articleList []*article.Article
 
-	tags, co, cn := GetTagManager().FindTagFromTag(ctx, tag, "", "", cursor)
+	tags, co, cn := GetTagManager().FindTagFromTagPlus(ctx, tag, subTag, optTag, cursor)
 
 	//
 	artMana := GetArtManager()
@@ -79,6 +79,7 @@ func articleFindFromTagHandler(w http.ResponseWriter, r *http.Request) {
 	optTag := getStringFromProp(requestPropery, ReqPropertyArticleOptTag, "")
 
 	//	arts, cO, cN, err := findArticleFromTag(ctx, tag, cursor)
+	WriteLog(ctx, ">>>>>>>"+tag+":"+subTag+":"+optTag)
 	arts, cO, cN, err := findArticleFromTag(ctx, tag, subTag, optTag, cursor)
 	//
 	if err != nil {

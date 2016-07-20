@@ -6,7 +6,6 @@ import '../dialog/dialog_text.dart' as dialog;
 import '../dialog/dialog_confirm.dart' as dialog;
 import 'package:umiuni2d_backend_client/nbox.dart' as nbox;
 
-
 class PostDialog {
   Dialog base;
   String dialogName;
@@ -109,7 +108,7 @@ class PostDialog {
     });
   }
 
-  show(String articleId, String title, List<String> tags, String message, String state,
+  show(String articleId, String title, List<String> tags, String subTag, String optTag, String message, String state,
       {String okName: "OK",
       String cancelName: "Cancel", //
       String type: "text", //
@@ -170,19 +169,23 @@ class PostDialog {
           titleElm.value,
           tags,
           contElm.value,
-          "save");
+          "save",
+          subTag: subTag,
+          optTag: optTag);
     });
 
     elm.querySelector("#public").onClick.listen((_) async {
-      nbox.NetBoxArtManagerPost ret =  await netbox.newArtManager().post(
+      nbox.NetBoxArtManagerPost ret = await netbox.newArtManager().post(
           status.userName,
           status.userObjectId, //
           articleId,
           titleElm.value,
           tags,
           contElm.value,
-          (state == "private" ? "public" : "private"));
-      if(ret.code == nbox.NetBox.ReqPropertyCodeOK) {
+          (state == "private" ? "public" : "private"),
+          subTag: subTag,
+          optTag: optTag);
+      if (ret.code == nbox.NetBox.ReqPropertyCodeOK) {
         state = ret.articleState;
         articleId = ret.articleId;
         elm.querySelector("#public").text = (state == "private" ? "public" : "hide");
@@ -192,7 +195,7 @@ class PostDialog {
     });
     //
     //
-    for(String t in tags) {
+    for (String t in tags) {
       addTag(tags, t);
     }
   }

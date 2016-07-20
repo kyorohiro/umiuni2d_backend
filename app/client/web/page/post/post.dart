@@ -43,12 +43,12 @@ class PostPage {
     var prop = util.Location.prop(html.window.location.hash);
     if (hash.startsWith("#/Post")) {
       if(prop[nbox.NetBox.ReqPropertyArticleState] == nbox.NetBox.ReqPropertyArticles) {
-        postDialog.show("", "title", [], "post", "private");
+        postDialog.show("", "title", [], "art", "","post", "private");
       } else if(prop[nbox.NetBox.ReqPropertyArticleState] == nbox.NetBox.ReqPropertyComments){
         targetDialog.show("Target Name", "Your comment target",onUpdated: (dialog.TextDialog d, String src){
           choiceDialog.show("Choice", "message", ["Greate", "Good", "Normal", "Bad", "SoBad"],onUpdated: (dialog.ChoiceDialog dialog, String choice){
             choiceDialog.close();
-            postDialog.show("", "title", ["comment","${choice}","${src}"], "post", "private");
+            postDialog.show("", "title", ["${choice}","${src}"], "comment", "","post", "private");
             return false;
           });
           targetDialog.close();

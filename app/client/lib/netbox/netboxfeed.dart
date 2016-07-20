@@ -36,12 +36,12 @@ class NetBoxFeedManager {
     }
   }
 
-  NetBoxFeed getFromTag(String tag) {
+  NetBoxFeed getFromTag(String tag, String subTag, String optTag) {
     var r = _tagBox[tag];
     if (r != null) {
       return r;
     }
-    r = new NetBoxFeed.tag(tag, backendAddr, apiKey, version: this.version, passwordKey: this.passwordKey);
+    r = new NetBoxFeed.tag(tag, subTag, optTag, backendAddr, apiKey, version: this.version, passwordKey: this.passwordKey);
     _tagBox[tag] = r;
     return r;
   }
@@ -84,12 +84,12 @@ class NetBoxFeed {
         funcfindArticle: adapter);
   }
 
-  factory NetBoxFeed.tag(String tag, String backendAddr, String apiKey, //
+  factory NetBoxFeed.tag(String tag, String subTag, String optTag, String backendAddr, String apiKey, //
       {String version: "v1",
       String passwordKey: "umiuni2d"}) {
     Future<netbox.NetBoxArtManagerFind> adapter(String cursor) {
       netbox.NetBoxArtManager art = new netbox.NetBoxArtManager(backendAddr, apiKey, version: version, passwordKey: passwordKey);
-      return art.findArticleFromTag(tag, cursor);
+      return art.findArticleFromTag(tag, subTag, optTag, cursor);
     }
     ;
     return new NetBoxFeed(backendAddr, apiKey,

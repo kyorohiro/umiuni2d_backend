@@ -55,17 +55,20 @@ class FeedPage {
         } catch (e) {}
       }
       if (useArtDialog == false) {
-        update(tag:prop[nbox.NetBox.ReqPropertyTag],userName: prop[nbox.NetBox.ReqPropertyName]);
+        update(tag:prop[nbox.NetBox.ReqPropertyTag], //
+          subTag:prop[nbox.NetBox.ReqPropertyArticleSubTag], //
+          optTag:prop[nbox.NetBox.ReqPropertyArticleOptTag],userName: prop[nbox.NetBox.ReqPropertyName]);
       }
     }
   }
 
-  update({String tag:"",String userName:""}) async {
-    print(">>>>>>> ${tag} ${userName}");
+  update({String tag:"", String subTag:"", String optTag:"",String userName:""}) async {
+    print(">>>>>>> ${tag} :: ${subTag} :: ${userName}");
     if (userName != null && userName != "") {
       feeder = feederManager.getNewOrder(userName:userName);
-    } else if (tag != null && tag != "") {
-      feeder = feederManager.getFromTag(tag);
+    } else if ((tag != null && tag != "") || (subTag != null && subTag != "")) {
+      print("AAAA ZZ BBBB");
+      feeder = feederManager.getFromTag(tag, subTag, optTag);
     } else {
       feeder = feederManager.getNewOrder();
     }

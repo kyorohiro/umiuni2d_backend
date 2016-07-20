@@ -168,6 +168,23 @@ func (obj *TagManager) FindTagFromTag(ctx context.Context, mainTag string, subTa
 	return obj.FindTagFromQuery(ctx, q, cursorSrc)
 }
 
+func (obj *TagManager) FindTagFromTagPlus(ctx context.Context, mainTag string, subTag string, optTag string, cursorSrc string) ([]*Tag, string, string) {
+	q := datastore.NewQuery(obj.kind)
+	if mainTag != "" {
+		q = q.Filter("MainTag =", mainTag)
+	}
+
+	if subTag != "" {
+		q = q.Filter("SubTag =", subTag)
+	}
+
+	if optTag != "" {
+		q = q.Filter("OptTag =", optTag)
+	}
+	q = q.Order("-Updated").Limit(10)
+	return obj.FindTagFromQuery(ctx, q, cursorSrc)
+}
+
 /*
 - kind: Comment
   properties:

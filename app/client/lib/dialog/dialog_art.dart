@@ -147,7 +147,7 @@ class ArtDialog {
     util.TextBuilderTicket tag = builder.pat(navi, ["""<div id="${this.naviId}_tag">"""], ["""</div>"""]);
 
     for (String t in tags) {
-      builder.end(tag, [""" <a class="mini" href="#/Article?tag=${Uri.encodeComponent(t)}">""", """ <div class="mini">${t}</div></a>"""]);
+      builder.end(tag, [""" <a class="mini" href="#/Article?${nbox.NetBox.ReqPropertyArticleSubTag}=comment&tag=${Uri.encodeComponent(t)}">""", """ <div class="mini">${t}</div></a>"""]);
     }
     print("tags----> ${tags}");
     //
@@ -157,7 +157,7 @@ class ArtDialog {
       message = "";
     }
     builder.end(builder.getRootTicket(), [markdown.markdownToHtml(message)]);
-    //var comments = 
+    //var comments =
     builder.pat(builder.getRootTicket(), //
         ["""<div id="comments">"""], ["</div>"]);
     if (status.isLogin == true) {

@@ -202,14 +202,19 @@ class NetBoxArtManager {
     return new NetBoxArtManagerFind(response);
   }
 
-  Future<NetBoxArtManagerFind> findArticleFromTag(String tag, String cursor) async {
+  Future<NetBoxArtManagerFind> findArticleFromTag(String tag, String subTag, String optTag, String cursor) async {
     TinyNetHtml5Builder builder = new TinyNetHtml5Builder();
     TinyNetRequester requester = await builder.createRequester();
+    subTag = (subTag==null?"":subTag);
+    optTag = (optTag==null?"":optTag);
     String url = "${this.backendAddr}/api/${version}/art_mana/find_from_tag";
     TinyNetRequesterResponse response = await requester.request(TinyNetRequester.TYPE_POST, url, //
         data: conv.JSON.encode({
 //          NetBox.ReqPropertyLoginId: loginId, //
           NetBox.ReqPropertyTag: tag, //
+          NetBox.ReqPropertyArticleSubTag: subTag,
+          NetBox.ReqPropertyArticleOptTag: optTag,
+
           NetBox.ReqPropertyRequestID: "AABBCC", //
           NetBox.ReqPropertyApiKey: apiKey,
           NetBox.ReqPropertyCursor: cursor
