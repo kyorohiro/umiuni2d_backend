@@ -138,6 +138,9 @@ func init() {
 	http.HandleFunc("/api/v1/art_mana/find_with_neworder", articleFindWithNewOrderHandler)
 	http.HandleFunc("/api/v1/art_mana/get", articleGetHandler)
 	http.HandleFunc("/api/v1/art_mana/find_from_username", articlefindFromUserNameHandler)
+	//
+	http.HandleFunc("/api/v1/art_mana/find_from_me", articlefindFromMeHandler)
+
 	http.HandleFunc("/api/v1/art_mana/find_from_tag", articleFindFromTagHandler)
 	http.HandleFunc("/api/v1/art_mana/post_comment", articlePostHandler)             //articlePostCommentHandler)
 	http.HandleFunc("/api/v1/art_mana/get_comments", articleFindWithNewOrderHandler) //articleGetCommentsHandler)

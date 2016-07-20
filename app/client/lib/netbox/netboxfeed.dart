@@ -22,7 +22,7 @@ class NetBoxFeedManager {
     _newOrderBox = new NetBoxFeed(backendAddr, apiKey, version: this.version, passwordKey: this.passwordKey, funcfindArticle: null);
   }
 
-  NetBoxFeed getNewOrder({String userName: ""}) {
+  NetBoxFeed getNewOrder({String userName: "", String loginId: ""}) {
     if (userName == "") {
       return _newOrderBox;
     } else {
@@ -30,7 +30,11 @@ class NetBoxFeedManager {
       if (r != null) {
         return r;
       }
-      r = new NetBoxFeed.username(userName, backendAddr, apiKey, version: this.version, passwordKey: this.passwordKey);
+      if( userName == "me") {
+        r = new NetBoxFeed.me(loginId, backendAddr, apiKey, version: this.version, passwordKey: this.passwordKey);
+      } else {
+        r = new NetBoxFeed.username(userName, backendAddr, apiKey, version: this.version, passwordKey: this.passwordKey);
+      }
       _userBox[userName] = r;
       return r;
     }
@@ -71,6 +75,20 @@ class NetBoxFeed {
       netbox.NetBoxArtManager art = new netbox.NetBoxArtManager(backendAddr, apiKey, version: version, passwordKey: passwordKey);
       this.funcfindArticle = art.findArticleWithNewOrde;
     }
+  }
+
+  factory NetBoxFeed.me(String loginId, String backendAddr, String apiKey, //
+      {String version: "v1",
+      String passwordKey: "umiuni2d"}) {
+    Future<netbox.NetBoxArtManagerFind> adapter(String cursor) {
+      netbox.NetBoxArtManager art = new netbox.NetBoxArtManager(backendAddr, apiKey, version: version, passwordKey: passwordKey);
+      return art.findArticleWithMe(loginId, cursor);
+    }
+    ;
+    return new NetBoxFeed(backendAddr, apiKey,
+        version: version,
+        passwordKey: passwordKey, //
+        funcfindArticle: adapter);
   }
 
   factory NetBoxFeed.username(String userName, String backendAddr, String apiKey, //

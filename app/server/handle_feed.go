@@ -49,7 +49,44 @@ func articlefindFromUserNameHandler(w http.ResponseWriter, r *http.Request) {
 	propUserName := requestPropery[ReqPropertyName].(string)
 	//	propRequestId := requestPropery[ReqPropertyRequestID].(string)
 	propCursorSrc := requestPropery[ReqPropertyCursor].(string)
-	u, o, cursorNext := GetArtManager().FindArticleFromUserName(ctx, propUserName, "", propCursorSrc)
+	u, o, cursorNext := GetArtManager().FindArticleFromUserName(ctx, propUserName, "", article.ArticleStatePublic, propCursorSrc)
+	//
+	findArticleResponse(w, requestPropery, u, o, cursorNext, false)
+}
+
+// todo
+func articlefindFromMeHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Add("Access-Control-Allow-Origin", "*")
+	w.Header().Add("Access-Control-Allow-Headers", "apikey")
+	ctx := appengine.NewContext(r)
+	WriteLog(ctx, "-----> (1)")
+	if r.Method != "POST" {
+		// you must to consider HEAD
+		return
+	}
+
+	WriteLog(ctx, "-----> (1-1)")
+	// parse
+	var requestPropery map[string]interface{}
+	json.NewDecoder(r.Body).Decode(&requestPropery)
+	WriteLog(ctx, "-----> (1-2)")
+	//propUserName := requestPropery[ReqPropertyName].(string)
+	propRequestId := requestPropery[ReqPropertyRequestID].(string)
+	propCursorSrc := requestPropery[ReqPropertyCursor].(string)
+
+	WriteLog(ctx, "-----> (2)")
+	//
+	//
+	isLogin, atk, _ := loginCheckHandler(ctx, r, requestPropery)
+
+	WriteLog(ctx, "-----> (3)")
+	if isLogin == false {
+		Response(w, map[string]interface{}{ReqPropertyCode: ReqPropertyCodeNotFound, ReqPropertyRequestID: propRequestId})
+		return
+	}
+	//
+	//
+	u, o, cursorNext := GetArtManager().FindArticleFromUserName(ctx, atk.GetUserName(), "", article.ArticleStateAll, propCursorSrc)
 	//
 	findArticleResponse(w, requestPropery, u, o, cursorNext, false)
 }

@@ -65,7 +65,7 @@ class FeedPage {
   update({String tag:"", String subTag:"", String optTag:"",String userName:""}) async {
     print(">>>>>>> ${tag} :: ${subTag} :: ${userName}");
     if (userName != null && userName != "") {
-      feeder = feederManager.getNewOrder(userName:userName);
+      feeder = feederManager.getNewOrder(userName:userName, loginId:status.userObjectId);
     } else if ((tag != null && tag != "") || (subTag != null && subTag != "")) {
       print("AAAA ZZ BBBB");
       feeder = feederManager.getFromTag(tag, subTag, optTag);

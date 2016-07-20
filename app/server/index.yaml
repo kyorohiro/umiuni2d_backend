@@ -28,6 +28,22 @@ indexes:
   - name: Updated
     direction: desc
 
+- kind: Article
+  properties:
+  - name: UserName
+  - name: ParentId
+  - name: State
+  - name: Updated
+    direction: desc
+
+- kind: Article
+  properties:
+  - name: UserName
+  - name: ParentId
+  - name: State
+  - name: Updated
+    direction: asc
+
 - kind: ArticleTag
   properties:
   - name: MainTag

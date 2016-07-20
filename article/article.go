@@ -9,6 +9,12 @@ import (
 	//	"google.golang.org/appengine/log"
 )
 
+const (
+	ArticleStatePublic  = "public"
+	ArticleStatePrivate = "private"
+	ArticleStateAll     = ""
+)
+
 type GaeObjectArticle struct {
 	UserName  string
 	Title     string `datastore:",noindex"`
@@ -173,14 +179,24 @@ func (obj *ArticleManager) GetArticleFromArticleId(ctx context.Context, articleI
   - name: Updated
     direction: desc
 
+- kind: Article
+  properties:
+  - name: UserName
+  - name: ParentId
+  - name: State
+  - name: Updated
+    direction: desc
 
 https://cloud.google.com/appengine/docs/go/config/indexconfig#updating_indexes
 */
-func (obj *ArticleManager) FindArticleFromUserName(ctx context.Context, userName string, parentId string, cursorSrc string) ([]*Article, string, string) {
+func (obj *ArticleManager) FindArticleFromUserName(ctx context.Context, userName string, parentId string, state string, cursorSrc string) ([]*Article, string, string) {
 	q := datastore.NewQuery(obj.kindArticle).
 		Filter("UserName =", userName). ////
-		Filter("ParentId =", parentId). //
-		Order("-Updated").Limit(obj.limitOfFinding)
+		Filter("ParentId =", parentId)
+	if state != "" {
+		q = q.Filter("State =", ArticleStatePublic) //
+	}
+	q = q.Order("-Updated").Limit(obj.limitOfFinding)
 	return obj.FindArticleFromQuery(ctx, q, cursorSrc)
 }
 
@@ -202,7 +218,7 @@ func (obj *ArticleManager) FindArticleFromUserName(ctx context.Context, userName
 https://cloud.google.com/appengine/docs/go/config/indexconfig#updating_indexes
 */
 func (obj *ArticleManager) FindArticleWithNewOrder(ctx context.Context, parentId string, cursorSrc string) ([]*Article, string, string) {
-	q := datastore.NewQuery(obj.kindArticle).Filter("State =", "public").Filter("ParentId =", parentId).Order("-Updated").Limit(obj.limitOfFinding)
+	q := datastore.NewQuery(obj.kindArticle).Filter("State =", ArticleStatePublic).Filter("ParentId =", parentId).Order("-Updated").Limit(obj.limitOfFinding)
 	return obj.FindArticleFromQuery(ctx, q, cursorSrc)
 }
 

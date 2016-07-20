@@ -103,7 +103,7 @@ func articlePostHandler(w http.ResponseWriter, r *http.Request) {
 	var err error = nil
 	if len(articleId) == 0 {
 		if state == "save" {
-			state = "private"
+			state = article.ArticleStatePrivate
 		}
 		artObj = artMana.NewArticle(ctx, at.GetUserName(), parentId)
 		artObj.SetTitle(title)
