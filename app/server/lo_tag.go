@@ -39,7 +39,7 @@ func findTagFromArticleObj(ctx context.Context, articleId string) ([]*tag.Tag, s
 	return GetTagManager().FindTagFromMainTag(ctx, articleId, "")
 }
 
-func findArticleFromTag(ctx context.Context, tag string, cursor string) (*[]*article.Article, string, string, error) {
+func findArticleFromTag(ctx context.Context, tag string, subTag string, optTag string, cursor string) (*[]*article.Article, string, string, error) {
 	//datastore.Query *
 	var articleList []*article.Article
 
@@ -68,14 +68,18 @@ func articleFindFromTagHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var data map[string]interface{}
-	json.NewDecoder(r.Body).Decode(&data)
+	var requestPropery map[string]interface{}
+	json.NewDecoder(r.Body).Decode(&requestPropery)
 
-	tag := data[ReqPropertyArticleTag].(string)
-	propRequestId := data[ReqPropertyRequestID].(string)
-	cursor := data[ReqPropertyCursor].(string)
+	tag := getStringFromProp(requestPropery, ReqPropertyArticleTag, "")          //data[ReqPropertyArticleTag].(string)
+	propRequestId := getStringFromProp(requestPropery, ReqPropertyRequestID, "") //data[ReqPropertyRequestID].(string)
+	cursor := getStringFromProp(requestPropery, ReqPropertyCursor, "")           //data[ReqPropertyCursor].(string)
 
-	arts, cO, cN, err := findArticleFromTag(ctx, tag, cursor)
+	subTag := getStringFromProp(requestPropery, ReqPropertyArticleSubTag, "")
+	optTag := getStringFromProp(requestPropery, ReqPropertyArticleOptTag, "")
+
+	//	arts, cO, cN, err := findArticleFromTag(ctx, tag, cursor)
+	arts, cO, cN, err := findArticleFromTag(ctx, tag, subTag, optTag, cursor)
 	//
 	if err != nil {
 		Response(w, map[string]interface{}{ //
@@ -84,5 +88,5 @@ func articleFindFromTagHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// requestPropery
-	findArticleResponse(w, data, *arts, cO, cN, false)
+	findArticleResponse(w, requestPropery, *arts, cO, cN, false)
 }
