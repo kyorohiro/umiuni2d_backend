@@ -23,15 +23,14 @@ class NetBoxFileShareManager {
   String apiKey;
   String version;
   String passwordKey;
-
-  NetBoxFileShareManager(this.backendAddr, this.apiKey, {this.version: "v1", this.passwordKey: "umiuni2d"}) {}
+  TinyNetBuilder builder;
+  NetBoxFileShareManager(this.builder, this.backendAddr, this.apiKey, {this.version: "v1", this.passwordKey: "umiuni2d"}) {}
 
   String makeUrlFromBlobKey(String blobKey) {
      return "${this.backendAddr}/api/v1/file/get?blobKey=${blobKey}";
   }
 
   Future<NetBoxFileShareManagerFileShare> fileShare(String src, String articleId, String loginId) async {
-    TinyNetHtml5Builder builder = new TinyNetHtml5Builder();
     TinyNetRequester requester = await builder.createRequester();
     //
     // get request id

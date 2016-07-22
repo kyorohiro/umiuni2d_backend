@@ -3,6 +3,7 @@ import './requester.dart';
 import 'dart:convert' as conv;
 import 'package:crypto/crypto.dart' as crypto;
 import './netbox.dart';
+import 'requester.dart';
 
 class NetBoxMeManagerRegist {
   int code;
@@ -152,15 +153,14 @@ class NetBoxMeManager {
   String apiKey;
   String version;
   String passwordKey;
-
-  NetBoxMeManager(this.backendAddr, this.apiKey, {this.version: "v1", this.passwordKey: "umiuni2d"}) {}
+  TinyNetBuilder builder;
+  NetBoxMeManager(this.builder, this.backendAddr, this.apiKey, {this.version: "v1", this.passwordKey: "umiuni2d"}) {}
 
   String makeImgUserIconSrc(String name) {
     return """${backendAddr}/api/v1/me_mana/get_icon?name=${name}""";
   }
 
   Future<NetBoxMeManagerRegist> regist(String name, String mail, String pass) async {
-    TinyNetHtml5Builder builder = new TinyNetHtml5Builder();
     TinyNetRequester requester = await builder.createRequester();
     String url = "${backendAddr}/api/${version}/me_mana/regist_user";
 
@@ -182,7 +182,6 @@ class NetBoxMeManager {
 
 // "${netbox.backendAddr}/api/v1/me_mana/login_from_twitter"
 Future<NetBoxMeManagerLoginTwitter> loginWithTwitter(String callbackUrl) async {
-  TinyNetHtml5Builder builder = new TinyNetHtml5Builder();
   TinyNetRequester requester = await builder.createRequester();
   String url = "${backendAddr}/api/${version}/me_mana/login_from_twitter";
 
@@ -199,7 +198,6 @@ Future<NetBoxMeManagerLoginTwitter> loginWithTwitter(String callbackUrl) async {
 }
 
   Future<NetBoxMeManagerLogin> login(String name, String pass) async {
-    TinyNetHtml5Builder builder = new TinyNetHtml5Builder();
     TinyNetRequester requester = await builder.createRequester();
     String url = "${backendAddr}/api/${version}/me_mana/login";
 
@@ -219,7 +217,6 @@ Future<NetBoxMeManagerLoginTwitter> loginWithTwitter(String callbackUrl) async {
   }
 
   Future<NetBoxMeManagerGetInfo> getMyInfo(String loginId) async {
-    TinyNetHtml5Builder builder = new TinyNetHtml5Builder();
     TinyNetRequester requester = await builder.createRequester();
     String url = "${backendAddr}/api/${version}/me_mana/get_info";
 
@@ -236,7 +233,6 @@ Future<NetBoxMeManagerLoginTwitter> loginWithTwitter(String callbackUrl) async {
   }
 
   Future<NetBoxMeManagerMail> mail(String name, String mail, String pass, String loginId) async {
-    TinyNetHtml5Builder builder = new TinyNetHtml5Builder();
     TinyNetRequester requester = await builder.createRequester();
     String url = "${backendAddr}/api/${version}/me_mana/update_mail";
 
@@ -254,7 +250,6 @@ Future<NetBoxMeManagerLoginTwitter> loginWithTwitter(String callbackUrl) async {
   }
 
   Future<NetBoxMeManagerPassword> password(String userName, String newpass, String pass, String loginId) async {
-    TinyNetHtml5Builder builder = new TinyNetHtml5Builder();
     TinyNetRequester requester = await builder.createRequester();
     String url = "${backendAddr}/api/${version}/me_mana/update_password";
 
@@ -275,7 +270,6 @@ Future<NetBoxMeManagerLoginTwitter> loginWithTwitter(String callbackUrl) async {
   }
 
   Future<NetBoxMeManagerLogout> logout(String loginId) async {
-    TinyNetHtml5Builder builder = new TinyNetHtml5Builder();
     TinyNetRequester requester = await builder.createRequester();
     String url = "${backendAddr}/api/${version}/me_mana/logout";
 
@@ -289,7 +283,6 @@ Future<NetBoxMeManagerLoginTwitter> loginWithTwitter(String callbackUrl) async {
   }
 
   Future<NetBoxMeFindUser> findUserWithNewOrder(String cursor) async {
-    TinyNetHtml5Builder builder = new TinyNetHtml5Builder();
     TinyNetRequester requester = await builder.createRequester();
     String url = "${this.backendAddr}/api/${version}/me_mana/find_with_neworder";
     TinyNetRequesterResponse response = await requester.request(TinyNetRequester.TYPE_POST, url, //

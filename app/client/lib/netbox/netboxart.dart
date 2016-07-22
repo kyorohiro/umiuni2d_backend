@@ -106,12 +106,11 @@ class NetBoxArtManager {
   String apiKey;
   String version;
   String passwordKey;
-
-  NetBoxArtManager(this.backendAddr, this.apiKey, {this.version: "v1", this.passwordKey: "umiuni2d"}) {}
+  TinyNetBuilder builder;
+  NetBoxArtManager(this.builder, this.backendAddr, this.apiKey, {this.version: "v1", this.passwordKey: "umiuni2d"}) {}
 
   Future<NetBoxArtManagerPost> post(String userName, String loginId, String articleId, String title,
     List<String> tag, String cont, String state, {String optTag:"",String subTag:""}) async {
-    TinyNetHtml5Builder builder = new TinyNetHtml5Builder();
     TinyNetRequester requester = await builder.createRequester();
     String url = "${this.backendAddr}/api/${version}/art_mana/post";
     if(tag == null) {
@@ -138,7 +137,6 @@ class NetBoxArtManager {
 
   //
   Future<NetBoxArtManagerPost> postComment(String loginId, String articleId, String cont, String state) async {
-    TinyNetHtml5Builder builder = new TinyNetHtml5Builder();
     TinyNetRequester requester = await builder.createRequester();
     String url = "${this.backendAddr}/api/${version}/art_mana/post_comment";
     List<String> tag = [];
@@ -157,7 +155,6 @@ class NetBoxArtManager {
   }
 
   Future<NetBoxArtManagerFind> findArticleWithNewOrde(String cursor) async {
-    TinyNetHtml5Builder builder = new TinyNetHtml5Builder();
     TinyNetRequester requester = await builder.createRequester();
     String url = "${this.backendAddr}/api/${version}/art_mana/find_with_neworder";
     TinyNetRequesterResponse response = await requester.request(TinyNetRequester.TYPE_POST, url, //
@@ -171,7 +168,6 @@ class NetBoxArtManager {
   }
 
   Future<NetBoxArtManagerFind> findCommentWithNewOrde(String articleId, String cursor) async {
-    TinyNetHtml5Builder builder = new TinyNetHtml5Builder();
     TinyNetRequester requester = await builder.createRequester();
     String url = "${this.backendAddr}/api/${version}/art_mana/get_comments";
     TinyNetRequesterResponse response = await requester.request(TinyNetRequester.TYPE_POST, url, //
@@ -187,7 +183,6 @@ class NetBoxArtManager {
   }
 
   Future<NetBoxArtManagerFind> findArticleWithMe(String loginId, String cursor) async {
-    TinyNetHtml5Builder builder = new TinyNetHtml5Builder();
     TinyNetRequester requester = await builder.createRequester();
     String url = "${this.backendAddr}/api/${version}/art_mana/find_from_me";
     TinyNetRequesterResponse response = await requester.request(TinyNetRequester.TYPE_POST, url, //
@@ -201,7 +196,6 @@ class NetBoxArtManager {
   }
 
   Future<NetBoxArtManagerFind> findArticleWithUserName(String userName, String cursor) async {
-    TinyNetHtml5Builder builder = new TinyNetHtml5Builder();
     TinyNetRequester requester = await builder.createRequester();
 //    String url = "${this.backendAddr}/api/${version}/art_mana/find_with_neworder";
     String url = "${this.backendAddr}/api/${version}/art_mana/find_from_username";
@@ -217,7 +211,6 @@ class NetBoxArtManager {
   }
 
   Future<NetBoxArtManagerFind> findArticleFromTag(String tag, String subTag, String optTag, String cursor) async {
-    TinyNetHtml5Builder builder = new TinyNetHtml5Builder();
     TinyNetRequester requester = await builder.createRequester();
     subTag = (subTag==null?"":subTag);
     optTag = (optTag==null?"":optTag);
@@ -238,7 +231,6 @@ class NetBoxArtManager {
   }
 
   Future<NetBoxArtManagerFindArt> getArticleFromArticleId(String articleId) async {
-    TinyNetHtml5Builder builder = new TinyNetHtml5Builder();
     TinyNetRequester requester = await builder.createRequester();
     String url = "${this.backendAddr}/api/${version}/art_mana/get";
 

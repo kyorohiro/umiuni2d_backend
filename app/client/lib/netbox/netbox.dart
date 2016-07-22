@@ -2,6 +2,7 @@ import 'netboxme.dart';
 import 'netboxfile.dart';
 import 'netboxart.dart';
 import 'netboxfeed.dart';
+import 'requester.dart';
 
 class TwitterButton {
   String makeUrl(String comment, String address, String user) {
@@ -74,26 +75,26 @@ class NetBox {
   String apiKey;
   String version;
   String passwordKey;
-
-  NetBox(this.backendAddr, this.apiKey, {this.version: "v1", this.passwordKey: "umiuni2d"}) {}
+  TinyNetBuilder builder;
+  NetBox(this.builder, this.backendAddr, this.apiKey, {this.version: "v1", this.passwordKey: "umiuni2d"}) {}
 
   NetBoxMeManager newMeManager() {
-    return new NetBoxMeManager(this.backendAddr, this.apiKey, version: this.version);
+    return new NetBoxMeManager(this.builder, this.backendAddr, this.apiKey, version: this.version);
   }
 
   NetBoxFileShareManager newFileShareManager() {
-    return new NetBoxFileShareManager(this.backendAddr, this.apiKey, version: this.version);
+    return new NetBoxFileShareManager(this.builder, this.backendAddr, this.apiKey, version: this.version);
   }
 
   NetBoxArtManager newArtManager() {
-    return new NetBoxArtManager(this.backendAddr, this.apiKey, version: this.version);
+    return new NetBoxArtManager(this.builder, this.backendAddr, this.apiKey, version: this.version);
   }
 
   NetBoxFeed newNewOrderFeed() {
-    return new NetBoxFeed(this.backendAddr, this.apiKey, version: this.version);
+    return new NetBoxFeed(this.builder, this.backendAddr, this.apiKey, version: this.version);
   }
 
   NetBoxFeedManager newNewOrderFeedManager() {
-    return new NetBoxFeedManager(this.backendAddr, this.apiKey, version: this.version);
+    return new NetBoxFeedManager(this.builder, this.backendAddr, this.apiKey, version: this.version);
   }
 }

@@ -1,5 +1,6 @@
 import "netboxart.dart" as netbox;
 import "netbox.dart" as netbox;
+import "requester.dart";
 import "dart:async";
 
 typedef Future<netbox.NetBoxArtManagerFind> FuncfindArticle(String cursor);
@@ -14,12 +15,12 @@ class NetBoxFeedManager {
   NetBoxFeed _newOrderBox = null;
   Map<String, NetBoxFeed> _tagBox = {};
   Map<String, NetBoxFeed> _userBox = {};
-
-  NetBoxFeedManager(this.backendAddr, this.apiKey,
+  TinyNetBuilder builder;
+  NetBoxFeedManager(this.builder, this.backendAddr, this.apiKey,
       {this.version: "v1",
       this.passwordKey: "umiuni2d", //
       this.funcfindArticle: null}) {
-    _newOrderBox = new NetBoxFeed(backendAddr, apiKey, version: this.version, passwordKey: this.passwordKey, funcfindArticle: null);
+    _newOrderBox = new NetBoxFeed(this.builder, backendAddr, apiKey, version: this.version, passwordKey: this.passwordKey, funcfindArticle: null);
   }
 
   NetBoxFeed getNewOrder({String userName: "", String loginId: ""}) {
@@ -30,10 +31,10 @@ class NetBoxFeedManager {
       if (r != null) {
         return r;
       }
-      if( userName == "me") {
-        r = new NetBoxFeed.me(loginId, backendAddr, apiKey, version: this.version, passwordKey: this.passwordKey);
+      if (userName == "me") {
+        r = new NetBoxFeed.me(this.builder, loginId, backendAddr, apiKey, version: this.version, passwordKey: this.passwordKey);
       } else {
-        r = new NetBoxFeed.username(userName, backendAddr, apiKey, version: this.version, passwordKey: this.passwordKey);
+        r = new NetBoxFeed.username(this.builder, userName, backendAddr, apiKey, version: this.version, passwordKey: this.passwordKey);
       }
       _userBox[userName] = r;
       return r;
@@ -41,14 +42,14 @@ class NetBoxFeedManager {
   }
 
   NetBoxFeed getFromTag(String tag, String subTag, String optTag) {
-    subTag = (subTag==null?"":subTag);
-    optTag = (optTag==null?"":optTag);
-    tag =(tag==null?"":tag);
-    var r = _tagBox[tag+"::"+subTag+"::"];
+    subTag = (subTag == null ? "" : subTag);
+    optTag = (optTag == null ? "" : optTag);
+    tag = (tag == null ? "" : tag);
+    var r = _tagBox[tag + "::" + subTag + "::"];
     if (r != null) {
       return r;
     }
-    r = new NetBoxFeed.tag(tag, subTag, optTag, backendAddr, apiKey, version: this.version, passwordKey: this.passwordKey);
+    r = new NetBoxFeed.tag(this.builder, tag, subTag, optTag, backendAddr, apiKey, version: this.version, passwordKey: this.passwordKey);
     _tagBox[tag] = r;
     return r;
   }
@@ -66,54 +67,54 @@ class NetBoxFeed {
 
   List<netbox.NetBoxArtManagerFindArt> founded = [];
   Map<String, netbox.NetBoxArtManagerFindArt> foundedHash = {};
-
-  NetBoxFeed(this.backendAddr, this.apiKey,
+  TinyNetBuilder builder;
+  NetBoxFeed(this.builder, this.backendAddr, this.apiKey,
       {this.version: "v1",
       this.passwordKey: "umiuni2d", //
       this.funcfindArticle: null}) {
     if (this.funcfindArticle == null) {
-      netbox.NetBoxArtManager art = new netbox.NetBoxArtManager(backendAddr, apiKey, version: version, passwordKey: passwordKey);
+      netbox.NetBoxArtManager art = new netbox.NetBoxArtManager(this.builder, backendAddr, apiKey, version: version, passwordKey: passwordKey);
       this.funcfindArticle = art.findArticleWithNewOrde;
     }
   }
 
-  factory NetBoxFeed.me(String loginId, String backendAddr, String apiKey, //
+  factory NetBoxFeed.me(TinyNetBuilder builder, String loginId, String backendAddr, String apiKey, //
       {String version: "v1",
       String passwordKey: "umiuni2d"}) {
     Future<netbox.NetBoxArtManagerFind> adapter(String cursor) {
-      netbox.NetBoxArtManager art = new netbox.NetBoxArtManager(backendAddr, apiKey, version: version, passwordKey: passwordKey);
+      netbox.NetBoxArtManager art = new netbox.NetBoxArtManager(builder, backendAddr, apiKey, version: version, passwordKey: passwordKey);
       return art.findArticleWithMe(loginId, cursor);
     }
     ;
-    return new NetBoxFeed(backendAddr, apiKey,
+    return new NetBoxFeed(builder, backendAddr, apiKey,
         version: version,
         passwordKey: passwordKey, //
         funcfindArticle: adapter);
   }
 
-  factory NetBoxFeed.username(String userName, String backendAddr, String apiKey, //
+  factory NetBoxFeed.username(TinyNetBuilder builder, String userName, String backendAddr, String apiKey, //
       {String version: "v1",
       String passwordKey: "umiuni2d"}) {
     Future<netbox.NetBoxArtManagerFind> adapter(String cursor) {
-      netbox.NetBoxArtManager art = new netbox.NetBoxArtManager(backendAddr, apiKey, version: version, passwordKey: passwordKey);
+      netbox.NetBoxArtManager art = new netbox.NetBoxArtManager(builder, backendAddr, apiKey, version: version, passwordKey: passwordKey);
       return art.findArticleWithUserName(userName, cursor);
     }
     ;
-    return new NetBoxFeed(backendAddr, apiKey,
+    return new NetBoxFeed(builder, backendAddr, apiKey,
         version: version,
         passwordKey: passwordKey, //
         funcfindArticle: adapter);
   }
 
-  factory NetBoxFeed.tag(String tag, String subTag, String optTag, String backendAddr, String apiKey, //
+  factory NetBoxFeed.tag(TinyNetBuilder builder, String tag, String subTag, String optTag, String backendAddr, String apiKey, //
       {String version: "v1",
       String passwordKey: "umiuni2d"}) {
     Future<netbox.NetBoxArtManagerFind> adapter(String cursor) {
-      netbox.NetBoxArtManager art = new netbox.NetBoxArtManager(backendAddr, apiKey, version: version, passwordKey: passwordKey);
+      netbox.NetBoxArtManager art = new netbox.NetBoxArtManager(builder, backendAddr, apiKey, version: version, passwordKey: passwordKey);
       return art.findArticleFromTag(tag, subTag, optTag, cursor);
     }
     ;
-    return new NetBoxFeed(backendAddr, apiKey,
+    return new NetBoxFeed(builder, backendAddr, apiKey,
         version: version,
         passwordKey: passwordKey, //
         funcfindArticle: adapter);

@@ -8,10 +8,10 @@ import 'config.dart';
 import 'package:umiuni2d_backend_client/toolbar.dart';
 import 'package:umiuni2d_backend_client/nbox.dart' as netbox;
 import 'package:umiuni2d_backend_client/util.dart' as util;
-
+import 'package:umiuni2d_backend_client/netboxhtml5.dart' as netbox;
 //import 'dart:html' as aahtml;
 Toolbar baseLine = new Toolbar();
-netbox.NetBox rootBox = new netbox.NetBox("http://127.0.0.1:8080", "A91A3E1B-15F0-4DEE-8ECE-F5DD1A06230E");
+netbox.NetBox rootBox = new netbox.NetBox(new netbox.TinyNetHtml5Builder(),"http://127.0.0.1:8080", "A91A3E1B-15F0-4DEE-8ECE-F5DD1A06230E");
 //netbox.NetBox rootBox = new netbox.NetBox("http://liquid-champion-127202.appspot.com", "A91A3E1B-15F0-4DEE-8ECE-F5DD1A06230E");
 
 //
