@@ -50,7 +50,9 @@ class NetBoxFileShareManager {
     //
     //
     {
+      print("##${src}");
       List<int> v1 = conv.BASE64.decode(src.replaceFirst(new RegExp(".*,"), ''));
+//      List<int> v1 = conv.BASE64.decode(src);
       html.Blob b = new html.Blob([v1], "image/png");
       var fd = new html.FormData();
       fd.appendBlob("file", b);

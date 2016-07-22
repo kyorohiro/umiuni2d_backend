@@ -5,6 +5,7 @@ import '../util/textbuilder.dart' as util;
 import '../dialog/dialog_text.dart' as dialog;
 import '../dialog/dialog_confirm.dart' as dialog;
 import 'package:umiuni2d_backend_client/nbox.dart' as nbox;
+import 'package:umiuni2d_backend_client/netboxhtml5.dart' as nbox;
 import 'package:markdown/markdown.dart' as markdown;
 
 class ChoiceDialog {

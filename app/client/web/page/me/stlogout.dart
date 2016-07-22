@@ -2,6 +2,7 @@ import 'dart:html' as html;
 import 'dart:async';
 import 'dart:math' as math;
 import 'package:umiuni2d_backend_client/nbox.dart' as nbox;
+import 'package:umiuni2d_backend_client/netboxhtml5.dart' as nbox;
 import 'package:umiuni2d_backend_client/util.dart' as util;
 import 'package:umiuni2d_backend_client/dialog.dart' as dialog;
 
