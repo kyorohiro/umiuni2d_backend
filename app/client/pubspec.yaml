@@ -14,5 +14,8 @@ dependencies:
   crypto: any
   markdown: any
   csv: any
+  tetorica:
+    git:
+      url: https://github.com/kyorohiro/tetorica.git
 transformers:
 - dart_to_js_script_rewriter
