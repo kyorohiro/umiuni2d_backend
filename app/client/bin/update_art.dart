@@ -23,7 +23,7 @@ void main(List<String> args) {
     rootBox.newMeManager().loginWithTwitter("http://127.0.0.1:8086").then(//
       (nbox.NetBoxMeManagerLoginTwitter res){
         print("## ${res.code} ${res.url}");
-    //    runBrowser("${res.url}");
+        runBrowser("${res.url}");
     });
   });
 
