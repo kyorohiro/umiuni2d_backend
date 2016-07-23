@@ -1,11 +1,14 @@
 import 'requester.dart';
 import 'dart:async';
 import 'dart:html' as html;
+import 'dart:convert' as conv;
 
 class TinyNetHtml5Builder extends TinyNetBuilder {
   Future<TinyNetRequester> createRequester() async {
     return new TinyNetHtml5HttpRequester();
   }
+
+
 }
 
 class TinyNetHtml5HttpRequester extends TinyNetRequester {
@@ -29,7 +32,7 @@ class TinyNetHtml5HttpRequester extends TinyNetRequester {
         }
       });
       req.onError.listen((html.ProgressEvent e) {
-                  print("----> asdfasdf B ${e} :: ${req.statusText}");
+        print("----> asdfasdf B ${e} :: ${req.statusText}");
         c.completeError(e);
       });
       if (data == null) {
@@ -41,5 +44,13 @@ class TinyNetHtml5HttpRequester extends TinyNetRequester {
       c.completeError(e);
     }
     return c.future;
+  }
+
+  Future<Object> srcToMultipartData(String src) {
+    List<int> v1 = conv.BASE64.decode(src);
+    html.Blob b = new html.Blob([v1], "image/png");
+    var fd = new html.FormData();
+    fd.appendBlob("file", b);
+    return fd;
   }
 }

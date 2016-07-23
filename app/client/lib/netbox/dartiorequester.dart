@@ -52,4 +52,8 @@ class TinyNetDartIoHttpRequester extends TinyNetRequester {
     });
     return new TinyNetRequesterResponse(res.statusCode, retHeader, new Uint8List.fromList(vv).buffer);
   }
+
+  Future<String> srcToMultipartData(String src) async {
+    return "";
+  }
 }

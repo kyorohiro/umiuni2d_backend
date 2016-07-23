@@ -1,7 +1,6 @@
 import 'dart:async';
 import './requester.dart';
 import 'dart:convert' as conv;
-import 'dart:html' as html;
 import 'netbox.dart';
 
 class NetBoxFileShareManagerFileShare {
@@ -50,15 +49,8 @@ class NetBoxFileShareManager {
     //
     //
     {
-      print("##${src}");
-      List<int> v1 = conv.BASE64.decode(src.replaceFirst(new RegExp(".*,"), ''));
-//      List<int> v1 = conv.BASE64.decode(src);
-      html.Blob b = new html.Blob([v1], "image/png");
-      var fd = new html.FormData();
-      fd.appendBlob("file", b);
-
+      var fd = await requester.srcToMultipartData(src.replaceFirst(new RegExp(".*,"), ''));
       TinyNetRequesterResponse response = await requester.request(TinyNetRequester.TYPE_POST, imageUrl, data: fd);
-
       return new NetBoxFileShareManagerFileShare(response);
     }
   }
