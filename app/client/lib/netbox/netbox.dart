@@ -78,6 +78,14 @@ class NetBox {
   TinyNetBuilder builder;
   NetBox(this.builder, this.backendAddr, this.apiKey, {this.version: "v1", this.passwordKey: "umiuni2d"}) {}
 
+  String getBackendAddr() {
+    return this.backendAddr;
+  }
+
+  TinyNetBuilder getBuilder() {
+    return this.builder;
+  }
+
   NetBoxMeManager newMeManager() {
     return new NetBoxMeManager(this.builder, this.backendAddr, this.apiKey, version: this.version);
   }

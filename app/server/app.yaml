@@ -13,3 +13,9 @@ handlers:
 - url: /images/meicon.gif
   static_files: images/meicon.gif
   upload: images/meicon.gif
+
+
+- url: /targets
+  static_dir: targets
+  http_headers:
+    Access-Control-Allow-Origin: "*"
