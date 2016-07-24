@@ -33,6 +33,20 @@ class NetBoxArtManagerFindArt {
   int updated;
   int created;
   NetBoxArtManagerFindArt.empty() {}
+  NetBoxArtManagerFindArt.mock(
+      {this.articleInfo: "",
+      this.articleId: "",
+      this.userName: "", //
+      this.title: "",
+      this.state: "",
+      this.cont: "", //
+      this.tag: null,
+      this.updated: 0,
+      this.created: 0}) {
+    if (this.tag == null) {
+      this.tag = [];
+    }
+  }
   NetBoxArtManagerFindArt(TinyNetRequesterResponse response) {
     String body = conv.UTF8.decode(response.response.asUint8List());
     Map<String, Object> v = conv.JSON.decode(body);
@@ -41,7 +55,7 @@ class NetBoxArtManagerFindArt {
     this.title = v[NetBox.ReqPropertyTitle];
     this.state = v[NetBox.ReqPropertyArticleState];
     this.tag = v[NetBox.ReqPropertyTag];
-    if(this.tag == null) {
+    if (this.tag == null) {
       this.tag = [];
     }
     this.created = v[NetBox.ReqPropertyCreated];
@@ -57,6 +71,19 @@ class NetBoxArtManagerFind {
   String loginId;
   String cursorNext;
   List<NetBoxArtManagerFindArt> arts = [];
+
+  NetBoxArtManagerFind.mock(
+      int _code,
+      String _requestId,
+      String _loginId,
+      String _cursorNext, //
+      List<NetBoxArtManagerFindArt> _arts) {
+    this.code = _code;
+    this.requestId = _requestId;
+    this.loginId = _loginId;
+    this.cursorNext = _cursorNext;
+    this.arts = _arts;
+  }
 
   NetBoxArtManagerFind(TinyNetRequesterResponse response) {
     String body = conv.UTF8.decode(response.response.asUint8List());
@@ -89,7 +116,7 @@ class NetBoxArtManagerFind {
       a.state = v[NetBox.ReqPropertyArticleState];
       a.tag = v[NetBox.ReqPropertyTag];
       a.cont = v[NetBox.ReqPropertyCont];
-      if(a.tag == null) {
+      if (a.tag == null) {
         a.tag = [];
       }
       a.created = v[NetBox.ReqPropertyCreated];
@@ -109,11 +136,10 @@ class NetBoxArtManager {
   TinyNetBuilder builder;
   NetBoxArtManager(this.builder, this.backendAddr, this.apiKey, {this.version: "v1", this.passwordKey: "umiuni2d"}) {}
 
-  Future<NetBoxArtManagerPost> post(String userName, String loginId, String articleId, String title,
-    List<String> tag, String cont, String state, {String optTag:"",String subTag:""}) async {
+  Future<NetBoxArtManagerPost> post(String userName, String loginId, String articleId, String title, List<String> tag, String cont, String state, {String optTag: "", String subTag: ""}) async {
     TinyNetRequester requester = await builder.createRequester();
     String url = "${this.backendAddr}/api/${version}/art_mana/post";
-    if(tag == null) {
+    if (tag == null) {
       tag = [];
     }
 
@@ -212,9 +238,9 @@ class NetBoxArtManager {
 
   Future<NetBoxArtManagerFind> findArticleFromTag(String tag, String subTag, String optTag, String cursor) async {
     TinyNetRequester requester = await builder.createRequester();
-    subTag = (subTag==null?"":subTag);
-    optTag = (optTag==null?"":optTag);
-    tag =(tag==null?"":tag);
+    subTag = (subTag == null ? "" : subTag);
+    optTag = (optTag == null ? "" : optTag);
+    tag = (tag == null ? "" : tag);
     String url = "${this.backendAddr}/api/${version}/art_mana/find_from_tag";
     TinyNetRequesterResponse response = await requester.request(TinyNetRequester.TYPE_POST, url, //
         data: conv.JSON.encode({

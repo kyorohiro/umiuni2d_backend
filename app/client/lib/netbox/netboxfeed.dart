@@ -78,6 +78,25 @@ class NetBoxFeed {
     }
   }
 
+  factory NetBoxFeed.mock(List<netbox.NetBoxArtManagerFindArt> _arts, TinyNetBuilder builder, String loginId, String backendAddr, String apiKey, //
+      {String version: "v1",
+      String passwordKey: "umiuni2d"}) {
+    bool isRelease = false;
+    Future<netbox.NetBoxArtManagerFind> adapter(String cursor) async {
+      if (isRelease == false) {
+        isRelease == true;
+        return new netbox.NetBoxArtManagerFind.mock(netbox.NetBox.ReqPropertyCodeOK, "dummy", loginId, cursor, _arts);
+      } else {
+        return new netbox.NetBoxArtManagerFind.mock(netbox.NetBox.ReqPropertyCodeOK, "dummy", loginId, cursor, []);
+      }
+    }
+    ;
+    return new NetBoxFeed(builder, backendAddr, apiKey,
+        version: version,
+        passwordKey: passwordKey, //
+        funcfindArticle: adapter);
+  }
+
   factory NetBoxFeed.me(TinyNetBuilder builder, String loginId, String backendAddr, String apiKey, //
       {String version: "v1",
       String passwordKey: "umiuni2d"}) {
