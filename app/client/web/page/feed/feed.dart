@@ -5,6 +5,7 @@ import 'package:umiuni2d_backend_client/netboxhtml5.dart' as nbox;
 import 'package:umiuni2d_backend_client/dialog.dart' as dialog;
 import 'package:umiuni2d_backend_client/util.dart' as util;
 import 'package:umiuni2d_backend_client/parts.dart' as parts;
+import "../../nbox/appnetbox.dart";
 
 class FeedPage {
   String rootId;
@@ -67,7 +68,14 @@ class FeedPage {
     print(">>>>>>> ${tag} :: ${subTag} :: ${userName}");
     if (subTag == "art") {
       print(">>>>>>>SSSSSSS");
-      feeder = new nbox.NetBoxFeed.mock([], netbox.getBuilder(), status.userObjectId, netbox.getBackendAddr(), netbox.apiKey);
+      AppNetBox b = new AppNetBox(status, netbox);
+      List<List> cv = await b.getIndex();
+      List<nbox.NetBoxArtManagerFindArt> ctt = [];
+      for(var v in cv) {
+        print(">>> ${v} >>>");
+        ctt.add(new nbox.NetBoxArtManagerFindArt.mock(title: v[1],articleId: "target_${v[0]}"));
+      }
+      feeder = new nbox.NetBoxFeed.mock(ctt, netbox.getBuilder(), status.userObjectId, netbox.getBackendAddr(), netbox.apiKey);
     } else if (userName != null && userName != "") {
       feeder = feederManager.getNewOrder(userName:userName, loginId:status.userObjectId);
     } else if ((tag != null && tag != "") || (subTag != null && subTag != "")) {
@@ -98,11 +106,7 @@ class FeedPage {
     artParts.nextFeed(isInit: true);
     //
     //
-    print("<><><><><>< isMaster : ${this.status.isMaster}");
-    if (this.status.isMaster) {
-      elm.appendHtml(["""<a href="#/Post/post?${nbox.NetBox.ReqPropertyArticleState}=${nbox.NetBox.ReqPropertyArticles}" id="view-source">""", """Post</a>"""].join("\r\n"));
-    } else if (this.status.isLogin) {
-      //target="_blank"
+  if (this.status.isLogin) {
      var v = "#/Post/comment?tag=comment&${nbox.NetBox.ReqPropertyArticleState}=${nbox.NetBox.ReqPropertyComments}";
      elm.appendHtml(["""<a href="${v}" id="view-source">""", """Post</a>"""].join("\r\n"));
     }
