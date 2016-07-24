@@ -65,7 +65,10 @@ class FeedPage {
 
   update({String tag:"", String subTag:"", String optTag:"",String userName:""}) async {
     print(">>>>>>> ${tag} :: ${subTag} :: ${userName}");
-    if (userName != null && userName != "") {
+    if (subTag == "art") {
+      print(">>>>>>>SSSSSSS");
+      feeder = new nbox.NetBoxFeed.mock([], netbox.getBuilder(), status.userObjectId, netbox.getBackendAddr(), netbox.apiKey);
+    } else if (userName != null && userName != "") {
       feeder = feederManager.getNewOrder(userName:userName, loginId:status.userObjectId);
     } else if ((tag != null && tag != "") || (subTag != null && subTag != "")) {
       print("AAAA ZZ BBBB");

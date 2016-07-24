@@ -7,6 +7,7 @@ import 'package:umiuni2d_backend_client/util.dart' as util;
 import 'package:umiuni2d_backend_client/parts.dart' as parts;
 import "package:csv/csv.dart" as csv;
 import "dart:convert" as conv;
+import "../../nbox/appnetbox.dart";
 
 class PostPage {
   String rootId;
@@ -44,18 +45,10 @@ class PostPage {
     choiceDialog1.init();
   }
 
+
+
   Future updateFromHash() async {
-    nbox.TinyNetRequester req = await netbox.getBuilder().createRequester();
-    nbox.TinyNetRequesterResponse res = await req.request("POST", netbox.getBackendAddr() + "/targets/index_jp.csv");
-    //
-    csv.CsvCodec cod = new csv.CsvCodec(fieldDelimiter: ",",eol: "\n");
-    List<List<String>> vs = cod.decode(conv.UTF8.decode(res.response.asUint8List()));
-    print("### ${vs}");
-    List<String> chh = [];
-    for (List<String> v in vs) {
-      print(">>>> ${v}");
-      chh.add(v[1]);
-    }
+
     //
     var hash = util.Location.address(html.window.location.hash);
     var prop = util.Location.prop(html.window.location.hash);
@@ -65,6 +58,8 @@ class PostPage {
         postDialog.show("", "title", [], "art", "", "post", "private");
       } else if (prop[nbox.NetBox.ReqPropertyArticleState] == nbox.NetBox.ReqPropertyComments) {
 //        targetDialog.show("Target Name", "Your comment target",onUpdated: (dialog.TextDialog d, String src){
+        AppNetBox b = new AppNetBox(status, netbox);
+        List<String> chh = await b.getTargetName();
         choiceDialog.show("Choice", "message", chh, onUpdated: (dialog.ChoiceDialog dialog1, String choice1) {
           choiceDialog.close();
           new Future(() {
